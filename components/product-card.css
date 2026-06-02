@@ -1,0 +1,135 @@
+.product-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 26px 52px rgba(17, 17, 17, 0.09);
+  border-color: rgba(17, 17, 17, 0.14);
+}
+
+.product-image {
+  position: relative;
+  display: block;
+  aspect-ratio: 0.92;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fff, var(--surface));
+}
+
+.product-image img {
+  object-fit: cover;
+  transition: transform 600ms ease;
+}
+
+.product-card:hover .product-image img {
+  transform: scale(1.07);
+}
+
+.product-image span {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  border-radius: 999px;
+  background: #fff;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.quick-actions {
+  position: absolute;
+  inset: auto 16px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: 240ms ease;
+}
+
+.product-card:hover .quick-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.quick-action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  padding: 0 14px;
+  background: rgba(17, 17, 17, 0.82);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.quick-icon {
+  width: 44px;
+  padding: 0;
+  justify-content: center;
+}
+
+.product-body {
+  padding: 24px;
+}
+
+.product-meta,
+.product-buy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.product-meta {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.product-meta span:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--accent);
+}
+
+.product-body h3 {
+  min-height: 64px;
+  margin: 14px 0 8px;
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.product-body p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.product-buy strong {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.product-buy .icon-button {
+  width: 44px;
+  height: 44px;
+}
+
+@media (max-width: 640px) {
+  .quick-actions {
+    opacity: 1;
+    transform: none;
+  }
+}

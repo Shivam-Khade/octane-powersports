@@ -1,0 +1,169 @@
+.shop-hero {
+  padding: 76px 0 52px;
+  background: var(--surface);
+}
+
+.shop-hero h1 {
+  max-width: 920px;
+  margin: 0;
+  font-size: clamp(42px, 6vw, 82px);
+  line-height: 0.96;
+}
+
+.shop-search {
+  width: min(100%, 720px);
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 30px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0 20px;
+}
+
+.shop-search input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+}
+
+.shop-layout {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  gap: 34px;
+  padding-top: 42px;
+  padding-bottom: 96px;
+}
+
+.filters {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 22px;
+}
+
+.filter-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 850;
+}
+
+.filter-group {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+}
+
+.filter-group h3,
+.range label {
+  margin: 0 0 14px;
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.filter-group label {
+  display: block;
+  margin: 12px 0;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.range {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+}
+
+.range input {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.shop-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.shop-toolbar span {
+  color: var(--muted);
+  font-weight: 750;
+}
+
+.shop-toolbar div {
+  display: flex;
+  gap: 10px;
+}
+
+.shop-toolbar select {
+  min-height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0 14px;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 42px;
+}
+
+.pagination button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.pagination .active {
+  background: var(--text);
+  color: #fff;
+}
+
+@media (max-width: 980px) {
+  .shop-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    position: static;
+  }
+
+  .shop-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .shop-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-toolbar {
+    display: block;
+  }
+
+  .shop-toolbar div {
+    margin-top: 16px;
+  }
+}

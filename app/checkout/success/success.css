@@ -1,0 +1,31 @@
+.success-page {
+  min-height: 680px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  padding: 48px 20px;
+}
+
+.success-card {
+  width: min(100%, 720px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  padding: 54px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.success-card svg {
+  color: var(--success);
+}
+
+.success-card h1 {
+  margin: 12px 0;
+  font-size: clamp(42px, 6vw, 78px);
+  line-height: 0.95;
+}
+
+.success-card p:not(.eyebrow) {
+  color: var(--muted);
+}
