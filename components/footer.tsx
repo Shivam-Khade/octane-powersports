@@ -25,14 +25,17 @@ export function Footer() {
             India's premium motorcycle gear and performance parts store. Authentic products, expert support, and Pan India delivery.
           </p>
           <div className="footer-contact">
-            <a href="tel:+919876543210" className="footer-contact-link">
-              <Phone size={14} /> +91 98765 43210
+            <a href="tel:+917420919711" className="footer-contact-link">
+              <Phone size={14} /> +91 7420919711 / 7420949711
             </a>
-            <a href="mailto:hello@octanepowersports.in" className="footer-contact-link">
-              <Mail size={14} /> hello@octanepowersports.in
+            <a href="mailto:info@octaneps.com" className="footer-contact-link">
+              <Mail size={14} /> info@octaneps.com
             </a>
             <span className="footer-contact-link">
-              <MapPin size={14} /> Mumbai, Maharashtra, India
+              <MapPin size={14} /> Shop no 5, 30/8A/1 Ramwadi, Pune 411014
+            </span>
+            <span className="footer-contact-link">
+              GST: 27AAHFO8248F1ZZ
             </span>
           </div>
           <div className="footer-socials">
@@ -98,7 +101,7 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="footer-bottom">
         <div className="container footer-bottom-inner">
-          <span className="footer-copy">© 2026 Octane Powersports Pvt. Ltd. All rights reserved.</span>
+          <span className="footer-copy">© 2026 Octane Powersports LLP. All rights reserved.</span>
           <div className="footer-payments">
             <span className="payment-badge">UPI</span>
             <span className="payment-badge">Visa</span>

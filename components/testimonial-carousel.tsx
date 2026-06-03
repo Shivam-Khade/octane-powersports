@@ -60,6 +60,7 @@ export function TestimonialCarousel() {
 
       <div className="testimonial-controls">
         <button
+          suppressHydrationWarning
           className="testimonial-btn"
           onClick={() => go(-1)}
           aria-label="Previous review"
@@ -69,6 +70,7 @@ export function TestimonialCarousel() {
         <div className="testimonial-dots">
           {testimonials.map((_, i) => (
             <button
+              suppressHydrationWarning
               key={i}
               className={`testimonial-dot${i === active ? " active" : ""}`}
               onClick={() => { setDirection(i > active ? 1 : -1); setActive(i); }}
@@ -77,6 +79,7 @@ export function TestimonialCarousel() {
           ))}
         </div>
         <button
+          suppressHydrationWarning
           className="testimonial-btn"
           onClick={() => go(1)}
           aria-label="Next review"
