@@ -157,6 +157,16 @@
   transform: translateX(-50%) translateY(0);
 }
 
+/* Invisible bridge to prevent dropdown from closing when moving mouse */
+.mega-menu::before {
+  content: "";
+  position: absolute;
+  top: -24px;
+  left: 0;
+  right: 0;
+  height: 24px;
+}
+
 .mega-inner {
   display: grid;
   grid-template-columns: 1fr 280px;

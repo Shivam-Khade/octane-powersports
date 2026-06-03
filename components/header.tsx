@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, Search, User, ShoppingBag, ChevronDown, X } from "lucide-react";
-import { categories, brands } from "@/lib/data";
+import { brands } from "@/lib/data";
 import "./header.css";
 
 export function Header() {
@@ -28,30 +28,7 @@ export function Header() {
 
           <nav className="main-nav" aria-label="Primary navigation">
             <Link href="/shop" className="nav-link">Shop</Link>
-            <div className="mega-trigger">
-              <button suppressHydrationWarning className="nav-link nav-btn">
-                Categories <ChevronDown size={13} className="nav-chevron" />
-              </button>
-              <div className="mega-menu">
-                <div className="mega-inner">
-                  <div>
-                    <p className="mega-title">Shop by System</p>
-                    <div className="mega-grid">
-                      {categories.map((category) => (
-                        <Link key={category} href={`/shop?category=${encodeURIComponent(category)}`} className="mega-item">
-                          {category}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="mega-feature">
-                    <p className="mega-eyebrow">Rider Edits</p>
-                    <h3>Performance, protection and race-ready kits curated by superbike brand.</h3>
-                    <Link href="/shop" className="button primary">Build Your Setup</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
+
             <div className="mega-trigger">
               <button suppressHydrationWarning className="nav-link nav-btn">
                 Brands <ChevronDown size={13} className="nav-chevron" />

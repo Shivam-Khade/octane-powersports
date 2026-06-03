@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Grid2X2, List, Search, SlidersHorizontal, X, ChevronDown, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard, Product } from "@/components/product-card";
@@ -16,9 +17,26 @@ const curatedCollections = [
 ];
 
 export function ShopPageClient({ initialProducts }: { initialProducts: Product[] }) {
+  const searchParams = useSearchParams();
+  const initialBrand = searchParams.get("brand");
+  const initialCategory = searchParams.get("category");
+
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
-  const [activeCategories, setActiveCategories] = useState<string[]>([]);
-  const [activeBrands, setActiveBrands] = useState<string[]>([]);
+  const [activeCategories, setActiveCategories] = useState<string[]>(initialCategory ? [initialCategory] : []);
+  const [activeBrands, setActiveBrands] = useState<string[]>(initialBrand ? [initialBrand] : []);
+
+  useEffect(() => {
+    const brand = searchParams.get("brand");
+    if (brand && !activeBrands.includes(brand)) {
+      setActiveBrands(prev => Array.from(new Set([...prev, brand])));
+      setPage(1);
+    }
+    const category = searchParams.get("category");
+    if (category && !activeCategories.includes(category)) {
+      setActiveCategories(prev => Array.from(new Set([...prev, category])));
+      setPage(1);
+    }
+  }, [searchParams]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Best Sellers");
   const [isGrid, setIsGrid] = useState(true);
