@@ -1,0 +1,48 @@
+.community-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.community-cell {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.community-cell img {
+  object-fit: cover;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.community-cell:hover img {
+  transform: scale(1.08);
+}
+
+.community-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.75) 0%, rgba(255, 107, 0, 0.4) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  opacity: 0;
+  transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 16px;
+}
+
+.community-cell:hover .community-overlay {
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .community-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}

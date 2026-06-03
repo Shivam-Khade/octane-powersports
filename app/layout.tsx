@@ -1,31 +1,56 @@
 import type { Metadata } from "next";
+import { Bebas_Neue, Montserrat, Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
+import { CursorGlow } from "@/components/cursor-glow";
+
+// Configure Next.js font loading
+const bebasNeue = Bebas_Neue({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-bebas-neue",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  weight: ["700", "800", "900"],
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
+const inter = Inter({
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://octanepowersports.com"),
+  metadataBase: new URL("https://octanepowersports.in"),
   title: {
-    default: "Octane Powersports | Premium Motorcycle Parts & Accessories",
+    default: "Octane Powersports | Premium Motorcycle Gear & Performance Parts India",
     template: "%s | Octane Powersports"
   },
   description:
-    "Premium motorcycle accessories, exhaust systems, protection parts, electronics and performance upgrades for riders who demand more.",
+    "India's premium motorcycle accessories store — riding gear, helmets, performance parts and accessories from KTM, Triumph, Ducati, Kawasaki, BMW and more. Pan India delivery.",
+  keywords: ["motorcycle gear India", "riding helmets", "performance exhaust", "KTM accessories", "superbike parts India"],
   openGraph: {
-    title: "Octane Powersports",
-    description: "Premium motorcycle parts and accessories for performance riders.",
-    url: "https://octanepowersports.com",
+    title: "Octane Powersports — Ride Harder. Explore Further.",
+    description: "Premium motorcycle gear, helmets and performance parts for riders who demand more.",
+    url: "https://octanepowersports.in",
     siteName: "Octane Powersports",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1600&q=80",
+        url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1600&q=80",
         width: 1600,
         height: 900,
-        alt: "Premium motorcycle exhaust and performance parts"
+        alt: "Premium motorcycle helmets and riding gear — Octane Powersports"
       }
     ],
-    locale: "en_US",
+    locale: "en_IN",
     type: "website"
   },
   robots: {
@@ -39,18 +64,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Octane Powersports",
-    url: "https://octanepowersports.com",
-    logo: "https://octanepowersports.com/logo.png",
-    sameAs: ["https://www.instagram.com/octanepowersports"]
+    url: "https://octanepowersports.in",
+    logo: "https://octanepowersports.in/logo.png",
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+91-9876543210",
+      contactType: "customer support",
+      areaServed: "IN"
+    },
+    sameAs: [
+      "https://www.instagram.com/octanepowersports",
+      "https://www.youtube.com/@octanepowersports"
+    ]
   };
 
   return (
-    <html lang="en">
+    <html 
+      lang="en" 
+      className={`${bebasNeue.variable} ${montserrat.variable} ${inter.variable}`}
+      style={{ scrollBehavior: "smooth" }}
+    >
       <body suppressHydrationWarning>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
+        <CursorGlow />
         <Header />
         {children}
         <Footer />

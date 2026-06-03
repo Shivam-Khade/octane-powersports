@@ -1,36 +1,117 @@
 import Link from "next/link";
-import { categories, brands } from "@/lib/data";
+import { Share2, Play, ExternalLink, Mail, Phone, MapPin } from "lucide-react";
+import { brands, categories } from "@/lib/data";
 import "./footer.css";
+
+const socials = [
+  { icon: ExternalLink, href: "https://instagram.com/octanepowersports", label: "Instagram" },
+  { icon: Play, href: "https://youtube.com/@octanepowersports", label: "YouTube" },
+  { icon: Share2, href: "#", label: "Facebook" },
+  { icon: ExternalLink, href: "#", label: "X / Twitter" }
+];
 
 export function Footer() {
   return (
     <footer className="footer">
+      {/* Main Grid */}
       <div className="container footer-grid">
+        {/* Brand Column */}
         <div className="footer-brand">
-          <Link href="/" className="logo">
-            <span>OCTANE</span>
-            <small>POWERSPORTS</small>
+          <Link href="/" className="footer-logo" aria-label="Octane Powersports">
+            <span className="footer-logo-main">OCTANE</span>
+            <small className="footer-logo-sub">POWERSPORTS</small>
           </Link>
-          <p>Premium motorcycle accessories, performance upgrades and service support for serious riders.</p>
+          <p className="footer-brand-desc">
+            India's premium motorcycle gear and performance parts store. Authentic products, expert support, and Pan India delivery.
+          </p>
+          <div className="footer-contact">
+            <a href="tel:+919876543210" className="footer-contact-link">
+              <Phone size={14} /> +91 98765 43210
+            </a>
+            <a href="mailto:hello@octanepowersports.in" className="footer-contact-link">
+              <Mail size={14} /> hello@octanepowersports.in
+            </a>
+            <span className="footer-contact-link">
+              <MapPin size={14} /> Mumbai, Maharashtra, India
+            </span>
+          </div>
+          <div className="footer-socials">
+            {socials.map(({ icon: Icon, href, label }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="footer-social-btn" aria-label={label}>
+                <Icon size={16} />
+              </a>
+            ))}
+          </div>
         </div>
-        <div>
-          <h3>Categories</h3>
-          {categories.slice(0, 8).map((item) => <Link key={item} href="/shop">{item}</Link>)}
+
+        {/* Shop */}
+        <div className="footer-col">
+          <h3 className="footer-col-title">Shop</h3>
+          {categories.slice(0, 8).map((item) => (
+            <Link key={item} href={`/shop?category=${encodeURIComponent(item)}`} className="footer-link">
+              {item}
+            </Link>
+          ))}
         </div>
-        <div>
-          <h3>Brands</h3>
-          {brands.map((item) => <Link key={item} href="/shop">{item}</Link>)}
+
+        {/* Brands */}
+        <div className="footer-col">
+          <h3 className="footer-col-title">Brands</h3>
+          {brands.map((item) => (
+            <Link key={item} href={`/shop?brand=${encodeURIComponent(item)}`} className="footer-link">
+              {item}
+            </Link>
+          ))}
         </div>
-        <div>
-          <h3>Support</h3>
-          {["Service Booking", "Shipping", "Returns", "Fitment Help"].map((item) => (
-            <Link key={item} href={item === "Service Booking" ? "/service-booking" : "/shop"}>{item}</Link>
+
+        {/* Support */}
+        <div className="footer-col">
+          <h3 className="footer-col-title">Support</h3>
+          {[
+            { label: "Service Booking", href: "/service-booking" },
+            { label: "Track Your Order", href: "/account" },
+            { label: "Shipping Info", href: "#" },
+            { label: "Returns Policy", href: "#" },
+            { label: "Fitment Help", href: "#" },
+            { label: "Contact Us", href: "/contact" },
+            { label: "FAQs", href: "#" }
+          ].map(({ label, href }) => (
+            <Link key={label} href={href} className="footer-link">{label}</Link>
+          ))}
+        </div>
+
+        {/* Company */}
+        <div className="footer-col">
+          <h3 className="footer-col-title">Company</h3>
+          {[
+            { label: "About Us", href: "#" },
+            { label: "Careers", href: "#" },
+            { label: "Blog & Journal", href: "/blog" },
+            { label: "Press", href: "#" },
+            { label: "Affiliates", href: "#" }
+          ].map(({ label, href }) => (
+            <Link key={label} href={href} className="footer-link">{label}</Link>
           ))}
         </div>
       </div>
-      <div className="container footer-bottom">
-        <span>© 2026 Octane Powersports</span>
-        <span>Built for superbike, track and street riders.</span>
+
+      {/* Bottom Bar */}
+      <div className="footer-bottom">
+        <div className="container footer-bottom-inner">
+          <span className="footer-copy">© 2026 Octane Powersports Pvt. Ltd. All rights reserved.</span>
+          <div className="footer-payments">
+            <span className="payment-badge">UPI</span>
+            <span className="payment-badge">Visa</span>
+            <span className="payment-badge">Mastercard</span>
+            <span className="payment-badge">RuPay</span>
+            <span className="payment-badge">EMI</span>
+            <span className="payment-badge">COD</span>
+          </div>
+          <div className="footer-legal">
+            <Link href="#">Privacy Policy</Link>
+            <Link href="#">Terms of Service</Link>
+          </div>
+        </div>
       </div>
     </footer>
   );

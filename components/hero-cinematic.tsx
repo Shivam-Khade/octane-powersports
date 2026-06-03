@@ -2,28 +2,32 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Users, Package, MapPin } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import "./hero-cinematic.css";
+
+const stats = [
+  { icon: Users, value: "5000+", label: "Riders" },
+  { icon: Package, value: "100+", label: "Premium Products" },
+  { icon: MapPin, value: "Pan India", label: "Delivery" }
+];
 
 export function HeroCinematic() {
   const [videoReady, setVideoReady] = useState(false);
   const { scrollYProgress } = useScroll({
-    target: undefined,
     offset: ["start start", "end start"]
   });
 
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.28], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 0.28], [0, 28]);
-  const videoScale = useTransform(scrollYProgress, [0, 0.4], [1, 1.06]);
-  const videoBrightness = useTransform(scrollYProgress, [0, 0.32], [1.08, 0.92]);
-  const videoFilter = useTransform(videoBrightness, (value) => `brightness(${value})`);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 0.3], [0, 40]);
+  const videoScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.08]);
 
   return (
     <section className="hero-cinematic">
+      {/* Video Background */}
       <motion.div
         className="hero-cinematic__videoWrap"
-        style={{ scale: videoScale, filter: videoFilter, opacity: videoReady ? 1 : 0 }}
+        style={{ scale: videoScale, opacity: videoReady ? 1 : 0 }}
       >
         <video
           className="hero-cinematic__video"
@@ -38,10 +42,10 @@ export function HeroCinematic() {
         </video>
       </motion.div>
 
+      {/* Dark overlay — subtle 25% */}
       <div className="hero-cinematic__overlay" />
-      <div className="hero-cinematic__rightShade" />
-      <div className="hero-cinematic__veil" />
 
+      {/* Content */}
       <div className="container hero-cinematic__content">
         <motion.div
           className="hero-cinematic__copy"
@@ -52,49 +56,71 @@ export function HeroCinematic() {
             hidden: {},
             show: {
               transition: {
-                staggerChildren: 0.09,
-                delayChildren: 0.18
+                staggerChildren: 0.1,
+                delayChildren: 0.2
               }
             }
           }}
         >
-          <motion.p className="eyebrow" variants={itemVariants}>
-            Premium motorcycle performance
+          <motion.p className="hero-eyebrow" variants={itemVariants}>
+            Premium Powersports India
           </motion.p>
-          <motion.h1 variants={itemVariants}>
-            <span>Premium Motorcycle Parts</span>
-            <span>Built For Riders</span>
-            <span>Who Demand More</span>
+
+          <motion.h1 className="hero-headline" variants={itemVariants}>
+            <span>RIDE HARDER.</span>
+            <span>EXPLORE FURTHER.</span>
+            <span className="hero-headline--accent">OWN THE ROAD.</span>
           </motion.h1>
-          <motion.p variants={itemVariants}>
-            Curated superbike exhausts, protection, electronics, tyres and control upgrades with the calm,
-            precision and confidence of a luxury performance brand.
+
+          <motion.p className="hero-sub" variants={itemVariants}>
+            Premium motorcycle accessories, riding gear and performance parts for riders who demand more.
           </motion.p>
-          <div className="hero-cinematic__actions">
-            <motion.div variants={itemVariants} className="hero-action-slot">
-              <Link className="button hero-button hero-button--primary" href="/shop">
-                <span>Shop Collection</span>
-                <ArrowRight size={18} className="hero-button__arrow" />
-              </Link>
-            </motion.div>
-            <motion.div variants={itemVariants} className="hero-action-slot">
-              <Link className="button hero-button hero-button--secondary" href="/shop#brands">
-                Explore Categories
-              </Link>
-            </motion.div>
-          </div>
+
+          <motion.div className="hero-actions" variants={itemVariants}>
+            <Link className="hero-button hero-button--primary" href="/shop">
+              <span>Shop Collection</span>
+              <ArrowRight size={18} className="hero-button__arrow" />
+            </Link>
+            <Link className="hero-button hero-button--secondary" href="/shop#brands">
+              Explore Brands
+            </Link>
+          </motion.div>
+
+          {/* Floating Stats */}
+          <motion.div className="hero-stats" variants={itemVariants}>
+            {stats.map(({ icon: Icon, value, label }) => (
+              <div key={label} className="hero-stat-card">
+                <Icon size={18} className="hero-stat-icon" />
+                <div>
+                  <strong className="hero-stat-value">{value}</strong>
+                  <span className="hero-stat-label">{label}</span>
+                </div>
+              </div>
+            ))}
+          </motion.div>
         </motion.div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="hero-scroll-indicator"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 0.6 }}
+      >
+        <div className="hero-scroll-line" />
+        <span>Scroll</span>
+      </motion.div>
     </section>
   );
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 18, filter: "blur(4px)" },
+  hidden: { opacity: 0, y: 24, filter: "blur(6px)" },
   show: {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }
   }
 };

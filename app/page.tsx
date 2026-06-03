@@ -1,134 +1,242 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Truck, Wrench, Sparkles } from "lucide-react";
-import { brands, categoryCards, products, posts } from "@/lib/data";
+import { ArrowRight, ShieldCheck, Truck, CreditCard, Headphones, RotateCcw } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
+import { categoryCards, products } from "@/lib/data";
 import { ProductCard } from "@/components/product-card";
-import { Reveal } from "@/components/reveal";
+import { BrandMarquee } from "@/components/brand-marquee";
+import { LifestyleSection } from "@/components/lifestyle-section";
+import { TestimonialCarousel } from "@/components/testimonial-carousel";
+import { CommunityGrid } from "@/components/community-grid";
 import { HeroCinematic } from "@/components/hero-cinematic";
 import "./home.css";
 
-const reasons = [
-  { title: "Fitment verified", text: "Parts matched by bike model, riding use and installation requirements.", Icon: ShieldCheck },
-  { title: "Fast dispatch", text: "Priority shipping on stocked premium parts with clear availability.", Icon: Truck },
-  { title: "Service support", text: "Booking support for installations, checks and maintenance.", Icon: Wrench },
-  { title: "Curated quality", text: "No filler inventory; every product earns its place.", Icon: Sparkles }
+const whyUs = [
+  { title: "Authentic Products", text: "Every product is 100% genuine, sourced directly from authorised brand distributors.", Icon: ShieldCheck },
+  { title: "Fast Delivery", text: "Priority shipping across India. Same-day dispatch on all in-stock orders placed before 2 PM.", Icon: Truck },
+  { title: "Secure Payments", text: "UPI, cards, net banking and EMI — all transactions encrypted with bank-grade security.", Icon: CreditCard },
+  { title: "Expert Support", text: "Speak to our riding gear experts for fitment advice, compatibility checks and recommendations.", Icon: Headphones },
+  { title: "Easy Returns", text: "Hassle-free 15-day return policy. If it doesn't fit or meet expectations, we make it right.", Icon: RotateCcw }
 ];
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } }
+};
 
 export default function HomePage() {
   return (
     <main>
+      {/* ===== HERO ===== */}
       <HeroCinematic />
 
+      {/* ===== BRAND MARQUEE ===== */}
+      <BrandMarquee />
+
+      {/* ===== CATEGORIES ===== */}
       <section className="section">
         <div className="container">
-          <div className="section-head">
+          <motion.div
+            className="section-head"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={{ show: { transition: { staggerChildren: 0.1 } } }}
+          >
             <div>
-              <p className="eyebrow">Shop by category</p>
-              <h2>Purpose-built superbike upgrades, arranged by system.</h2>
+              <motion.p className="eyebrow" variants={fadeUp}>Shop by Category</motion.p>
+              <motion.h2 variants={fadeUp}>Everything You Need.<br />Built to Perform.</motion.h2>
             </div>
-            <p>Every category is selected around fitment confidence, premium material quality and the kind of finishing detail superbike riders notice.</p>
-          </div>
-          <div className="category-grid">
-            {categoryCards.map((category) => (
-              <Reveal key={category.title} className="category-card">
-                <Image src={category.image} alt={category.title} fill sizes="(max-width: 900px) 100vw, 25vw" />
-                <div>
-                  <h3>{category.title}</h3>
-                  <p>{category.detail}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section alt" id="brands">
-        <div className="container">
-          <div className="section-head">
-            <div>
-              <p className="eyebrow">Featured brands</p>
-              <h2>Factory-grade names for serious machines.</h2>
-            </div>
-          </div>
-          <div className="brand-strip">
-            {brands.map((brand) => <span key={brand}>{brand}</span>)}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <div className="section-head">
-            <div>
-              <p className="eyebrow">Best sellers</p>
-              <h2>Proven superbike upgrades riders keep coming back for.</h2>
-            </div>
-            <Link href="/shop" className="button secondary">View All</Link>
-          </div>
-          <div className="product-grid">
-            {products.slice(0, 4).map((product) => <ProductCard key={product.slug} product={product} />)}
-          </div>
-        </div>
-      </section>
-
-      <section className="upgrade-band">
-        <div className="container upgrade-grid">
-          <div>
-            <p className="eyebrow">Popular upgrades</p>
-            <h2>Build a cleaner cockpit, sharper brakes and a better-sounding superbike.</h2>
-          </div>
-          <div className="upgrade-list">
-            {["Track-day brake kit", "Street lighting system", "Race tail package", "Carbon exhaust package"].map((item) => (
-              <Link href="/shop" key={item}>{item}<ArrowRight size={18} /></Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container why-grid">
-          {reasons.map(({ title, text, Icon }) => (
-            <div className="why-card" key={title}>
-              <Icon size={28} />
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section alt">
-        <div className="container review-blog-grid">
-          <div className="reviews">
-            <p className="eyebrow">Customer reviews</p>
-            <h2>“The parts arrived fast, fit perfectly and made the bike feel properly finished.”</h2>
-            <p>Arjun M. · Ducati Panigale V4</p>
-          </div>
-          <div>
-            <p className="eyebrow">From the journal</p>
-            {posts.map((post) => (
-              <Link className="post-row" href={`/blog/${post.slug}`} key={post.slug}>
-                <Image src={post.image} alt={post.title} width={128} height={86} />
-                <div>
-                  <span>{post.category}</span>
-                  <strong>{post.title}</strong>
-                </div>
+            <motion.div variants={fadeUp}>
+              <Link href="/shop" className="button outline-dark">
+                View All Categories <ArrowRight size={16} />
               </Link>
+            </motion.div>
+          </motion.div>
+
+          <div className="category-grid">
+            {categoryCards.map((cat, i) => (
+              <motion.div
+                key={cat.title}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Link href={`/shop?category=${encodeURIComponent(cat.title)}`} className="category-card">
+                  <Image src={cat.image} alt={cat.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+                  <div className="category-card-body">
+                    <h3 className="category-card-title">{cat.title}</h3>
+                    <p className="category-card-desc">{cat.detail}</p>
+                    <span className="category-card-arrow">
+                      <ArrowRight size={16} />
+                    </span>
+                  </div>
+                </Link>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="newsletter">
-        <div className="container newsletter-inner">
-          <div>
-            <p className="eyebrow">Octane insider</p>
-            <h2>New drops, fitment guides and rider edits.</h2>
+      {/* ===== FEATURED PRODUCTS ===== */}
+      <section className="section alt">
+        <div className="container">
+          <motion.div
+            className="section-head"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={{ show: { transition: { staggerChildren: 0.1 } } }}
+          >
+            <div>
+              <motion.p className="eyebrow" variants={fadeUp}>Best Sellers</motion.p>
+              <motion.h2 variants={fadeUp}>Premium Gear,<br />Proven by Riders.</motion.h2>
+            </div>
+            <motion.div variants={fadeUp}>
+              <Link href="/shop" className="button outline-dark">View All Products <ArrowRight size={16} /></Link>
+            </motion.div>
+          </motion.div>
+          <div className="product-grid">
+            {products.slice(0, 4).map((product) => (
+              <ProductCard key={product.slug} product={product} />
+            ))}
           </div>
-          <form>
-            <input suppressHydrationWarning aria-label="Email address" placeholder="Email address" type="email" />
-            <button suppressHydrationWarning className="button">Subscribe</button>
-          </form>
+        </div>
+      </section>
+
+      {/* ===== LIFESTYLE ===== */}
+      <LifestyleSection />
+
+      {/* ===== WHY CHOOSE US ===== */}
+      <section className="section">
+        <div className="container">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={{ show: { transition: { staggerChildren: 0.08 } } }}
+          >
+            <motion.p className="eyebrow" variants={fadeUp}>Why Octane</motion.p>
+            <motion.h2 className="why-heading" variants={fadeUp}>The Octane Promise</motion.h2>
+          </motion.div>
+          <div className="why-grid">
+            {whyUs.map(({ title, text, Icon }, i) => (
+              <motion.div
+                key={title}
+                className="why-card"
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="why-icon">
+                  <Icon size={22} />
+                </div>
+                <h3 className="why-title">{title}</h3>
+                <p className="why-text">{text}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== TESTIMONIALS ===== */}
+      <section className="section alt">
+        <div className="container">
+          <motion.div
+            className="testimonial-section-head"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={{ show: { transition: { staggerChildren: 0.1 } } }}
+          >
+            <motion.p className="eyebrow" variants={fadeUp}>Rider Reviews</motion.p>
+            <motion.h2 variants={fadeUp}>5,000+ Riders Trust Octane</motion.h2>
+            <motion.p className="testimonial-intro" variants={fadeUp}>
+              From mountain passes to city commutes — real riders, real experiences.
+            </motion.p>
+          </motion.div>
+          <TestimonialCarousel />
+
+          {/* Trust stats */}
+          <div className="trust-stats">
+            {[
+              { value: "4.9", label: "Average Rating" },
+              { value: "5,000+", label: "Orders Delivered" },
+              { value: "98%", label: "Happy Customers" },
+              { value: "15 Day", label: "Easy Returns" }
+            ].map(({ value, label }) => (
+              <div key={label} className="trust-stat">
+                <strong>{value}</strong>
+                <span>{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== COMMUNITY ===== */}
+      <section className="section">
+        <div className="container">
+          <motion.div
+            className="section-head"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={{ show: { transition: { staggerChildren: 0.1 } } }}
+          >
+            <div>
+              <motion.p className="eyebrow" variants={fadeUp}>The Community</motion.p>
+              <motion.h2 variants={fadeUp}>Riders on the Road</motion.h2>
+            </div>
+            <motion.a
+              href="https://instagram.com/octanepowersports"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="button outline-dark"
+              variants={fadeUp}
+            >
+              @octanepowersports <ArrowRight size={16} />
+            </motion.a>
+          </motion.div>
+          <CommunityGrid />
+        </div>
+      </section>
+
+      {/* ===== NEWSLETTER ===== */}
+      <section className="newsletter-section">
+        <div className="container newsletter-inner">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <p className="eyebrow">Octane Insider</p>
+            <h2 className="newsletter-heading">New drops, fitment guides<br />and exclusive deals.</h2>
+            <p className="newsletter-body">Join 5,000+ riders. No spam, only what matters.</p>
+          </motion.div>
+          <motion.form
+            className="newsletter-form"
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <input
+              suppressHydrationWarning
+              aria-label="Email address"
+              placeholder="Enter your email"
+              type="email"
+              className="newsletter-input"
+            />
+            <button suppressHydrationWarning type="submit" className="button primary newsletter-submit">
+              Subscribe
+            </button>
+          </motion.form>
         </div>
       </section>
     </main>
