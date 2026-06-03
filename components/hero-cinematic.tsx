@@ -13,7 +13,6 @@ const stats = [
 ];
 
 export function HeroCinematic() {
-  const [videoReady, setVideoReady] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export function HeroCinematic() {
       {/* Video Background */}
       <motion.div
         className="hero-cinematic__videoWrap"
-        style={{ scale: videoScale, opacity: videoReady ? 1 : 0 }}
+        style={{ scale: videoScale, opacity: isMounted ? 1 : 0 }}
       >
         <div suppressHydrationWarning style={{ width: '100%', height: '100%' }}>
           {isMounted && (
@@ -43,7 +42,6 @@ export function HeroCinematic() {
               loop
               playsInline
               preload="auto"
-              onCanPlay={() => setVideoReady(true)}
             >
               <source src="/hero.mp4" type="video/mp4" />
             </video>
