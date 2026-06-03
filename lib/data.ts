@@ -235,26 +235,70 @@ export const communityImages = [
   "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80"
 ];
 
-export const posts = [
+export const articles = [
   {
-    slug: "choosing-performance-exhaust",
+    id: 1,
     title: "How to Choose a Performance Exhaust Without Losing Rideability",
+    description: "A practical guide to materials, maps, torque curves and noise limits.",
+    slug: "choosing-performance-exhaust",
+    image: "https://images.pexels.com/photos/9606857/pexels-photo-9606857.jpeg?auto=compress&cs=tinysrgb&w=2560",
     category: "Performance",
-    excerpt: "A practical guide to materials, maps, torque curves and noise limits.",
-    image: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1000&q=80"
+    author: "Rahul Sharma",
+    publishDate: "Jan 15, 2026",
+    readTime: 5,
+    featured: true,
+    content: "Full article content goes here..."
   },
   {
-    slug: "street-bike-setup",
+    id: 2,
     title: "The Modern Street Setup: Luggage, Lighting and Cockpit Tech",
+    description: "Build a superbike that stays calm, visible and useful when the miles stack up.",
+    slug: "street-bike-setup",
+    image: "https://images.pexels.com/photos/33469791/pexels-photo-33469791.jpeg?auto=compress&cs=tinysrgb&w=2560",
     category: "Street",
-    excerpt: "Build a superbike that stays calm, visible and useful when the miles stack up.",
-    image: "https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&w=1000&q=80"
+    author: "Priya Nair",
+    publishDate: "Jan 12, 2026",
+    readTime: 4,
+    featured: false,
+    content: "Full article content goes here..."
   },
   {
-    slug: "brake-pad-compounds",
+    id: 3,
     title: "Brake Pad Compounds Explained for Street and Track Riders",
+    description: "What sintered, ceramic and organic pads actually change at the lever.",
+    slug: "brake-pad-compounds",
+    image: "https://images.pexels.com/photos/5450167/pexels-photo-5450167.jpeg?auto=compress&cs=tinysrgb&w=2560",
     category: "Maintenance",
-    excerpt: "What sintered, ceramic and organic pads actually change at the lever.",
-    image: "https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?auto=format&fit=crop&w=1000&q=80"
+    author: "Vikram Patel",
+    publishDate: "Jan 05, 2026",
+    readTime: 6,
+    featured: false,
+    content: "Full article content goes here..."
+  },
+  {
+    id: 4,
+    title: "Mastering Track Days: Essential Bike Prep",
+    description: "Suspension tuning, tire pressures, and safety wiring your machine for the circuit.",
+    slug: "mastering-track-days",
+    image: "https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&w=2560&q=90",
+    category: "Track",
+    author: "Arjun Mehta",
+    publishDate: "Dec 28, 2025",
+    readTime: 8,
+    featured: false,
+    content: "Full article content goes here..."
+  },
+  {
+    id: 5,
+    title: "Upgrading Your Motorcycle's Electronics Suite",
+    description: "Demystifying quickshifters, auto-blippers, and aftermarket ECU flashes.",
+    slug: "electronics-suite-upgrade",
+    image: "https://images.unsplash.com/photo-1547549082-6bc09f2049ae?auto=format&fit=crop&w=2560&q=90",
+    category: "Electronics",
+    author: "Sneha Kulkarni",
+    publishDate: "Dec 15, 2025",
+    readTime: 7,
+    featured: false,
+    content: "Full article content goes here..."
   }
 ];
