@@ -275,11 +275,6 @@
   transform: scale(1.05);
 }
 
-.wishlist-btn:hover {
-  color: #ff4d6d;
-  background: rgba(255,77,109,0.1);
-  border-color: rgba(255,77,109,0.2);
-}
 
 .cart-btn {
   background: var(--accent) !important;

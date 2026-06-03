@@ -8,8 +8,7 @@ export const metadata = {
 const accountSections = [
   { title: "Profile", text: "Bike garage, fitment preferences and rider details.", Icon: UserRound },
   { title: "Order History", text: "Track recent orders, invoices and returns.", Icon: Package },
-  { title: "Addresses", text: "Manage shipping and billing addresses.", Icon: MapPin },
-  { title: "Wishlist", text: "Saved products and upgrade plans.", Icon: Heart }
+  { title: "Addresses", text: "Manage shipping and billing addresses.", Icon: MapPin }
 ];
 
 export default function AccountPage() {

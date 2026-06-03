@@ -1,10 +1,24 @@
 export const categories = [
-  "Helmets",
-  "Riding Gear",
-  "Performance Parts",
-  "Accessories",
+  "Exhausts systems",
+  "Air filters",
+  "Protection parts",
+  "Tank pads",
+  "Traction pads",
+  "Brake pads",
+  "Fork seals",
+  "Windscreen",
+  "Chain sprockets",
+  "Handle grips",
+  "Dash protectors",
+  "Aux lights",
   "Luggage",
-  "Maintenance"
+  "Electronics",
+  "Tyres",
+  "Phone mount",
+  "GPS",
+  "Hand guards",
+  "Led bulbs",
+  "Indicators"
 ];
 
 export const brands = [
@@ -16,81 +30,47 @@ export const brands = [
   "Triumph",
   "AGV",
   "Alpinestars",
-  "Rynox",
-  "MT",
-  "Axor",
-  "LS2",
-  "SMK"
+  "Rynox"
 ];
 
 export const categoryCards = [
   {
-    title: "Helmets",
-    detail: "Full-face, modular and track-certified helmets from premium safety brands.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=80"
-  },
-  {
-    title: "Riding Gear",
-    detail: "Jackets, gloves, boots and riding pants built for all-weather protection and track speed.",
-    image: "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?auto=format&fit=crop&w=900&q=80"
-  },
-  {
-    title: "Performance Parts",
-    detail: "Titanium exhausts, high-flow filters, brake systems and engine mapping components.",
+    title: "Exhausts systems",
+    detail: "Premium titanium and carbon fiber slip-ons and full systems for maximum power.",
     image: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=900&q=80"
   },
   {
-    title: "Accessories",
-    detail: "Aerodynamic windscreens, ergonomic handle grips, crash protection, and phone mounts.",
+    title: "Protection parts",
+    detail: "Engine guards, frame sliders and crash protection to keep your bike safe.",
     image: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=900&q=80"
   },
   {
+    title: "Tyres",
+    detail: "Track-spec and street-legal rubber for ultimate grip and cornering stability.",
+    image: "https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&w=900&q=80"
+  },
+  {
     title: "Luggage",
-    detail: "Heavy-duty panniers, waterproof tail bags and tank luggage for transcontinental touring.",
+    detail: "Heavy-duty panniers, waterproof tail bags and tank luggage for touring.",
     image: "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=900&q=80"
   },
   {
-    title: "Maintenance",
-    detail: "Premium chains, sintered brake pads, racing oils and filters to keep your engine sharp.",
-    image: "https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=900&q=80"
+    title: "Brake pads",
+    detail: "Sintered and ceramic racing compounds for dramatically sharper stopping power.",
+    image: "https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    title: "Windscreen",
+    detail: "Aerodynamic double bubble screens to improve wind protection and speed.",
+    image: "https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&w=900&q=80"
   }
 ];
 
 export const products = [
   {
-    slug: "agv-k6-s-helmet",
-    name: "AGV K6 S Full-Face Helmet - Mono Matte Black",
-    category: "Helmets",
-    brand: "AGV",
-    price: 54999,
-    rating: 4.9,
-    availability: "In Stock",
-    badge: "Best Seller",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=80",
-    description: "The lightest road helmet in the world, developed with MotoGP technology. Combines maximum safety, premium comfort, and optimal aerodynamics for track and street riders alike.",
-    compatibility: ["KTM RC 390", "Kawasaki Ninja ZX-10R", "Ducati Panigale V4", "BMW S 1000 RR", "Triumph Street Triple RS"],
-    warranty: "5 Years Manufacturer Warranty",
-    shipping: "Free Pan India Delivery in 2-3 Days"
-  },
-  {
-    slug: "alpinestars-gp-pro-r3-gloves",
-    name: "Alpinestars GP Pro R3 Racing Gloves",
-    category: "Riding Gear",
-    brand: "Alpinestars",
-    price: 18499,
-    rating: 4.8,
-    availability: "In Stock",
-    badge: "Track Ready",
-    image: "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?auto=format&fit=crop&w=900&q=80",
-    description: "Pure performance racing gloves with advanced protection, ergonomic design, and Kevlar lining. Offers ultimate tactile feedback and abrasion resistance.",
-    compatibility: ["All Motorcycles (Universal Fit)"],
-    warranty: "1 Year Manufacturer Warranty",
-    shipping: "Free Delivery in 3-4 Days"
-  },
-  {
     slug: "akrapovic-slip-on-titanium-exhaust",
     name: "Akrapovic Slip-On Line Titanium Exhaust",
-    category: "Performance Parts",
+    category: "Exhausts systems",
     brand: "Ducati",
     price: 134999,
     rating: 4.9,
@@ -100,27 +80,16 @@ export const products = [
     description: "Crafted from race-proven high-grade titanium. Delivers significant weight reduction, deep racing soundtrack, and direct power/torque improvements without remapping.",
     compatibility: ["Ducati Panigale V4 / V4S (2020-2026)", "Ducati Streetfighter V4", "Ducati Multistrada V4"],
     warranty: "2 Years Official Warranty",
-    shipping: "Secured insured courier delivery in 5-7 Days"
-  },
-  {
-    slug: "rynox-urban-x-jacket",
-    name: "Rynox Stealth Evo V3 Riding Jacket",
-    category: "Riding Gear",
-    brand: "Rynox",
-    price: 12999,
-    rating: 4.7,
-    availability: "In Stock",
-    badge: "Best Seller",
-    image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=900&q=80",
-    description: "India's highest-selling heavy duty touring jacket. Features level 2 Cerprotect armors, premium high-denacity mesh, and fully removable thermal and rain liners.",
-    compatibility: ["Royal Enfield Himalayan 450 / Scrambler", "KTM Adventure 390", "BMW G 310 GS", "Triumph Tiger 900"],
-    warranty: "1 Year Rynox Warranty",
-    shipping: "Free Pan India Delivery in 2-3 Days"
+    shipping: "Secured insured courier delivery in 5-7 Days",
+    specs: ["Titanium Build", "-2.5kg Weight", "No Remap Required"],
+    options: ["Carbon Cap", "Titanium Cap"],
+    stockCount: 3,
+    relatedThumbs: ["https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?auto=format&fit=crop&w=150&q=80", "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=150&q=80"]
   },
   {
     slug: "brembo-sintered-brake-pads",
     name: "Brembo Racing Z04 Sintered Brake Pads",
-    category: "Performance Parts",
+    category: "Brake pads",
     brand: "Kawasaki",
     price: 8499,
     rating: 4.8,
@@ -130,7 +99,11 @@ export const products = [
     description: "True racing compound designed for maximum braking coefficient at high temperatures. Delivers highly consistent performance and eliminates lever fade completely.",
     compatibility: ["Kawasaki Ninja ZX-10R / ZX-6R", "BMW S 1000 RR", "Ducati Panigale V2", "Triumph Street Triple RS"],
     warranty: "Fits Brembo Monobloc Calipers",
-    shipping: "Free Dispatch inside 24 Hours"
+    shipping: "Free Dispatch inside 24 Hours",
+    specs: ["Sintered Compound", "Track Focus", "High Friction Coef."],
+    options: ["Front Set", "Rear Set", "Full Set"],
+    stockCount: 15,
+    relatedThumbs: ["https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=150&q=80"]
   },
   {
     slug: "bmw-motorrad-pro-tank-bag",
@@ -145,7 +118,68 @@ export const products = [
     description: "Fully waterproof tank bag with absolute seal zippers, magnetic quick-mount base system, and expandable volume. Perfect for long-distance adventure touring.",
     compatibility: ["BMW R 1250 GS / R 1300 GS", "BMW F 900 GS", "BMW G 310 GS"],
     warranty: "2 Years BMW Motorrad Warranty",
-    shipping: "Free Pan India Delivery in 2-3 Days"
+    shipping: "Free Pan India Delivery in 2-3 Days",
+    specs: ["100% Waterproof", "15L Volume", "Magnetic Mount"],
+    options: ["11L Standard", "15L Pro"],
+    stockCount: 8,
+    relatedThumbs: ["https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=150&q=80"]
+  },
+  {
+    slug: "puig-racing-windscreen-z-racing",
+    name: "Puig Z-Racing Double Bubble Windscreen",
+    category: "Windscreen",
+    brand: "Triumph",
+    price: 9500,
+    rating: 4.7,
+    availability: "In Stock",
+    badge: "Best Seller",
+    image: "https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&w=900&q=80",
+    description: "Designed in the virtual wind tunnel to improve aerodynamics and wind protection on average by 12.7%. Derived straight from WSBK competition.",
+    compatibility: ["Triumph Daytona 675", "Triumph Street Triple 765", "Triumph Speed Triple"],
+    warranty: "1 Year Manufacturer Warranty",
+    shipping: "Free Delivery in 3-4 Days",
+    specs: ["3mm High Impact Acrylic", "TUV Approved", "Double Bubble Design"],
+    options: ["Dark Smoke", "Light Smoke", "Clear"],
+    stockCount: 22,
+    relatedThumbs: ["https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?auto=format&fit=crop&w=150&q=80"]
+  },
+  {
+    slug: "pirelli-diablo-supercorsa-sp-v3",
+    name: "Pirelli Diablo Supercorsa SP V3 Front & Rear Tyres",
+    category: "Tyres",
+    brand: "Ducati",
+    price: 34500,
+    rating: 5.0,
+    availability: "Limited",
+    badge: "Track Spec",
+    image: "https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&w=900&q=80",
+    description: "The ultimate street-legal track tyre. Features World Superbike derived compounds and profiles for maximum lean angles and cornering grip.",
+    compatibility: ["Ducati Panigale V4", "Kawasaki Ninja ZX-10R", "BMW S 1000 RR", "Aprilia RSV4"],
+    warranty: "Manufacturer Warranty",
+    shipping: "Heavy item shipping in 5-7 Days",
+    specs: ["WSBK Compound", "W-Rated", "Bi-Compound Rear"],
+    options: ["120/70 & 200/55", "120/70 & 200/60", "120/70 & 190/55"],
+    stockCount: 5,
+    relatedThumbs: ["https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=150&q=80"]
+  },
+  {
+    slug: "quad-lock-motorcycle-mount-pro",
+    name: "Quad Lock Motorcycle Mount PRO",
+    category: "Phone mount",
+    brand: "Accessories",
+    price: 6500,
+    rating: 4.8,
+    availability: "In Stock",
+    badge: "Must Have",
+    image: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=900&q=80",
+    description: "The most secure and convenient smartphone mount for motorcycles. PRO version features CNC machined aluminium construction and black hardware.",
+    compatibility: ["All Motorcycles (Handlebar mount)"],
+    warranty: "1 Year Warranty",
+    shipping: "Free Dispatch inside 24 Hours",
+    specs: ["CNC Aluminium", "Patented Dual-Stage Lock", "Vibration Dampener Ready"],
+    options: ["Handlebar Mount", "Fork Stem Mount", "Mirror Mount"],
+    stockCount: 45,
+    relatedThumbs: ["https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=150&q=80"]
   }
 ];
 
@@ -155,7 +189,7 @@ export const testimonials = [
     bike: "KTM 390 Duke",
     location: "Mumbai",
     rating: 5,
-    review: "The AGV helmet arrived in 2 days, packaging was immaculate. Quality is on another level — feels exactly like what you'd buy at a European dealer. Octane is my go-to now.",
+    review: "The Puig windscreen arrived in 2 days, packaging was immaculate. Quality is on another level — feels exactly like what you'd buy at a European dealer. Octane is my go-to now.",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
   },
   {
@@ -163,7 +197,7 @@ export const testimonials = [
     bike: "Royal Enfield Interceptor 650",
     location: "Bengaluru",
     rating: 5,
-    review: "Finally a store that stocks genuine Rynox gear. The jacket fit perfectly and the customer support helped me pick the right size. Absolutely premium experience from start to finish.",
+    review: "Finally a store that stocks genuine protection parts. The crash guards fit perfectly and the customer support helped me pick the right model. Absolutely premium experience from start to finish.",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80"
   },
   {

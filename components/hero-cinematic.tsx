@@ -73,7 +73,7 @@ export function HeroCinematic() {
           </motion.h1>
 
           <motion.p className="hero-sub" variants={itemVariants}>
-            Premium motorcycle accessories, riding gear and performance parts for riders who demand more.
+            Premium motorcycle exhausts, protection parts, tyres and accessories for riders who demand more.
           </motion.p>
 
           <motion.div className="hero-actions" variants={itemVariants}>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Menu, Search, User, Heart, ShoppingBag, ChevronDown, X } from "lucide-react";
+import { Menu, Search, User, ShoppingBag, ChevronDown, X } from "lucide-react";
 import { categories, brands } from "@/lib/data";
 import "./header.css";
 
@@ -76,9 +76,6 @@ export function Header() {
             </button>
             <Link className="nav-icon-btn" href="/account" aria-label="Account">
               <User size={18} />
-            </Link>
-            <Link className="nav-icon-btn wishlist-btn" href="/account#wishlist" aria-label="Wishlist">
-              <Heart size={18} />
             </Link>
             <Link className="nav-icon-btn cart-btn" href="/checkout" aria-label="Cart">
               <ShoppingBag size={18} />

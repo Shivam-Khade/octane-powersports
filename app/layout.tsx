@@ -35,11 +35,11 @@ export const metadata: Metadata = {
     template: "%s | Octane Powersports"
   },
   description:
-    "India's premium motorcycle accessories store — riding gear, helmets, performance parts and accessories from KTM, Triumph, Ducati, Kawasaki, BMW and more. Pan India delivery.",
-  keywords: ["motorcycle gear India", "riding helmets", "performance exhaust", "KTM accessories", "superbike parts India"],
+    "India's premium motorcycle accessories store — exhausts, protection parts, tyres and accessories from KTM, Triumph, Ducati, Kawasaki, BMW and more. Pan India delivery.",
+  keywords: ["motorcycle accessories India", "performance exhaust", "protection parts", "KTM accessories", "superbike parts India"],
   openGraph: {
     title: "Octane Powersports — Ride Harder. Explore Further.",
-    description: "Premium motorcycle gear, helmets and performance parts for riders who demand more.",
+    description: "Premium motorcycle accessories, exhausts and performance parts for riders who demand more.",
     url: "https://octanepowersports.in",
     siteName: "Octane Powersports",
     images: [

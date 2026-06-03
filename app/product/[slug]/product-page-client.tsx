@@ -37,7 +37,6 @@ export function ProductPageClient({
   const allImages = [product.image, ...related.slice(0, 3).map((r) => r.image)];
   const [activeImg, setActiveImg] = useState(0);
   const [qty, setQty] = useState(1);
-  const [wishlisted, setWishlisted] = useState(false);
   const [zoomStyle, setZoomStyle] = useState<{ transformOrigin: string; transform: string } | null>(null);
 
   const emi = Math.round(product.price / 12);
@@ -229,14 +228,6 @@ export function ProductPageClient({
               </button>
             </div>
 
-            <button
-              suppressHydrationWarning
-              className={`purchase-wishlist${wishlisted ? " active" : ""}`}
-              onClick={() => setWishlisted(!wishlisted)}
-            >
-              <Heart size={16} fill={wishlisted ? "#FF6B00" : "none"} />
-              {wishlisted ? "Saved to Wishlist" : "Add to Wishlist"}
-            </button>
 
             {/* Trust Strip */}
             <div className="purchase-trust">
