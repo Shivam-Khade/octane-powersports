@@ -7,16 +7,35 @@
   overflow: hidden;
 }
 
-.brand-showcase-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
+.brand-marquee-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.brand-marquee-track {
+  display: flex;
+  width: max-content;
   gap: 16px;
+  animation: scrollMarquee 40s linear infinite;
+  padding: 30px 0;
+}
+
+.brand-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scrollMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 8px)); }
 }
 
 .brand-showcase-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 24px 16px;
+  min-width: 240px;
+  width: max-content;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 24px 32px;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -26,9 +45,14 @@
   transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), 
               border-color 200ms ease, 
               background-color 200ms ease,
-              box-shadow 250ms ease;
+              box-shadow 250ms ease,
+              filter 250ms ease,
+              opacity 250ms ease;
   cursor: pointer;
-  min-height: 100px;
+  min-height: 110px;
+  flex-shrink: 0;
+  filter: grayscale(100%);
+  opacity: 0.6;
 }
 
 .brand-showcase-card:hover {
@@ -36,16 +60,21 @@
   border-color: var(--accent);
   background: rgba(255, 107, 0, 0.04);
   box-shadow: 0 10px 30px rgba(255, 107, 0, 0.08);
+  filter: grayscale(0%);
+  opacity: 1;
+  z-index: 10;
 }
 
 .brand-card-logo {
-  font-family: var(--font-montserrat), "Montserrat", sans-serif;
-  font-size: 19px;
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.85);
-  letter-spacing: 0.03em;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.04em;
   line-height: 1.2;
   transition: color 200ms ease;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .brand-showcase-card:hover .brand-card-logo {
@@ -53,41 +82,16 @@
 }
 
 .brand-card-type {
-  font-size: 10.5px;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-top: 6px;
-  font-weight: 500;
+  font-weight: 600;
   transition: color 200ms ease;
+  white-space: nowrap;
 }
 
 .brand-showcase-card:hover .brand-card-type {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-@media (max-width: 1024px) {
-  .brand-showcase-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .brand-showcase-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-  .brand-showcase-section {
-    padding: 48px 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .brand-showcase-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  .brand-card-logo {
-    font-size: 17px;
-  }
+  color: rgba(255, 255, 255, 0.9);
 }

@@ -100,17 +100,6 @@ export function HeroCinematic() {
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        className="hero-scroll-indicator"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
-      >
-        <div className="hero-scroll-line" />
-        <span>Scroll</span>
-      </motion.div>
     </section>
   );
 }

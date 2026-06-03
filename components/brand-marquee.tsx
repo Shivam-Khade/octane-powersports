@@ -19,22 +19,17 @@ const featuredBrands = [
 ];
 
 export function BrandMarquee() {
+  const marqueeBrands = [...featuredBrands, ...featuredBrands];
+
   return (
     <section className="brand-showcase-section" id="brands">
-      <div className="container">
-        <div className="brand-showcase-grid">
-          {featuredBrands.map((brand, i) => (
-            <motion.div
-              key={brand.name}
-              className="brand-showcase-card"
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
-            >
+      <div className="brand-marquee-container">
+        <div className="brand-marquee-track">
+          {marqueeBrands.map((brand, i) => (
+            <div key={`${brand.name}-${i}`} className="brand-showcase-card">
               <span className="brand-card-logo">{brand.name}</span>
               <span className="brand-card-type">{brand.type}</span>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
