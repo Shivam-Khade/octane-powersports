@@ -20,6 +20,7 @@ export function ShopPageClient({ initialProducts }: { initialProducts: Product[]
   const searchParams = useSearchParams();
   const initialBrand = searchParams.get("brand");
   const initialCategory = searchParams.get("category");
+  const initialQ = searchParams.get("q");
 
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [activeCategories, setActiveCategories] = useState<string[]>(initialCategory ? [initialCategory] : []);
@@ -36,8 +37,13 @@ export function ShopPageClient({ initialProducts }: { initialProducts: Product[]
       setActiveCategories(prev => Array.from(new Set([...prev, category])));
       setPage(1);
     }
+    const q = searchParams.get("q");
+    if (q !== null && q !== searchQuery) {
+      setSearchQuery(q);
+      setPage(1);
+    }
   }, [searchParams]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialQ || "");
   const [sortBy, setSortBy] = useState("Best Sellers");
   const [isGrid, setIsGrid] = useState(true);
   const [isLoading, setIsLoading] = useState(true);

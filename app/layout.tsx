@@ -83,6 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en" 
       className={`${bebasNeue.variable} ${montserrat.variable} ${inter.variable}`}
       style={{ scrollBehavior: "smooth" }}
+      data-scroll-behavior="smooth"
     >
       <body suppressHydrationWarning>
         <script

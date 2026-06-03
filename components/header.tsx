@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Menu, Search, User, ShoppingBag, ChevronDown, X } from "lucide-react";
 import { brands } from "@/lib/data";
 import "./header.css";
@@ -9,6 +10,31 @@ import "./header.css";
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const router = useRouter();
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setSearchOpen(false);
+      }
+    }
+    if (searchOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [searchOpen]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchText.trim()) {
+      router.push(`/shop?q=${encodeURIComponent(searchText.trim())}`);
+      setSearchOpen(false);
+      setSearchText("");
+    }
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -48,9 +74,33 @@ export function Header() {
           </nav>
 
           <div className="nav-actions">
-            <button suppressHydrationWarning className="nav-icon-btn" aria-label="Search">
-              <Search size={18} />
-            </button>
+            <div ref={searchContainerRef} className={`nav-search-wrapper ${searchOpen ? "open" : ""}`}>
+              <button 
+                suppressHydrationWarning 
+                className="search-trigger-btn" 
+                aria-label="Search"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (searchOpen && searchText.trim()) {
+                    handleSearch(e as any);
+                  } else {
+                    setSearchOpen(!searchOpen);
+                  }
+                }}
+              >
+                <Search size={18} />
+              </button>
+              <form onSubmit={handleSearch} className="nav-search-form">
+                <input 
+                  autoFocus={searchOpen}
+                  type="text" 
+                  placeholder="Search products..." 
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  className="nav-search-input"
+                />
+              </form>
+            </div>
             <Link className="nav-icon-btn" href="/account" aria-label="Account">
               <User size={18} />
             </Link>

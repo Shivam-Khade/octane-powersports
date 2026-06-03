@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, Users, Package, MapPin } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -14,6 +14,11 @@ const stats = [
 
 export function HeroCinematic() {
   const [videoReady, setVideoReady] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const { scrollYProgress } = useScroll({
     offset: ["start start", "end start"]
   });
@@ -29,17 +34,21 @@ export function HeroCinematic() {
         className="hero-cinematic__videoWrap"
         style={{ scale: videoScale, opacity: videoReady ? 1 : 0 }}
       >
-        <video
-          className="hero-cinematic__video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          onCanPlay={() => setVideoReady(true)}
-        >
-          <source src="/hero.mp4" type="video/mp4" />
-        </video>
+        <div suppressHydrationWarning style={{ width: '100%', height: '100%' }}>
+          {isMounted && (
+            <video
+              className="hero-cinematic__video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              onCanPlay={() => setVideoReady(true)}
+            >
+              <source src="/hero.mp4" type="video/mp4" />
+            </video>
+          )}
+        </div>
       </motion.div>
 
       {/* Dark overlay — subtle 25% */}
