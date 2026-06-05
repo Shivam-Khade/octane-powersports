@@ -1,14 +1,36 @@
-import { products } from "@/lib/data";
+import pool from "@/lib/db";
 import { ProductPageClient } from "./product-page-client";
 import { notFound } from "next/navigation";
 
-export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
+// Utility to parse product fields correctly
+function parseProduct(p: any) {
+  const parsed = { ...p };
+  ['compatibility', 'specs', 'options', 'relatedThumbs'].forEach(field => {
+    if (typeof parsed[field] === 'string') {
+      try {
+        parsed[field] = JSON.parse(parsed[field]);
+      } catch (e) {
+        // ignore
+      }
+    }
+  });
+  parsed.rating = Number(parsed.rating);
+  parsed.price = Number(parsed.price);
+  parsed.stockCount = Number(parsed.stockCount);
+  return parsed;
+}
+
+export async function generateStaticParams() {
+  const [rows] = await pool.query('SELECT slug FROM products');
+  return (rows as any[]).map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = products.find((item) => item.slug === slug);
+  const [rows] = await pool.query('SELECT * FROM products WHERE slug = ?', [slug]);
+  const products = rows as any[];
+  const product = products.length > 0 ? products[0] : null;
+  
   return {
     title: product ? `${product.name} — Buy Online India` : "Product",
     description: product
@@ -17,12 +39,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+import { ViewTracker } from "@/components/view-tracker";
+
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = products.find((item) => item.slug === slug);
-  if (!product) notFound();
+  const [rows] = await pool.query('SELECT * FROM products WHERE slug = ?', [slug]);
+  const matched = rows as any[];
+  if (matched.length === 0) notFound();
+  
+  const product = parseProduct(matched[0]);
 
-  const related = products.filter((item) => item.slug !== product.slug).slice(0, 4);
+  const [allRows] = await pool.query('SELECT * FROM products LIMIT 5');
+  const allProducts = (allRows as any[]).map(parseProduct);
+  const related = allProducts.filter((item) => item.slug !== product.slug).slice(0, 4);
 
-  return <ProductPageClient product={product} related={related} />;
+  return (
+    <>
+      <ViewTracker type="product" id={product.id} />
+      <ProductPageClient product={product} related={related} />
+    </>
+  );
 }

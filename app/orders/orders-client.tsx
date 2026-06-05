@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Package, Truck, CheckCircle, Loader2, Grid2X2, List } from "lucide-react";
-import { products } from "@/lib/data";
 import "./orders.css";
 
 type OrderItem = {
@@ -22,25 +21,33 @@ type Order = {
 
 export default function OrdersClient({ session }: { session: any }) {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"current" | "history">("current");
   const [isGrid, setIsGrid] = useState(false);
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch("/api/user/orders");
-        if (res.ok) {
-          const data = await res.json();
+        const [ordersRes, productsRes] = await Promise.all([
+          fetch("/api/user/orders"),
+          fetch("/api/products")
+        ]);
+        if (ordersRes.ok) {
+          const data = await ordersRes.json();
           setOrders(data);
         }
+        if (productsRes.ok) {
+          const data = await productsRes.json();
+          setProducts(data);
+        }
       } catch (err) {
-        console.error("Failed to load orders", err);
+        console.error("Failed to load data", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchOrders();
+    fetchData();
   }, []);
 
   if (loading) {

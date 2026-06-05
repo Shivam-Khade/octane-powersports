@@ -13,6 +13,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
     "framer-motion": "latest",
     "lucide-react": "latest",
     "mysql2": "^3.22.4",
@@ -22,6 +23,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-hot-toast": "^2.6.0",
+    "recharts": "^3.8.1",
     "typescript": "latest"
   },
   "devDependencies": {

@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Truck, CreditCard, Headphones, RotateCcw } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
-import { categoryCards, products } from "@/lib/data";
 import { ProductCard } from "@/components/product-card";
 import { BrandMarquee } from "@/components/brand-marquee";
 import { LifestyleSection } from "@/components/lifestyle-section";
 import { TestimonialCarousel } from "@/components/testimonial-carousel";
 import { CommunityGrid } from "@/components/community-grid";
 import { HeroCinematic } from "@/components/hero-cinematic";
+import { useEffect, useState } from "react";
 import "./home.css";
 
 const whyUs = [
@@ -27,6 +27,24 @@ const fadeUp: Variants = {
 };
 
 export default function HomePage() {
+  const [products, setProducts] = useState<any[]>([]);
+  const [categoryCards, setCategoryCards] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(data => setProducts(data))
+      .catch(console.error);
+
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then(data => {
+        // filter featured ones
+        setCategoryCards(data.filter((c: any) => c.featured));
+      })
+      .catch(console.error);
+  }, []);
+
   return (
     <main>
       {/* ===== HERO ===== */}
@@ -59,17 +77,17 @@ export default function HomePage() {
           <div className="category-grid">
             {categoryCards.map((cat, i) => (
               <motion.div
-                key={cat.title}
+                key={cat.name}
                 initial={{ opacity: 0, y: 32 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Link href={`/shop?category=${encodeURIComponent(cat.title)}`} className="category-card">
-                  <Image src={cat.image} alt={cat.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+                <Link href={`/shop?category=${encodeURIComponent(cat.name)}`} className="category-card">
+                  <Image src={cat.image} alt={cat.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
                   <div className="category-card-body">
-                    <h3 className="category-card-title">{cat.title}</h3>
-                    <p className="category-card-desc">{cat.detail}</p>
+                    <h3 className="category-card-title">{cat.name}</h3>
+                    <p className="category-card-desc">{cat.description}</p>
                     <span className="category-card-arrow">
                       <ArrowRight size={16} />
                     </span>

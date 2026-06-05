@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { products } from "@/lib/data";
 import "./hero-visual.css";
 
 function Count({ value, suffix = "" }: { value: number; suffix?: string }) {
@@ -45,7 +44,18 @@ const tileVariants = {
 };
 
 export function HeroVisual() {
-  const tiles = [products[0], products[1], products[3]];
+  const [products, setProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(data => setProducts(data))
+      .catch(console.error);
+  }, []);
+
+  const tiles = products.length >= 4 ? [products[0], products[1], products[3]] : [];
+
+  if (tiles.length === 0) return null;
 
   return (
     <motion.div

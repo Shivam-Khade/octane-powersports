@@ -6,7 +6,7 @@ import { Grid2X2, List, Search, SlidersHorizontal, X, ChevronDown, ChevronUp } f
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard, Product } from "@/components/product-card";
 import { ProductCardSkeleton } from "@/components/product-card-skeleton";
-import { categories, brands } from "@/lib/data";
+import { brands } from "@/lib/data";
 import "./shop.css";
 
 // Helper for Curated Collections
@@ -16,7 +16,7 @@ const curatedCollections = [
   { name: "Essential Protection", filter: { category: "Protection parts" } }
 ];
 
-export function ShopPageClient({ initialProducts }: { initialProducts: Product[] }) {
+export function ShopPageClient({ initialProducts, categories }: { initialProducts: Product[], categories: string[] }) {
   const searchParams = useSearchParams();
   const initialBrand = searchParams.get("brand");
   const initialCategory = searchParams.get("category");

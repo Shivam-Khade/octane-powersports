@@ -23,6 +23,8 @@ export function Header({ session }: { session: any }) {
   const { openModal: openProfileModal } = useProfileModal();
   const { totalItems } = useCart();
 
+
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
@@ -50,6 +52,10 @@ export function Header({ session }: { session: any }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <>

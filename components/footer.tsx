@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Share2, Play, ExternalLink, Mail, Phone, MapPin } from "lucide-react";
-import { brands, categories } from "@/lib/data";
+import { brands } from "@/lib/data";
+import pool from "@/lib/db";
 import "./footer.css";
 
 const socials = [
@@ -10,7 +11,13 @@ const socials = [
   { icon: ExternalLink, href: "#", label: "X / Twitter" }
 ];
 
-export function Footer() {
+export async function Footer() {
+  let categories: string[] = [];
+  try {
+    const [rows] = await pool.query("SELECT name FROM categories ORDER BY featured DESC LIMIT 8");
+    categories = (rows as any[]).map(r => r.name);
+  } catch(e) {}
+
   return (
     <footer className="footer">
       {/* Main Grid */}
@@ -50,7 +57,7 @@ export function Footer() {
         {/* Shop */}
         <div className="footer-col">
           <h3 className="footer-col-title">Shop</h3>
-          {categories.slice(0, 8).map((item) => (
+          {categories.map((item) => (
             <Link key={item} href={`/shop?category=${encodeURIComponent(item)}`} className="footer-link">
               {item}
             </Link>

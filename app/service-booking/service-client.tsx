@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Image from "next/image";
+import { useLoginModal } from "@/components/login-context";
 import "./service.css";
 
 const formVariants: Variants = {
@@ -18,12 +19,27 @@ const itemVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
 
-export function ServiceClient() {
+interface InitialData {
+  name: string;
+  email: string;
+  phone: string;
+  bikeModel: string;
+}
+
+export function ServiceClient({ 
+  isAuthenticated, 
+  initialData 
+}: { 
+  isAuthenticated: boolean; 
+  initialData?: InitialData; 
+}) {
+  const { openModal } = useLoginModal();
+
   const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    bikeModel: "",
+    name: initialData?.name || "",
+    phone: initialData?.phone || "",
+    email: initialData?.email || "",
+    bikeModel: initialData?.bikeModel || "",
     date: "",
     serviceType: "Part Installation",
     notes: ""
@@ -47,6 +63,12 @@ export function ServiceClient() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isAuthenticated) {
+      openModal();
+      return;
+    }
+
     setSubmitting(true);
     setError("");
 

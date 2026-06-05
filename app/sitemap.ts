@@ -1,8 +1,15 @@
 import type { MetadataRoute } from "next";
-import { products, articles } from "@/lib/data";
+import pool from "@/lib/db";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = "https://octanepowersports.com";
+  
+  const [productRows] = await pool.query('SELECT slug FROM products');
+  const products = productRows as any[];
+  
+  const [blogRows] = await pool.query('SELECT slug FROM blogs');
+  const articles = blogRows as any[];
+
   return [
     "",
     "/shop",

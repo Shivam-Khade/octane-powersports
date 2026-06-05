@@ -3,6 +3,7 @@ import { Bebas_Neue, Montserrat, Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { FooterWrapper } from "@/components/footer-wrapper";
 import { CartDrawer } from "@/components/cart-drawer";
 import { CursorGlow } from "@/components/cursor-glow";
 import { LoginModalProvider } from "@/components/login-context";
@@ -107,7 +108,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <CursorGlow />
               <Header session={session} />
               {children}
-              <Footer />
+              <FooterWrapper>
+                <Footer />
+              </FooterWrapper>
               <CartDrawer />
               <LoginModal />
               <ProfileModal />

@@ -34,13 +34,24 @@ export function LoginModal() {
         setError("Invalid email or password");
       } else {
         closeModal();
+        
+        // Check if the user is an admin
+        const sessionRes = await fetch('/api/auth/session');
+        const sessionData = await sessionRes.json();
+        const isAdmin = sessionData?.user?.role === 'admin';
+
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        toast.success("Logged in successfully", { 
+        toast.success(isAdmin ? "Welcome back, Admin" : "Logged in successfully", { 
           position: isMobile ? 'bottom-center' : 'top-right',
           style: { background: '#16a34a', color: '#fff', fontWeight: '600', padding: '12px 20px', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(22, 163, 74, 0.4)' }, 
           iconTheme: { primary: '#fff', secondary: '#16a34a' } 
         });
-        router.push("/checkout");
+        
+        if (isAdmin) {
+          router.push("/admin");
+        } else {
+          router.push("/checkout");
+        }
         router.refresh();
       }
     } else {
@@ -197,7 +208,7 @@ export function LoginModal() {
                     <Loader2 className="animate-spin" size={20} />
                   ) : (
                     <>
-                      {isLogin ? "Ignition" : "Register"} <ArrowRight size={18} />
+                      {isLogin ? "Login" : "Register"} <ArrowRight size={18} />
                     </>
                   )}
                 </motion.button>
