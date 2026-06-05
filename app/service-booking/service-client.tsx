@@ -41,10 +41,37 @@ export function ServiceClient() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate booking submission
-    alert("Booking request submitted! Our team will contact you shortly.");
+    setSubmitting(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/service-bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      if (res.ok) {
+        setSuccess(true);
+        setFormData({
+          name: "", phone: "", email: "", bikeModel: "", date: "", serviceType: "Part Installation", notes: ""
+        });
+        setTimeout(() => setSuccess(false), 5000);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to submit booking");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -131,8 +158,10 @@ export function ServiceClient() {
             </motion.div>
 
             <motion.div variants={itemVariants} className="form-submit-wrapper">
-              <button type="submit" className="button submit-btn">
-                Confirm Request
+              {error && <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm border border-red-100">{error}</div>}
+              {success && <div className="mb-4 p-3 bg-green-50 text-green-600 rounded-lg text-sm border border-green-100">Booking request submitted successfully! We'll contact you soon.</div>}
+              <button type="submit" className="button submit-btn" disabled={submitting || success}>
+                {submitting ? "Submitting..." : success ? "Submitted!" : "Confirm Request"}
               </button>
             </motion.div>
           </form>

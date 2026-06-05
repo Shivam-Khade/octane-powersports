@@ -3,12 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Star, Check, ShoppingBag, Heart, Zap, Shield,
   Truck, RotateCcw, ChevronRight, Minus, Plus
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { ProductCard } from "@/components/product-card";
+import { useCart } from "@/components/cart-context";
 import "./product.css";
 
 type Product = {
@@ -38,6 +40,9 @@ export function ProductPageClient({
   const [activeImg, setActiveImg] = useState(0);
   const [qty, setQty] = useState(1);
   const [zoomStyle, setZoomStyle] = useState<{ transformOrigin: string; transform: string } | null>(null);
+  
+  const { addToCart } = useCart();
+  const router = useRouter();
 
   const emi = Math.round(product.price / 12);
   const isLimited = product.availability === "Limited";
@@ -219,12 +224,14 @@ export function ProductPageClient({
 
             {/* CTAs */}
             <div className="purchase-ctas">
-              <button suppressHydrationWarning className="purchase-add-cart">
+              <button 
+                suppressHydrationWarning 
+                className="purchase-add-cart"
+                onClick={() => addToCart(product, qty)}
+                style={{ width: "100%" }} // Make Add to Cart full width since Buy Now is removed
+              >
                 <ShoppingBag size={18} />
                 Add to Cart
-              </button>
-              <button suppressHydrationWarning className="purchase-buy-now">
-                Buy Now
               </button>
             </div>
 

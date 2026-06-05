@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, Star, Zap } from "lucide-react";
+import { useCart } from "./cart-context";
 import "./product-card.css";
 
 export type Product = {
@@ -24,6 +25,7 @@ export type Product = {
 export function ProductCard({ product }: { product: Product }) {
   const isLimited = product.availability === "Limited";
   const lowStock = product.stockCount !== undefined && product.stockCount <= 5;
+  const { addToCart } = useCart();
 
   return (
     <article className="product-card">
@@ -69,7 +71,15 @@ export function ProductCard({ product }: { product: Product }) {
               EMI from ₹{Math.round(product.price / 12).toLocaleString("en-IN")}/mo
             </span>
           </div>
-          <button suppressHydrationWarning className="product-cart-btn" aria-label={`Add ${product.name} to cart`}>
+          <button 
+            suppressHydrationWarning 
+            className="product-cart-btn" 
+            aria-label={`Add ${product.name} to cart`}
+            onClick={(e) => {
+              e.preventDefault(); // prevent triggering the Link
+              addToCart(product);
+            }}
+          >
             <ShoppingBag size={18} />
           </button>
         </div>

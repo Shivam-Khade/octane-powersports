@@ -5,6 +5,14 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
 import { CursorGlow } from "@/components/cursor-glow";
+import { LoginModalProvider } from "@/components/login-context";
+import { LoginModal } from "@/components/login-modal";
+import { ProfileModalProvider } from "@/components/profile-context";
+import { ProfileModal } from "@/components/profile-modal";
+import { CartProvider } from "@/components/cart-context";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { Toaster } from "react-hot-toast";
 
 // Configure Next.js font loading
 const bebasNeue = Bebas_Neue({
@@ -59,7 +67,7 @@ export const metadata: Metadata = {
   }
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const schema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -78,6 +86,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     ]
   };
 
+  const session = await getServerSession(authOptions);
+
   return (
     <html 
       lang="en" 
@@ -90,11 +100,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
-        <CursorGlow />
-        <Header />
-        {children}
-        <Footer />
-        <CartDrawer />
+        <CartProvider>
+          <LoginModalProvider>
+            <ProfileModalProvider>
+              <Toaster position="top-right" toastOptions={{ duration: 3000, style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333' } }} />
+              <CursorGlow />
+              <Header session={session} />
+              {children}
+              <Footer />
+              <CartDrawer />
+              <LoginModal />
+              <ProfileModal />
+            </ProfileModalProvider>
+          </LoginModalProvider>
+        </CartProvider>
       </body>
     </html>
   );
