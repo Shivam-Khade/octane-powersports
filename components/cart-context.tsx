@@ -45,6 +45,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addToCart = (product: any, quantity: number = 1) => {
+    // Fire and forget cart analytics tracker
+    fetch('/api/track/cart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: product.id || product.slug })
+    }).catch(() => {});
+
     setCartItems((prevItems) => {
       const existing = prevItems.find((item) => item.id === product.slug);
       let newItems;
@@ -66,13 +73,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         ];
       }
       localStorage.setItem("octane_cart", JSON.stringify(newItems));
-      
-      // Fire and forget cart analytics tracker
-      fetch('/api/track/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: product.id || product.slug })
-      }).catch(() => {});
       
       return newItems;
     });

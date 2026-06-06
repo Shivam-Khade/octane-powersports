@@ -50,6 +50,21 @@ export default async function AdminProductsPage() {
   const [rows] = await pool.query('SELECT * FROM products ORDER BY id DESC');
   const products = rows as any[];
 
+  const [categoryRows] = await pool.query('SELECT * FROM categories ORDER BY name ASC');
+  const categories = categoryRows as any[];
+
+  const [brandRows] = await pool.query('SELECT DISTINCT brand FROM products WHERE brand IS NOT NULL AND brand != "" ORDER BY brand ASC');
+  const dbBrands = (brandRows as any[]).map(r => r.brand);
+  
+  const popularBrands = [
+    "Aprilia", "Benelli", "BMW Motorrad", "Ducati", "Harley-Davidson", 
+    "Honda", "Indian Motorcycle", "Kawasaki", "KTM", "MV Agusta", 
+    "Royal Enfield", "Suzuki", "Triumph", "Yamaha"
+  ];
+
+  const allBrands = Array.from(new Set([...popularBrands, ...dbBrands])).sort();
+  const brands = allBrands.map(b => ({ brand: b }));
+
   return (
     <div className="p-8">
       <div className="mb-8 flex justify-between items-center">
@@ -59,7 +74,7 @@ export default async function AdminProductsPage() {
         </div>
       </div>
 
-      <ProductsClient initialProducts={products} saveAction={saveProduct} deleteAction={deleteProduct} />
+      <ProductsClient initialProducts={products} categories={categories} brands={brands} saveAction={saveProduct} deleteAction={deleteProduct} />
     </div>
   );
 }

@@ -32,14 +32,17 @@ function CheckoutContent() {
   useEffect(() => {
     if (session?.user?.id) {
       fetch("/api/user/address")
-        .then(res => res.json())
+        .then(async res => {
+          if (!res.ok) throw new Error("Failed to fetch address");
+          return res.json();
+        })
         .then(data => {
           if (Array.isArray(data)) {
             setAddresses(data);
             if (data.length > 0) setSelectedAddress(data[0]);
           }
         })
-        .catch(console.error);
+        .catch(err => console.error("Checkout address fetch error:", err));
     }
   }, [session]);
 
@@ -170,16 +173,26 @@ function CheckoutContent() {
               <div className="panel-body">
                 <div className="address-block">
                   <div className="address-details w-full pr-4">
-                    <strong>{session?.user?.name || "Premium Rider"}</strong>
                     {selectedAddress ? (
-                      <>
-                        <p className="mb-1">{selectedAddress.address_line}</p>
-                        <p>{selectedAddress.city}, {selectedAddress.postal_code}</p>
-                      </>
+                      <div>
+                        <p className="mb-1 font-bold text-[#0a0a0a]">{selectedAddress.full_name || session?.user?.name || "Premium Rider"}</p>
+                        <p className="text-[#0a0a0a] text-sm mb-1">{selectedAddress.address_line}</p>
+                        <p className="text-[#0a0a0a] text-sm mb-1">{selectedAddress.city}, {selectedAddress.postal_code}</p>
+                        <p className="text-sm text-[#878787] mb-3">Phone: {selectedAddress.phone}</p>
+                        {selectedAddress.lat && selectedAddress.lng && (
+                          <div className="h-28 w-full rounded-md overflow-hidden relative shadow-[0_1px_2px_0_rgba(0,0,0,0.1)] border border-[#e0e0e0]">
+                            <iframe width="100%" height="100%" frameBorder="0" scrolling="no" src={`https://maps.google.com/maps?q=${selectedAddress.lat},${selectedAddress.lng}&z=15&output=embed`} className="border-0 pointer-events-none"></iframe>
+                            <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-[10px] px-2 py-1 rounded text-[#0a0a0a] font-bold border border-gray-100 flex items-center gap-1 shadow-sm">
+                              <MapPin size={10} className="text-[#ff6b00]" /> GPS Pinned
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     ) : (
                       <>
-                        <p>No delivery address saved yet.</p>
-                        <p className="text-sm text-[#878787] mt-2">Add your delivery address in your profile pop-up.</p>
+                        <strong>{session?.user?.name || "Premium Rider"}</strong>
+                        <p className="mt-1">No delivery address saved yet.</p>
+                        <p className="text-sm text-[#878787] mt-2">Add your delivery location in your profile pop-up.</p>
                       </>
                     )}
                   </div>

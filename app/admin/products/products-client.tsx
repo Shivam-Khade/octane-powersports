@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Edit2, Trash2, X, Upload } from "lucide-react";
+import { Plus, Edit2, Trash2, X, Upload, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function ProductsClient({ initialProducts, saveAction, deleteAction }: any) {
+export default function ProductsClient({ initialProducts, categories, brands, saveAction, deleteAction }: any) {
   const [products, setProducts] = useState(initialProducts);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
@@ -31,7 +32,7 @@ export default function ProductsClient({ initialProducts, saveAction, deleteActi
     } else {
       setEditingProduct(null);
       setFormData({
-        id: null, name: "", slug: "", category: "Exhausts systems", brand: "Ducati", 
+        id: null, name: "", slug: "", category: categories?.[0]?.name || "", brand: brands?.[0]?.brand || "", 
         price: 0, rating: 5.0, availability: "In Stock", badge: "", image: "", description: ""
       });
     }
@@ -175,13 +176,23 @@ export default function ProductsClient({ initialProducts, saveAction, deleteActi
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Category</label>
-                  <input required type="text" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]" />
+                  <PremiumSelect 
+                    value={formData.category} 
+                    onChange={(v) => setFormData({...formData, category: v})} 
+                    options={categories?.map((c: any) => c.name) || []}
+                    placeholder="Select a category"
+                  />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Brand</label>
-                <input required type="text" value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]" />
+                <PremiumSelect 
+                  value={formData.brand} 
+                  onChange={(v) => setFormData({...formData, brand: v})} 
+                  options={brands?.map((b: any) => b.brand) || []}
+                  placeholder="Select a brand"
+                />
               </div>
 
               <div>
@@ -216,5 +227,63 @@ export default function ProductsClient({ initialProducts, saveAction, deleteActi
         </div>
       )}
     </>
+  );
+}
+
+function PremiumSelect({ 
+  value, 
+  onChange, 
+  options, 
+  placeholder 
+}: { 
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+  placeholder: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+        className={`w-full p-3.5 pr-12 border-2 rounded-xl focus:outline-none transition-all text-left flex justify-between items-center shadow-sm ${isOpen ? 'border-[#ff6b00] ring-4 ring-[#ff6b00]/10 bg-white' : 'border-gray-200 hover:border-gray-300 bg-gray-50 hover:bg-white'}`}
+      >
+        <span className={value ? "text-[#0a0a0a] font-bold" : "text-gray-400 font-medium"}>
+          {value || placeholder}
+        </span>
+        <div className={`absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-md flex items-center justify-center transition-colors ${isOpen ? 'bg-[#ff6b00]/10' : 'bg-white border border-gray-200 shadow-sm'}`}>
+          <ChevronDown 
+            size={18} 
+            className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#ff6b00]' : 'text-gray-400'}`} 
+          />
+        </div>
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="absolute z-[100] w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl overflow-hidden max-h-64 overflow-y-auto"
+          >
+            {options.map((opt, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => { onChange(opt); setIsOpen(false); }}
+                className={`w-full text-left px-5 py-3.5 transition-colors ${value === opt ? 'bg-[#ff6b00]/10 text-[#ff6b00] font-black border-l-4 border-[#ff6b00]' : 'text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 border-l-4 border-transparent'}`}
+              >
+                {opt}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

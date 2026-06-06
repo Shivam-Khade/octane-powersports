@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import pool from "@/lib/db";
 import { RowDataPacket } from "mysql2";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.id) {
@@ -30,18 +32,21 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { address_line, city, postal_code } = await req.json();
+    const { full_name, phone, address_line, city, postal_code } = await req.json();
 
-    if (!address_line || !city || !postal_code) {
-      return NextResponse.json({ error: "Address details are required" }, { status: 400 });
+    if (!full_name || !phone || !address_line || !city || !postal_code) {
+      return NextResponse.json({ error: "All text address details are required" }, { status: 400 });
     }
+
+    // Delete existing address to enforce single address policy
+    await pool.query("DELETE FROM addresses WHERE user_id = ?", [session.user.id]);
 
     const [result] = await pool.query(
       "INSERT INTO addresses (user_id, full_name, phone, address_line, city, postal_code) VALUES (?, ?, ?, ?, ?, ?)",
-      [session.user.id, session.user.name || 'User', '0000000000', address_line, city, postal_code]
+      [session.user.id, full_name, phone, address_line, city, postal_code]
     );
 
-    return NextResponse.json({ message: "Address added successfully", id: (result as any).insertId }, { status: 201 });
+    return NextResponse.json({ message: "Address updated successfully", id: (result as any).insertId }, { status: 201 });
   } catch (error) {
     console.error("Address POST error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

@@ -67,12 +67,10 @@ export const authOptions: NextAuthOptions = {
       return session;
     }
   },
-  pages: {
-    signIn: '/account',
-    error: '/account', 
-  },
+
   session: {
     strategy: "jwt",
   },
+  trustHost: true,
   secret: process.env.NEXTAUTH_SECRET,
 };

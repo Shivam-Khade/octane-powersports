@@ -12,7 +12,7 @@ export async function GET() {
 
   try {
     const [rows] = await pool.query<RowDataPacket[]>(
-      "SELECT phone, bike_garage, fitment_preferences FROM users WHERE email = ?",
+      "SELECT phone FROM users WHERE email = ?",
       [session.user.email]
     );
 
@@ -34,11 +34,11 @@ export async function PUT(req: Request) {
   }
 
   try {
-    const { phone, bike_garage, fitment_preferences } = await req.json();
+    const { phone } = await req.json();
 
     await pool.query(
-      "UPDATE users SET phone = ?, bike_garage = ?, fitment_preferences = ? WHERE email = ?",
-      [phone || null, bike_garage || null, fitment_preferences || null, session.user.email]
+      "UPDATE users SET phone = ? WHERE email = ?",
+      [phone || null, session.user.email]
     );
 
     return NextResponse.json({ message: "Profile updated successfully" });

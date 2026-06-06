@@ -6,7 +6,6 @@ import { Grid2X2, List, Search, SlidersHorizontal, X, ChevronDown, ChevronUp } f
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard, Product } from "@/components/product-card";
 import { ProductCardSkeleton } from "@/components/product-card-skeleton";
-import { brands } from "@/lib/data";
 import "./shop.css";
 
 // Helper for Curated Collections
@@ -52,6 +51,10 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
   const [page, setPage] = useState(1);
   const itemsPerPage = 12;
 
+  const dynamicBrands = useMemo(() => {
+    return Array.from(new Set(initialProducts.map(p => p.brand).filter(Boolean))).sort();
+  }, [initialProducts]);
+
   // Simulate loading on mount
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 800);
@@ -61,10 +64,20 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
   // Filtering
   const filteredProducts = useMemo(() => {
     return initialProducts.filter(p => {
-      const matchCategory = activeCategories.length === 0 || activeCategories.includes(p.category);
-      const matchBrand = activeBrands.length === 0 || activeBrands.includes(p.brand);
-      const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          p.category.toLowerCase().includes(searchQuery.toLowerCase());
+      const safeName = p.name || "";
+      const safeCategory = p.category || "";
+      const safeBrand = p.brand || "";
+
+      const matchCategory = activeCategories.length === 0 || activeCategories.includes(safeCategory);
+      
+      // Case-insensitive brand match
+      const matchBrand = activeBrands.length === 0 || activeBrands.some(b => b.toLowerCase() === safeBrand.toLowerCase());
+      
+      // Search matches name, category, or brand
+      const matchSearch = safeName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          safeCategory.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          safeBrand.toLowerCase().includes(searchQuery.toLowerCase());
+                          
       return matchCategory && matchBrand && matchSearch;
     }).sort((a, b) => {
       if (sortBy === "Price Low-High") return a.price - b.price;
@@ -175,7 +188,7 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
           </CollapsibleFilter>
 
           <CollapsibleFilter title="Brand">
-            {brands.map((item) => (
+            {dynamicBrands.map((item) => (
               <label key={item} className="custom-checkbox">
                 <input 
                   suppressHydrationWarning 
@@ -221,7 +234,7 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
                     ))}
                   </CollapsibleFilter>
                   <CollapsibleFilter title="Brand">
-                    {brands.map((item) => (
+                    {dynamicBrands.map((item) => (
                       <label key={item} className="custom-checkbox">
                         <input type="checkbox" checked={activeBrands.includes(item)} onChange={() => toggleBrand(item)}/> 
                         <span className="checkmark"></span> {item}
