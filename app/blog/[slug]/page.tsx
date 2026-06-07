@@ -82,15 +82,25 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             <div className="article-body">
               <p className="article-lead">{article.description}</p>
               <div className="article-content">
-                <p>Premium motorcycle upgrades work best when every part supports the way the bike is actually ridden. That means thinking beyond the headline specification and looking at materials, fitment, service access and long-term comfort.</p>
+                {article.introText && <p>{article.introText}</p>}
                 
-                <blockquote>
-                  "The best upgrade you can make to your motorcycle is the one that gives you the confidence to ride further and brake harder."
-                </blockquote>
+                {article.quoteText && (
+                  <blockquote>
+                    "{article.quoteText}"
+                  </blockquote>
+                )}
 
-                <h2>The Right Choice for Your Ride</h2>
-                <p>For performance riders, the right choice balances response with predictability. Street and track riders often benefit more from protection, lighting, cockpit tech and compact luggage systems that reduce friction over hundreds of miles.</p>
-                <p>Octane Powersports keeps the catalog focused so each part can be evaluated for finish, reliability and installation confidence before it reaches a rider.</p>
+                {article.subHeading && <h2>{article.subHeading}</h2>}
+                
+                {article.bodyText && (
+                  <div style={{ whiteSpace: 'pre-wrap' }}>
+                    {article.bodyText}
+                  </div>
+                )}
+
+                {article.content && (
+                  <div dangerouslySetInnerHTML={{ __html: article.content }} />
+                )}
               </div>
             </div>
 

@@ -6,7 +6,7 @@ import { ArticleCard } from "@/components/article-card";
 import { FeaturedSlider, type Article } from "@/components/featured-slider";
 import "./blog.css";
 
-const categories = ["All", "Performance", "Street", "Track", "Maintenance", "Electronics"];
+const categories = ["All", "News", "Performance", "Street", "Track", "Maintenance", "Electronics"];
 
 export function BlogPageClient({ initialArticles }: { initialArticles: Article[] }) {
   const [activeCategory, setActiveCategory] = useState("All");

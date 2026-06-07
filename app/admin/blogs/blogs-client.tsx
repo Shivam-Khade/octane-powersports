@@ -20,7 +20,11 @@ export default function BlogsClient({ initialBlogs, saveAction, deleteAction }: 
     author: "",
     publishDate: "",
     readTime: 5,
-    content: ""
+    content: "",
+    introText: "",
+    quoteText: "",
+    subHeading: "",
+    bodyText: ""
   });
 
   const openModal = (blog: any = null) => {
@@ -31,7 +35,8 @@ export default function BlogsClient({ initialBlogs, saveAction, deleteAction }: 
       setEditingBlog(null);
       setFormData({
         id: null, title: "", slug: "", description: "", image: "", category: "News", author: "Admin", 
-        publishDate: new Date().toISOString().split('T')[0], readTime: 5, content: ""
+        publishDate: new Date().toISOString().split('T')[0], readTime: 5, content: "",
+        introText: "", quoteText: "", subHeading: "", bodyText: ""
       });
     }
     setIsModalOpen(true);
@@ -201,9 +206,32 @@ export default function BlogsClient({ initialBlogs, saveAction, deleteAction }: 
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Full Content (HTML/Text)</label>
-                <textarea rows={8} value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00] font-mono text-sm"></textarea>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Intro Text</label>
+                <textarea rows={3} value={formData.introText || ''} onChange={e => setFormData({...formData, introText: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]"></textarea>
               </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Highlight Quote</label>
+                <textarea rows={2} value={formData.quoteText || ''} onChange={e => setFormData({...formData, quoteText: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00] italic"></textarea>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Subheading</label>
+                <input type="text" value={formData.subHeading || ''} onChange={e => setFormData({...formData, subHeading: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Main Body Text</label>
+                <textarea rows={5} value={formData.bodyText || ''} onChange={e => setFormData({...formData, bodyText: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]"></textarea>
+              </div>
+
+              {/* Legacy Content Field (Optional) */}
+              <details className="mt-4">
+                <summary className="text-sm text-gray-500 cursor-pointer">Show Legacy Content Field</summary>
+                <div className="mt-2">
+                  <textarea rows={4} value={formData.content || ''} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00] font-mono text-sm"></textarea>
+                </div>
+              </details>
 
               <div className="flex justify-end gap-4 pt-4 border-t border-gray-100">
                 <button type="button" onClick={closeModal} className="px-6 py-3 font-bold uppercase tracking-wide text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>

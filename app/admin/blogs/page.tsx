@@ -20,20 +20,20 @@ export async function saveBlog(data: any) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") throw new Error("Unauthorized");
 
-  const { id, title, slug, description, image, category, author, publishDate, readTime, content } = data;
+  const { id, title, slug, description, image, category, author, publishDate, readTime, content, introText, quoteText, subHeading, bodyText } = data;
   
   if (id) {
     await pool.query(`
       UPDATE blogs SET 
-        title=?, slug=?, description=?, image=?, category=?, author=?, publishDate=?, readTime=?, content=?
+        title=?, slug=?, description=?, image=?, category=?, author=?, publishDate=?, readTime=?, content=?, introText=?, quoteText=?, subHeading=?, bodyText=?
       WHERE id=?
-    `, [title, slug, description, image, category, author, publishDate, readTime, content, id]);
+    `, [title, slug, description, image, category, author, publishDate, readTime, content, introText, quoteText, subHeading, bodyText, id]);
   } else {
     await pool.query(`
       INSERT INTO blogs 
-      (title, slug, description, image, category, author, publishDate, readTime, content, featured)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
-    `, [title, slug, description, image, category, author, publishDate || new Date().toISOString().split('T')[0], readTime || 5, content || '']);
+      (title, slug, description, image, category, author, publishDate, readTime, content, featured, introText, quoteText, subHeading, bodyText)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?)
+    `, [title, slug, description, image, category, author, publishDate || new Date().toISOString().split('T')[0], readTime || 5, content || '', introText || '', quoteText || '', subHeading || '', bodyText || '']);
   }
   
   revalidatePath('/admin/blogs');
