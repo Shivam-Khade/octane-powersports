@@ -226,27 +226,73 @@
   font-weight: 700;
 }
 
-/* ===== Brands Dropdown ===== */
-.brands-menu {
-  min-width: 480px;
-  padding: 24px;
+/* ===== Types Dropdown ===== */
+.types-menu {
+  min-width: 800px;
+  padding: 32px;
 }
 
-.brands-grid {
+.mega-type-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.type-item {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.type-item:hover {
+  color: var(--accent);
+  background: rgba(255,107,0,0.1);
+}
+
+/* ===== Brands Dropdown ===== */
+.brands-menu {
+  min-width: 600px;
+  padding: 32px;
+}
+
+.mega-brand-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.brand-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.brand-letter {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 8px;
+  margin: 0 0 4px;
+}
+
+.brand-links {
+  display: flex;
+  flex-direction: column;
   gap: 4px;
 }
 
 .brand-item {
   display: block;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.75);
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: rgba(255,255,255,0.7);
   transition: color 150ms ease, background 150ms ease;
-  letter-spacing: 0.04em;
 }
 
 .brand-item:hover {
@@ -490,6 +536,52 @@
 .mobile-nav-link:hover {
   background: rgba(255,255,255,0.06);
   color: #fff;
+}
+
+.mobile-accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-accordion-content {
+  display: flex;
+  flex-direction: column;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  margin-left: 16px;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+.mobile-sub-link {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.mobile-sub-link:hover {
+  background: rgba(255,107,0,0.1);
+  color: var(--accent);
+}
+
+.mobile-brand-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  gap: 4px;
+}
+
+.mobile-brand-letter {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
 }
 
 .mobile-brands {

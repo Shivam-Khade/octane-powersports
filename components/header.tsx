@@ -5,15 +5,30 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Menu, Search, User, ShoppingBag, ChevronDown, X, LogOut, MapPin, Package, Shield } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { brands } from "@/lib/data";
+import { brands, categories } from "@/lib/data";
 import { useLoginModal } from "./login-context";
 import { useProfileModal } from "./profile-context";
 import { useCart } from "./cart-context";
 import "./header.css";
 
+const getBrandGroups = () => {
+  const groups: Record<string, string[]> = {};
+  brands.forEach(b => {
+    const letter = b.charAt(0).toUpperCase();
+    if (!groups[letter]) groups[letter] = [];
+    groups[letter].push(b);
+  });
+  return Object.keys(groups).sort().map(letter => ({
+    letter,
+    brands: groups[letter].sort()
+  }));
+};
+
 export function Header({ session }: { session: any }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileTypeOpen, setMobileTypeOpen] = useState(false);
+  const [mobileBrandOpen, setMobileBrandOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const router = useRouter();
@@ -67,22 +82,45 @@ export function Header({ session }: { session: any }) {
           </Link>
 
           <nav className="main-nav" aria-label="Primary navigation">
-            <Link href="/shop" className={`nav-link ${pathname?.startsWith('/shop') ? '!text-[#ff6b00]' : ''}`}>Shop</Link>
-
             <div className="mega-trigger">
               <button suppressHydrationWarning className="nav-link nav-btn">
-                Brands <ChevronDown size={13} className="nav-chevron" />
+                Shop By Type <ChevronDown size={13} className="nav-chevron" />
               </button>
-              <div className="mega-menu brands-menu">
-                <div className="brands-grid">
-                  {brands.map((brand) => (
-                    <Link key={brand} href={`/shop?brand=${encodeURIComponent(brand)}`} className="brand-item">
-                      {brand}
+              <div className="mega-menu types-menu">
+                <div className="mega-type-grid">
+                  {categories.map((cat) => (
+                    <Link key={cat} href={`/shop?category=${encodeURIComponent(cat)}`} className="type-item">
+                      {cat}
                     </Link>
                   ))}
                 </div>
               </div>
             </div>
+
+            <div className="mega-trigger">
+              <button suppressHydrationWarning className="nav-link nav-btn">
+                Shop By Brand <ChevronDown size={13} className="nav-chevron" />
+              </button>
+              <div className="mega-menu brands-menu">
+                <div className="mega-brand-grid">
+                  {getBrandGroups().map(group => (
+                    <div key={group.letter} className="brand-group">
+                      <h4 className="brand-letter">{group.letter}</h4>
+                      <div className="brand-links">
+                        {group.brands.map(brand => (
+                          <Link key={brand} href={`/shop?brand=${encodeURIComponent(brand)}`} className="brand-item">
+                            {brand}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <Link href="/shop" className={`nav-link ${pathname?.startsWith('/shop') && !searchOpen ? '!text-[#ff6b00]' : ''}`}>Shop All</Link>
+
             <Link href="/blog" className={`nav-link ${pathname?.startsWith('/blog') ? '!text-[#ff6b00]' : ''}`}>Journal</Link>
             
             {session ? (
@@ -197,7 +235,51 @@ export function Header({ session }: { session: any }) {
               <small className="logo-sub">POWERSPORTS</small>
             </Link>
             <nav className="mobile-nav">
-              <Link href="/shop" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Shop</Link>
+              <div className="mobile-accordion">
+                <button 
+                  className="mobile-nav-link w-full flex items-center justify-between" 
+                  onClick={() => setMobileTypeOpen(!mobileTypeOpen)}
+                >
+                  Shop By Type
+                  <ChevronDown size={18} className={`transition-transform ${mobileTypeOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {mobileTypeOpen && (
+                  <div className="mobile-accordion-content">
+                    {categories.map((cat) => (
+                      <Link key={cat} href={`/shop?category=${encodeURIComponent(cat)}`} className="mobile-sub-link" onClick={() => setMobileOpen(false)}>
+                        {cat}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="mobile-accordion">
+                <button 
+                  className="mobile-nav-link w-full flex items-center justify-between" 
+                  onClick={() => setMobileBrandOpen(!mobileBrandOpen)}
+                >
+                  Shop By Brand
+                  <ChevronDown size={18} className={`transition-transform ${mobileBrandOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {mobileBrandOpen && (
+                  <div className="mobile-accordion-content">
+                    {getBrandGroups().map(group => (
+                      <div key={group.letter} className="mobile-brand-group">
+                        <span className="mobile-brand-letter">{group.letter}</span>
+                        {group.brands.map(brand => (
+                          <Link key={brand} href={`/shop?brand=${encodeURIComponent(brand)}`} className="mobile-sub-link" onClick={() => setMobileOpen(false)}>
+                            {brand}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <Link href="/shop" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Shop All</Link>
+
               <Link href="/blog" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Journal</Link>
               <Link href="/service-booking" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Service Booking</Link>
               <Link href="/contact" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Contact</Link>
@@ -232,16 +314,6 @@ export function Header({ session }: { session: any }) {
                 </button>
               )}
             </nav>
-            <div className="mobile-brands">
-              <p className="mega-eyebrow">Brands</p>
-              <div className="mobile-brands-grid">
-                {brands.slice(0, 6).map((b) => (
-                  <Link key={b} href={`/shop?brand=${encodeURIComponent(b)}`} className="mobile-brand-chip" onClick={() => setMobileOpen(false)}>
-                    {b}
-                  </Link>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       )}

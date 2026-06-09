@@ -7,6 +7,14 @@ export const brands = [
   "Engine ice"
 ];
 
+export const categories = [
+  "Exhausts Systems", "Air Filters", "Protection Parts", "Tank Pads", 
+  "Traction Pads", "Brake Pads", "Fork Seals", "Windscreen", 
+  "Chain Sprockets", "Handle Grips", "Dash Protectors", "Aux Lights", 
+  "Luggage", "Electronics", "Tyres", "Phone Mount", 
+  "GPS", "Hand Guards", "Led Bulbs", "Indicators"
+];
+
 export const testimonials = [
   {
     name: "Arjun Mehta",
