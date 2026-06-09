@@ -47,8 +47,8 @@ export default function OrdersClient({ initialOrders, updateStatusAction }: any)
             {orders.map((order: any) => (
               <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                 <td className="p-4 font-mono font-bold text-[#0a0a0a]">OCT-{order.id.toString().padStart(5, '0')}</td>
-                <td className="p-4 text-sm text-gray-500">
-                  {new Date(order.created_at).toLocaleDateString()}
+                <td className="p-4 text-sm text-gray-500" suppressHydrationWarning>
+                  {new Date(order.created_at).toLocaleDateString('en-IN')}
                 </td>
                 <td className="p-4">
                   <p className="font-medium text-[#0a0a0a]">{order.customer_name || 'Guest'}</p>

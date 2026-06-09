@@ -30,8 +30,8 @@ export default function OrdersClient({ session }: { session: any }) {
     const fetchData = async () => {
       try {
         const [ordersRes, productsRes] = await Promise.all([
-          fetch("/api/user/orders"),
-          fetch("/api/products")
+          fetch("/api/user/orders", { cache: "no-store" }),
+          fetch("/api/products", { cache: "no-store" })
         ]);
         if (ordersRes.ok) {
           const data = await ordersRes.json();

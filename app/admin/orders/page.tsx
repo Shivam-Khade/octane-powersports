@@ -12,6 +12,7 @@ export async function updateOrderStatus(id: number, status: string) {
   if (session?.user?.role !== "admin") throw new Error("Unauthorized");
   await pool.query('UPDATE orders SET status = ? WHERE id = ?', [status, id]);
   revalidatePath('/admin/orders');
+  revalidatePath('/orders');
 }
 
 export default async function AdminOrdersPage() {

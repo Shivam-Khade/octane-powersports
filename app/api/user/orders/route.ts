@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import pool from "@/lib/db";
 import { RowDataPacket } from "mysql2";
 
+export const dynamic = "force-dynamic";
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.id) {
