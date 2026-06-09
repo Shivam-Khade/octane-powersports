@@ -4,7 +4,7 @@ import pool from "@/lib/db";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = "https://octanepowersports.com";
   
-  const [productRows] = await pool.query('SELECT slug FROM products');
+  const [productRows] = await pool.query('SELECT slug FROM products WHERE stockCount > 0');
   const products = productRows as any[];
   
   const [blogRows] = await pool.query('SELECT slug FROM blogs');

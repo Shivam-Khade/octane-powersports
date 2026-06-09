@@ -54,14 +54,10 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
   const [page, setPage] = useState(1);
   const itemsPerPage = 12;
 
-  const filterBrands = useMemo(() => [
-    { value: "Eazi grip", label: "Eazi grip" },
-    { value: "K&N", label: "K&N" },
-    { value: "Brembo", label: "Brembo" },
-    { value: "R&G", label: "R&G" },
-    { value: "Pirelli", label: "Pirelli" },
-    { value: "Engine ice", label: "Engine ice" }
-  ], []);
+  const filterBrands = useMemo(() => {
+    const uniqueBrands = Array.from(new Set(initialProducts.map(p => p.brand).filter(Boolean)));
+    return uniqueBrands.sort().map(b => ({ value: b, label: b }));
+  }, [initialProducts]);
 
   // Simulate loading on mount
   useEffect(() => {
@@ -76,15 +72,17 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
       const safeCategory = p.category || "";
       const safeBrand = p.brand || "";
 
-      const matchCategory = activeCategories.length === 0 || activeCategories.includes(safeCategory);
+      const normalize = (str: string) => str.toLowerCase().replace(/[-_]/g, ' ');
+      const normQuery = normalize(searchQuery);
+
+      const matchCategory = activeCategories.length === 0 || activeCategories.some(c => normalize(c) === normalize(safeCategory));
       
-      // Case-insensitive brand match
-      const matchBrand = activeBrands.length === 0 || activeBrands.some(b => b.toLowerCase() === safeBrand.toLowerCase());
+      // Case-insensitive, hyphen-insensitive brand match
+      const matchBrand = activeBrands.length === 0 || activeBrands.some(b => normalize(b) === normalize(safeBrand));
       
-      // Search matches name, category, or brand
-      const matchSearch = safeName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          safeCategory.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          safeBrand.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchSearch = normalize(safeName).includes(normQuery) || 
+                          normalize(safeCategory).includes(normQuery) ||
+                          normalize(safeBrand).includes(normQuery);
                           
       return matchCategory && matchBrand && matchSearch;
     }).sort((a, b) => {

@@ -3,7 +3,7 @@ import pool from '@/lib/db';
 
 export async function GET() {
   try {
-    const [rows] = await pool.query('SELECT * FROM products');
+    const [rows] = await pool.query('SELECT * FROM products WHERE stockCount > 0');
     // Ensure JSON fields are parsed correctly
     const products = (rows as any[]).map(product => {
       const p = { ...product };

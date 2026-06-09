@@ -10,9 +10,33 @@ export async function updateOrderStatus(id: number, status: string) {
   "use server";
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") throw new Error("Unauthorized");
+
+  // Get previous status
+  const [prevRows] = await pool.query('SELECT status FROM orders WHERE id = ?', [id]);
+  const prevStatus = (prevRows as any[])[0]?.status;
+
+  if (status === "Cancelled" && prevStatus !== "Cancelled") {
+    // Restock items
+    const [items] = await pool.query('SELECT * FROM order_items WHERE order_id = ?', [id]);
+    for (const item of (items as any[])) {
+      await pool.query(
+        "UPDATE products SET stockCount = stockCount + ? WHERE name = ?",
+        [item.quantity, item.product_name]
+      );
+    }
+  } else if (prevStatus === "Cancelled" && status !== "Cancelled") {
+    // Deduct stock again if re-activating order
+    const [items] = await pool.query('SELECT * FROM order_items WHERE order_id = ?', [id]);
+    for (const item of (items as any[])) {
+      await pool.query(
+        "UPDATE products SET stockCount = GREATEST(0, stockCount - ?) WHERE name = ?",
+        [item.quantity, item.product_name]
+      );
+    }
+  }
+
   await pool.query('UPDATE orders SET status = ? WHERE id = ?', [status, id]);
-  revalidatePath('/admin/orders');
-  revalidatePath('/orders');
+  revalidatePath('/', 'layout');
 }
 
 export default async function AdminOrdersPage() {

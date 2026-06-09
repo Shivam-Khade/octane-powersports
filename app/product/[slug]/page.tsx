@@ -21,13 +21,13 @@ function parseProduct(p: any) {
 }
 
 export async function generateStaticParams() {
-  const [rows] = await pool.query('SELECT slug FROM products');
+  const [rows] = await pool.query('SELECT slug FROM products WHERE stockCount > 0');
   return (rows as any[]).map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [rows] = await pool.query('SELECT * FROM products WHERE slug = ?', [slug]);
+  const [rows] = await pool.query('SELECT * FROM products WHERE slug = ? AND stockCount > 0', [slug]);
   const products = rows as any[];
   const product = products.length > 0 ? products[0] : null;
   
@@ -43,13 +43,13 @@ import { ViewTracker } from "@/components/view-tracker";
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [rows] = await pool.query('SELECT * FROM products WHERE slug = ?', [slug]);
+  const [rows] = await pool.query('SELECT * FROM products WHERE slug = ? AND stockCount > 0', [slug]);
   const matched = rows as any[];
   if (matched.length === 0) notFound();
   
   const product = parseProduct(matched[0]);
 
-  const [allRows] = await pool.query('SELECT * FROM products LIMIT 5');
+  const [allRows] = await pool.query('SELECT * FROM products WHERE stockCount > 0 LIMIT 5');
   const allProducts = (allRows as any[]).map(parseProduct);
   const related = allProducts.filter((item) => item.slug !== product.slug).slice(0, 4);
 

@@ -22,7 +22,8 @@ export default function ProductsClient({ initialProducts, categories, brands, sa
     availability: "In Stock",
     badge: "",
     image: "",
-    description: ""
+    description: "",
+    stockCount: 10
   });
 
   const openModal = (product: any = null) => {
@@ -33,7 +34,7 @@ export default function ProductsClient({ initialProducts, categories, brands, sa
       setEditingProduct(null);
       setFormData({
         id: null, name: "", slug: "", category: categories?.[0]?.name || "", brand: brands?.[0]?.brand || "", 
-        price: 0, rating: 5.0, availability: "In Stock", badge: "", image: "", description: ""
+        price: 0, rating: 5.0, availability: "In Stock", badge: "", image: "", description: "", stockCount: 10
       });
     }
     setIsModalOpen(true);
@@ -113,6 +114,7 @@ export default function ProductsClient({ initialProducts, categories, brands, sa
                 <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Name</th>
                 <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Category</th>
                 <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Price</th>
+                <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Stock</th>
                 <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Status</th>
                 <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider text-right">Actions</th>
               </tr>
@@ -126,8 +128,18 @@ export default function ProductsClient({ initialProducts, categories, brands, sa
                   <td className="p-4 font-medium text-[#0a0a0a]">{product.name}</td>
                   <td className="p-4 text-sm text-gray-500">{product.category}</td>
                   <td className="p-4 font-bold">₹{Number(product.price).toLocaleString('en-IN')}</td>
+                  <td className="p-4 font-bold text-gray-700">{product.stockCount ?? 'N/A'}</td>
                   <td className="p-4">
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-bold">{product.availability}</span>
+                    <span className={`text-xs px-2 py-1 rounded-full font-bold ${
+                      (product.stockCount ?? 0) > 5 ? 'bg-green-100 text-green-800' : 
+                      (product.stockCount ?? 0) > 3 ? 'bg-yellow-100 text-yellow-800' : 
+                      (product.stockCount ?? 0) > 0 ? 'bg-orange-100 text-orange-800' : 
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {(product.stockCount ?? 0) > 5 ? 'In Stock' : 
+                       (product.stockCount ?? 0) > 3 ? 'Limited' : 
+                       (product.stockCount ?? 0) > 0 ? 'Low Stock' : 'Out of Stock'}
+                    </span>
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-2">
@@ -185,14 +197,20 @@ export default function ProductsClient({ initialProducts, categories, brands, sa
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Brand</label>
-                <PremiumSelect 
-                  value={formData.brand} 
-                  onChange={(v) => setFormData({...formData, brand: v})} 
-                  options={brands?.map((b: any) => b.brand) || []}
-                  placeholder="Select a brand"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Brand</label>
+                  <PremiumSelect 
+                    value={formData.brand} 
+                    onChange={(v) => setFormData({...formData, brand: v})} 
+                    options={brands?.map((b: any) => b.brand) || []}
+                    placeholder="Select a brand"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Stock Quantity</label>
+                  <input required type="number" min="0" value={formData.stockCount} onChange={e => setFormData({...formData, stockCount: Number(e.target.value)})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]" />
+                </div>
               </div>
 
               <div>

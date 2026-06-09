@@ -6,7 +6,7 @@ import { ChevronDown, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./bike-parts-search.css";
 
-const bikeData = {
+const bikeData: Record<string, Record<string, Record<string, string[]>>> = {
   "BMW": {
     "R": {
       "GS1300": ["Engine ice", "Brembo"]
@@ -36,13 +36,13 @@ export function BikePartsSearch() {
   const [model, setModel] = useState("");
 
   const makes = Object.keys(bikeData);
-  const seriesList = make ? Object.keys(bikeData[make as keyof typeof bikeData]) : [];
-  const modelList = make && series ? Object.keys(bikeData[make as keyof typeof bikeData][series as keyof typeof bikeData[keyof typeof bikeData]]) : [];
+  const seriesList = make ? Object.keys(bikeData[make]) : [];
+  const modelList = make && series ? Object.keys(bikeData[make][series]) : [];
 
   const handleSearch = () => {
     if (!make || !series || !model) return;
     
-    const parts = bikeData[make as keyof typeof bikeData][series as keyof typeof bikeData[keyof typeof bikeData]][model as keyof typeof bikeData[keyof typeof bikeData][keyof typeof bikeData[keyof typeof bikeData]]];
+    const parts = bikeData[make][series][model];
     
     if (parts && parts.length > 0) {
       // Construct the URL with multiple brand parameters
@@ -62,8 +62,8 @@ export function BikePartsSearch() {
       transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
     >
       <div className="bps-header">
-        <h2>Find parts, accessories & consumables</h2>
         <p>Bike-Specific Parts</p>
+        <h2>Find Parts for Your Ride</h2>
       </div>
 
       <div className="bps-body">

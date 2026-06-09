@@ -54,11 +54,15 @@ export async function POST(req: Request) {
     
     const orderId = (orderResult as any).insertId;
 
-    // Insert items
+    // Insert items and deduct stock
     for (const item of items) {
       await pool.query(
         "INSERT INTO order_items (order_id, product_name, price, quantity) VALUES (?, ?, ?, ?)",
         [orderId, item.product_name, item.price, item.quantity]
+      );
+      await pool.query(
+        "UPDATE products SET stockCount = GREATEST(0, stockCount - ?) WHERE name = ?",
+        [item.quantity, item.product_name]
       );
     }
 

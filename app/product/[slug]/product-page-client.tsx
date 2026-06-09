@@ -27,6 +27,7 @@ type Product = {
   compatibility?: string[];
   warranty?: string;
   shipping?: string;
+  stockCount?: number;
 };
 
 export function ProductPageClient({
@@ -45,8 +46,13 @@ export function ProductPageClient({
   const router = useRouter();
 
   const emi = Math.round(product.price / 12);
-  const isLimited = product.availability === "Limited";
+  const stock = product.stockCount ?? 0;
+  let dynamicAvailability = "Out of Stock";
+  if (stock > 5) dynamicAvailability = "In Stock";
+  else if (stock > 3) dynamicAvailability = "Limited";
+  else if (stock > 0) dynamicAvailability = "Low Stock";
 
+  const isLimited = dynamicAvailability === "Limited" || dynamicAvailability === "Low Stock";
   // Hover zoom handler
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -131,10 +137,17 @@ export function ProductPageClient({
           >
             <div className="purchase-brand-row">
               <span className="purchase-brand">{product.brand}</span>
-              <span className={`purchase-stock${isLimited ? " limited" : ""}`}>
-                <span className="stock-dot" />
-                {product.availability}
-              </span>
+              <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
+                <span className={`purchase-stock${isLimited ? " limited" : ""}`}>
+                  <span className="stock-dot" />
+                  {dynamicAvailability}
+                </span>
+                {product.stockCount !== undefined && product.stockCount <= 3 && (
+                  <span className="product-badge product-badge--stock" style={{fontSize: '10px', padding: '4px 8px', margin: 0, textTransform: 'uppercase', fontWeight: 800}}>
+                    {product.stockCount} remaining
+                  </span>
+                )}
+              </div>
             </div>
 
             <h1 className="purchase-title">{product.name}</h1>

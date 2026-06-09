@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export default async function ShopPage() {
-  const [rows] = await pool.query('SELECT * FROM products');
+  const [rows] = await pool.query('SELECT * FROM products WHERE stockCount > 0');
   const products = (rows as any[]).map(product => {
     const p = { ...product };
     ['compatibility', 'specs', 'options', 'relatedThumbs'].forEach(field => {
@@ -26,7 +26,9 @@ export default async function ShopPage() {
   });
 
   const [catRows] = await pool.query('SELECT name FROM categories ORDER BY name ASC');
-  const categories = (catRows as any[]).map(c => c.name);
+  const dbCategories = (catRows as any[]).map(c => c.name);
+  const productCategories = products.map(p => p.category).filter(Boolean);
+  const categories = Array.from(new Set([...dbCategories, ...productCategories])).sort();
 
   return (
     <Suspense fallback={<div style={{height: "100vh"}}></div>}>

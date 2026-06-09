@@ -20,24 +20,23 @@ export async function saveProduct(data: any) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") throw new Error("Unauthorized");
 
-  const { id, name, slug, category, brand, price, rating, availability, badge, image, description } = data;
+  const { id, name, slug, category, brand, price, rating, availability, badge, image, description, stockCount } = data;
   
   if (id) {
     await pool.query(`
       UPDATE products SET 
-        name=?, slug=?, category=?, brand=?, price=?, rating=?, availability=?, badge=?, image=?, description=?
+        name=?, slug=?, category=?, brand=?, price=?, rating=?, availability=?, badge=?, image=?, description=?, stockCount=?
       WHERE id=?
-    `, [name, slug, category, brand, price, rating, availability, badge, image, description, id]);
+    `, [name, slug, category, brand, price, rating, availability, badge, image, description, stockCount ?? 10, id]);
   } else {
     await pool.query(`
       INSERT INTO products 
-      (name, slug, category, brand, price, rating, availability, badge, image, description, compatibility, specs, options, relatedThumbs)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '[]', '[]', '[]', '[]')
-    `, [name, slug, category, brand, price, rating || 5.0, availability || 'In Stock', badge || '', image, description || '']);
+      (name, slug, category, brand, price, rating, availability, badge, image, description, stockCount, compatibility, specs, options, relatedThumbs)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '[]', '[]', '[]', '[]')
+    `, [name, slug, category, brand, price, rating || 5.0, availability || 'In Stock', badge || '', image, description || '', stockCount ?? 10]);
   }
   
-  revalidatePath('/admin/products');
-  revalidatePath('/shop');
+  revalidatePath('/', 'layout');
 }
 
 export default async function AdminProductsPage() {
