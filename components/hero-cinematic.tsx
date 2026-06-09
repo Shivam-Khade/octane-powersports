@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, Users, Package, MapPin } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { BikePartsSearch } from "./bike-parts-search";
 import "./hero-cinematic.css";
 
 const stats = [
@@ -54,57 +55,13 @@ export function HeroCinematic() {
 
       {/* Content */}
       <div className="container hero-cinematic__content">
-        <motion.div
-          className="hero-cinematic__copy"
-          style={{ opacity: contentOpacity, y: contentY }}
-          initial="hidden"
-          animate="show"
-          variants={{
-            hidden: {},
-            show: {
-              transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.2
-              }
-            }
-          }}
+        <motion.div 
+          className="hero-cinematic__search-wrapper"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <motion.p className="hero-eyebrow" variants={itemVariants}>
-            Premium Powersports India
-          </motion.p>
-
-          <motion.h1 className="hero-headline" variants={itemVariants}>
-            <span>RIDE HARDER.</span>
-            <span>EXPLORE FURTHER.</span>
-            <span className="hero-headline--accent">OWN THE ROAD.</span>
-          </motion.h1>
-
-          <motion.p className="hero-sub" variants={itemVariants}>
-            Premium motorcycle exhausts, protection parts, tyres and accessories for riders who demand more.
-          </motion.p>
-
-          <motion.div className="hero-actions" variants={itemVariants}>
-            <Link className="hero-button hero-button--primary" href="/shop">
-              <span>Shop Collection</span>
-              <ArrowRight size={18} className="hero-button__arrow" />
-            </Link>
-            <Link className="hero-button hero-button--secondary" href="/shop#brands">
-              Explore Brands
-            </Link>
-          </motion.div>
-
-          {/* Floating Stats */}
-          <motion.div className="hero-stats" variants={itemVariants}>
-            {stats.map(({ icon: Icon, value, label }) => (
-              <div key={label} className="hero-stat-card">
-                <Icon size={18} className="hero-stat-icon" />
-                <div>
-                  <strong className="hero-stat-value">{value}</strong>
-                  <span className="hero-stat-label">{label}</span>
-                </div>
-              </div>
-            ))}
-          </motion.div>
+          <BikePartsSearch />
         </motion.div>
       </div>
     </section>

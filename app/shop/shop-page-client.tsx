@@ -17,19 +17,22 @@ const curatedCollections = [
 
 export function ShopPageClient({ initialProducts, categories }: { initialProducts: Product[], categories: string[] }) {
   const searchParams = useSearchParams();
-  const initialBrand = searchParams.get("brand");
+  const initialBrands = searchParams.getAll("brand");
   const initialCategory = searchParams.get("category");
   const initialQ = searchParams.get("q");
 
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [activeCategories, setActiveCategories] = useState<string[]>(initialCategory ? [initialCategory] : []);
-  const [activeBrands, setActiveBrands] = useState<string[]>(initialBrand ? [initialBrand] : []);
+  const [activeBrands, setActiveBrands] = useState<string[]>(initialBrands.length > 0 ? initialBrands : []);
 
   useEffect(() => {
-    const brand = searchParams.get("brand");
-    if (brand && !activeBrands.includes(brand)) {
-      setActiveBrands(prev => Array.from(new Set([...prev, brand])));
-      setPage(1);
+    const brands = searchParams.getAll("brand");
+    if (brands.length > 0) {
+      setActiveBrands(prev => {
+        const merged = Array.from(new Set([...prev, ...brands]));
+        if (merged.length !== prev.length) setPage(1);
+        return merged;
+      });
     }
     const category = searchParams.get("category");
     if (category && !activeCategories.includes(category)) {
@@ -51,9 +54,14 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
   const [page, setPage] = useState(1);
   const itemsPerPage = 12;
 
-  const dynamicBrands = useMemo(() => {
-    return Array.from(new Set(initialProducts.map(p => p.brand).filter(Boolean))).sort();
-  }, [initialProducts]);
+  const filterBrands = useMemo(() => [
+    { value: "Eazi grip", label: "Eazi grip" },
+    { value: "K&N", label: "K&N" },
+    { value: "Brembo", label: "Brembo" },
+    { value: "R&G", label: "R&G" },
+    { value: "Pirelli", label: "Pirelli" },
+    { value: "Engine ice", label: "Engine ice" }
+  ], []);
 
   // Simulate loading on mount
   useEffect(() => {
@@ -188,16 +196,16 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
           </CollapsibleFilter>
 
           <CollapsibleFilter title="Brand">
-            {dynamicBrands.map((item) => (
-              <label key={item} className="custom-checkbox">
+            {filterBrands.map((brand) => (
+              <label key={brand.value} className="custom-checkbox">
                 <input 
                   suppressHydrationWarning 
                   type="checkbox" 
-                  checked={activeBrands.includes(item)}
-                  onChange={() => toggleBrand(item)}
+                  checked={activeBrands.includes(brand.value)}
+                  onChange={() => toggleBrand(brand.value)}
                 /> 
                 <span className="checkmark"></span>
-                {item}
+                {brand.label}
               </label>
             ))}
           </CollapsibleFilter>
@@ -234,10 +242,10 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
                     ))}
                   </CollapsibleFilter>
                   <CollapsibleFilter title="Brand">
-                    {dynamicBrands.map((item) => (
-                      <label key={item} className="custom-checkbox">
-                        <input type="checkbox" checked={activeBrands.includes(item)} onChange={() => toggleBrand(item)}/> 
-                        <span className="checkmark"></span> {item}
+                    {filterBrands.map((brand) => (
+                      <label key={brand.value} className="custom-checkbox">
+                        <input type="checkbox" checked={activeBrands.includes(brand.value)} onChange={() => toggleBrand(brand.value)}/> 
+                        <span className="checkmark"></span> {brand.label}
                       </label>
                     ))}
                   </CollapsibleFilter>

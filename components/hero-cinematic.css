@@ -61,7 +61,14 @@
   align-items: flex-start;
   padding-top: 145px;
   justify-content: flex-start;
+  gap: 60px;
+  flex-wrap: wrap;
   color: #fff;
+}
+
+.hero-cinematic__search-wrapper {
+  flex-shrink: 0;
+  z-index: 2;
 }
 
 .hero-cinematic__copy {

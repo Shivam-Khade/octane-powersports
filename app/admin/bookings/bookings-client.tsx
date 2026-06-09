@@ -30,7 +30,7 @@ export default function BookingsClient({ initialBookings, deleteAction }: any) {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Date</th>
+              <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Date & Time</th>
               <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Customer</th>
               <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Phone</th>
               <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Service Type</th>
@@ -48,11 +48,18 @@ export default function BookingsClient({ initialBookings, deleteAction }: any) {
               return (
                 <tr key={booking.id} className={`hover:bg-gray-50 transition-colors ${!upcoming ? 'opacity-60 bg-gray-50/50' : ''}`}>
                   <td className="p-4">
-                    <div className="flex items-center gap-2">
-                      <CalendarIcon size={16} className={upcoming ? "text-[#ff6b00]" : "text-gray-400"} />
-                      <span className="font-bold text-[#0a0a0a]">
-                        {new Date(booking.booking_date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
-                      </span>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <CalendarIcon size={16} className={upcoming ? "text-[#ff6b00]" : "text-gray-400"} />
+                        <span className="font-bold text-[#0a0a0a]">
+                          {new Date(booking.booking_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                      </div>
+                      {booking.time_slot && (
+                        <div className="text-sm text-gray-500 ml-6">
+                          {booking.time_slot}
+                        </div>
+                      )}
                     </div>
                   </td>
                   <td className="p-4 font-medium text-[#0a0a0a]">{booking.name}</td>

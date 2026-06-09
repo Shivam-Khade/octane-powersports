@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Image from "next/image";
+import { toast } from "react-hot-toast";
 import { useLoginModal } from "@/components/login-context";
 import "./service.css";
 
@@ -41,9 +42,67 @@ export function ServiceClient({
     email: initialData?.email || "",
     bikeModel: initialData?.bikeModel || "",
     date: "",
+    timeSlot: "",
     serviceType: "Part Installation",
     notes: ""
   });
+
+  const TIME_SLOTS = [
+    "12:00 PM – 2:00 PM",
+    "2:00 PM – 4:00 PM",
+    "4:00 PM – 6:00 PM",
+    "6:00 PM – 8:00 PM"
+  ];
+
+  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+
+  useEffect(() => {
+    if (!formData.date) {
+      setBookedSlots([]);
+      return;
+    }
+    
+    // Reset timeSlot when date changes
+    setFormData(prev => ({ ...prev, timeSlot: "" }));
+    setIsLoadingSlots(true);
+
+    fetch(`/api/service-bookings/availability?date=${formData.date}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.bookedSlots) {
+          setBookedSlots(data.bookedSlots);
+        }
+      })
+      .catch(err => console.error("Failed to fetch slots", err))
+      .finally(() => setIsLoadingSlots(false));
+  }, [formData.date]);
+
+  const isSlotPassed = (dateString: string, slotString: string) => {
+    if (!dateString) return false;
+    
+    const now = new Date();
+    // Use en-CA locale to get YYYY-MM-DD format natively
+    const istDateStr = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    
+    if (dateString !== istDateStr) return false;
+
+    // Get current hour in IST (24-hour format)
+    const currentHourStr = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false });
+    let currentHour = parseInt(currentHourStr, 10);
+    if (currentHour === 24) currentHour = 0;
+
+    let slotStartHour = 0;
+    if (slotString.includes("12:00 PM")) slotStartHour = 12;
+    else if (slotString.includes("2:00 PM")) slotStartHour = 14;
+    else if (slotString.includes("4:00 PM")) slotStartHour = 16;
+    else if (slotString.includes("6:00 PM")) slotStartHour = 18;
+    
+    return currentHour >= slotStartHour;
+  };
+
+  const availableCount = formData.date ? TIME_SLOTS.filter(slot => !bookedSlots.includes(slot) && !isSlotPassed(formData.date, slot)).length : 0;
+  const allSlotsBooked = formData.date ? availableCount === 0 : false;
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const serviceOptions = ["Part Installation", "General Maintenance", "Fitment & Diagnostics", "Performance Tuning"];
@@ -72,6 +131,12 @@ export function ServiceClient({
     setSubmitting(true);
     setError("");
 
+    if (!formData.timeSlot) {
+      toast.error("Please select an available time slot", { position: "top-right" });
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/service-bookings", {
         method: "POST",
@@ -80,17 +145,16 @@ export function ServiceClient({
       });
 
       if (res.ok) {
-        setSuccess(true);
+        toast.success("Booking request submitted successfully! We'll contact you soon.", { position: "top-right" });
         setFormData({
-          name: "", phone: "", email: "", bikeModel: "", date: "", serviceType: "Part Installation", notes: ""
+          name: "", phone: "", email: "", bikeModel: "", date: "", timeSlot: "", serviceType: "Part Installation", notes: ""
         });
-        setTimeout(() => setSuccess(false), 5000);
       } else {
         const data = await res.json();
-        setError(data.error || "Failed to submit booking");
+        toast.error(data.error || "Failed to submit booking", { position: "top-right" });
       }
     } catch (err) {
-      setError("An unexpected error occurred");
+      toast.error("An unexpected error occurred", { position: "top-right" });
     } finally {
       setSubmitting(false);
     }
@@ -115,29 +179,62 @@ export function ServiceClient({
             <div className="form-row">
               <motion.div variants={itemVariants} className="input-group">
                 <input type="text" name="name" id="name" required value={formData.name} onChange={handleChange} placeholder=" " />
-                <label htmlFor="name">Full Name</label>
+                <label htmlFor="name">Full Name <span className="text-red-500">*</span></label>
               </motion.div>
               <motion.div variants={itemVariants} className="input-group">
                 <input type="tel" name="phone" id="phone" required value={formData.phone} onChange={handleChange} placeholder=" " />
-                <label htmlFor="phone">Phone Number</label>
+                <label htmlFor="phone">Phone Number <span className="text-red-500">*</span></label>
               </motion.div>
             </div>
 
             <motion.div variants={itemVariants} className="input-group">
               <input type="email" name="email" id="email" required value={formData.email} onChange={handleChange} placeholder=" " />
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email">Email Address <span className="text-red-500">*</span></label>
             </motion.div>
 
             <div className="form-row">
               <motion.div variants={itemVariants} className="input-group">
                 <input type="text" name="bikeModel" id="bikeModel" required value={formData.bikeModel} onChange={handleChange} placeholder=" " />
-                <label htmlFor="bikeModel">Bike Make & Model</label>
+                <label htmlFor="bikeModel">Bike Make & Model <span className="text-red-500">*</span></label>
               </motion.div>
               <motion.div variants={itemVariants} className="input-group">
-                <input type="date" name="date" id="date" required value={formData.date} onChange={handleChange} placeholder=" " />
-                <label htmlFor="date" className={formData.date ? "active-date" : ""}>Preferred Date</label>
+                <input type="date" name="date" id="date" min={new Date().toISOString().split('T')[0]} required value={formData.date} onChange={handleChange} placeholder=" " />
+                <label htmlFor="date" className={formData.date ? "active-date" : ""}>Preferred Date <span className="text-red-500">*</span></label>
               </motion.div>
             </div>
+
+            {formData.date && (
+              <motion.div variants={itemVariants} className="input-group">
+                <label style={{position: 'static', transform: 'none', color: 'var(--gray-300)', fontSize: '13px', marginBottom: '10px', display: 'block'}}>
+                  Available Time Slots <span className="text-red-500">*</span>
+                </label>
+                {isLoadingSlots ? (
+                  <div className="text-sm text-gray-400 p-3">Loading available slots...</div>
+                ) : allSlotsBooked ? (
+                  <div className="text-sm text-red-400 bg-red-400/10 p-3 rounded-md border border-red-500/20 mt-2">
+                    All slots are fully booked for this date. Please select another date.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    {TIME_SLOTS.map(slot => {
+                      const passed = isSlotPassed(formData.date, slot);
+                      const isBooked = bookedSlots.includes(slot) || passed;
+                      return (
+                        <button
+                          key={slot}
+                          type="button"
+                          disabled={isBooked}
+                          onClick={() => setFormData({ ...formData, timeSlot: slot })}
+                          className={`time-slot-btn ${formData.timeSlot === slot ? "selected" : ""}`}
+                        >
+                          {slot} {bookedSlots.includes(slot) ? "(Booked)" : passed ? "(Passed)" : ""}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </motion.div>
+            )}
 
             <motion.div variants={itemVariants} className="input-group custom-select-group">
               <div 
@@ -180,10 +277,8 @@ export function ServiceClient({
             </motion.div>
 
             <motion.div variants={itemVariants} className="form-submit-wrapper">
-              {error && <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm border border-red-100">{error}</div>}
-              {success && <div className="mb-4 p-3 bg-green-50 text-green-600 rounded-lg text-sm border border-green-100">Booking request submitted successfully! We'll contact you soon.</div>}
-              <button type="submit" className="button submit-btn" disabled={submitting || success}>
-                {submitting ? "Submitting..." : success ? "Submitted!" : "Confirm Request"}
+              <button type="submit" className="button submit-btn" disabled={submitting || allSlotsBooked}>
+                {submitting ? "Submitting..." : "Confirm Request"}
               </button>
             </motion.div>
           </form>
@@ -205,7 +300,7 @@ export function ServiceClient({
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             className="map-header"
           >
-            <h2 className="service-title">Visit Offline</h2>
+            <h2 className="service-title">Visit the Store</h2>
             <p className="service-desc">
               Drop by our performance center for an in-person consultation or to view our latest inventory.
             </p>

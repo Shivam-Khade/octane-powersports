@@ -1,13 +1,10 @@
 export const brands = [
-  "KTM",
-  "Kawasaki",
-  "Ducati",
-  "BMW",
-  "Royal Enfield",
-  "Triumph",
-  "AGV",
-  "Alpinestars",
-  "Rynox"
+  "Eazi grip",
+  "K&N",
+  "Brembo",
+  "R&G",
+  "Pirelli",
+  "Engine ice"
 ];
 
 export const testimonials = [

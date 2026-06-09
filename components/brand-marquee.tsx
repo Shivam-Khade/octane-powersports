@@ -4,18 +4,12 @@ import { motion } from "framer-motion";
 import "./brand-marquee.css";
 
 const featuredBrands = [
-  { name: "AGV", type: "Helmets & Safety" },
-  { name: "Alpinestars", type: "Riding Gear" },
-  { name: "Rynox", type: "Touring Apparel" },
-  { name: "MT Helmets", type: "Helmets" },
-  { name: "LS2", type: "Helmets & Apparel" },
-  { name: "Axor", type: "Helmets & Goggles" },
-  { name: "KTM", type: "PowerParts" },
-  { name: "Kawasaki", type: "Performance Parts" },
-  { name: "Ducati", type: "Exhausts & Carbon" },
-  { name: "BMW Motorrad", type: "Adventure Luggage" },
-  { name: "Triumph", type: "Crash Protection" },
-  { name: "Royal Enfield", type: "Genuine Accessories" }
+  { name: "Eazi grip", type: "Tank Grips" },
+  { name: "K&N", type: "Air Filters" },
+  { name: "Brembo", type: "Braking Systems" },
+  { name: "R&G", type: "Crash Protection" },
+  { name: "Pirelli", type: "Tyres" },
+  { name: "Engine ice", type: "Coolants" }
 ];
 
 export function BrandMarquee() {

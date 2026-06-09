@@ -1,0 +1,176 @@
+.bike-parts-search {
+  background: rgba(10, 14, 23, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 36px;
+  width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.bps-header h2 {
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.bps-header p {
+  font-size: 14px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.bps-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bps-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bps-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-300);
+}
+
+.bps-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.custom-bps-select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 18px 20px;
+  padding-right: 48px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.custom-bps-select:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.custom-bps-select:focus,
+.custom-bps-select.open {
+  border-color: var(--accent);
+  background: rgba(255, 107, 0, 0.05);
+  box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+}
+
+.custom-bps-select.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.bps-select-value {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bps-select-value.placeholder {
+  color: var(--gray-400);
+  font-weight: 400;
+}
+
+.bps-select-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+.bps-select-icon.open {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.bps-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(15, 15, 20, 0.98);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 50;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.bps-dropdown-option {
+  padding: 14px 20px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.bps-dropdown-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.bps-dropdown-option.selected {
+  background: rgba(255, 107, 0, 0.15);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.bps-submit {
+  width: 100%;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border-radius: 12px;
+}
+
+.bps-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--gray-800);
+  color: var(--gray-400);
+  border-color: var(--gray-800);
+}
+
+@media (max-width: 1024px) {
+  .bike-parts-search {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
