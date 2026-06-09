@@ -6,6 +6,7 @@ import { Grid2X2, List, Search, SlidersHorizontal, X, ChevronDown, ChevronUp } f
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard, Product } from "@/components/product-card";
 import { ProductCardSkeleton } from "@/components/product-card-skeleton";
+import { BikePartsSearch } from "@/components/bike-parts-search";
 import "./shop.css";
 
 // Helper for Curated Collections
@@ -26,24 +27,16 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
   const [activeBrands, setActiveBrands] = useState<string[]>(initialBrands.length > 0 ? initialBrands : []);
 
   useEffect(() => {
+    // When URL search params change (i.e. user clicked a header link), 
+    // completely reset the filters to match the new URL.
     const brands = searchParams.getAll("brand");
-    if (brands.length > 0) {
-      setActiveBrands(prev => {
-        const merged = Array.from(new Set([...prev, ...brands]));
-        if (merged.length !== prev.length) setPage(1);
-        return merged;
-      });
-    }
     const category = searchParams.get("category");
-    if (category && !activeCategories.includes(category)) {
-      setActiveCategories(prev => Array.from(new Set([...prev, category])));
-      setPage(1);
-    }
     const q = searchParams.get("q");
-    if (q !== null && q !== searchQuery) {
-      setSearchQuery(q);
-      setPage(1);
-    }
+
+    setActiveBrands(brands);
+    setActiveCategories(category ? [category] : []);
+    setSearchQuery(q || "");
+    setPage(1);
   }, [searchParams]);
   const [searchQuery, setSearchQuery] = useState(initialQ || "");
   const [sortBy, setSortBy] = useState("Best Sellers");
@@ -114,157 +107,30 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
   };
 
   const activeFiltersCount = activeCategories.length + activeBrands.length;
+  
+  const isShopAll = activeCategories.length === 0 && activeBrands.length === 0;
+  const showCategoryFilter = activeBrands.length > 0;
+  const showBrandFilter = activeCategories.length > 0;
 
   return (
     <main className="shop-premium-bg">
       <section className="shop-hero">
         <div className="container">
-          <div className="shop-search">
-            <Search size={20} />
-            <input 
-              suppressHydrationWarning 
-              placeholder="Search exhausts, tyres, phone mounts..." 
-              aria-label="Search products" 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className="curated-collections">
-            <span className="curated-label">Curated:</span>
-            {curatedCollections.map(c => (
-              <button 
-                key={c.name} 
-                className="curated-btn"
-                onClick={() => { clearAllFilters(); toggleCategory(c.filter.category!); }}
-              >
-                {c.name}
-              </button>
-            ))}
-          </div>
+          <AnimatePresence>
+            <BikePartsSearch variant="horizontal" />
+          </AnimatePresence>
         </div>
       </section>
 
-      <section className="shop-layout container">
-        {/* Desktop Sidebar */}
-        <aside className="filters desktop-filters">
-          <div className="filter-title">
-            <SlidersHorizontal size={18} /> Filters
-            {activeFiltersCount > 0 && <span className="filter-count">{activeFiltersCount}</span>}
-          </div>
-          
-          <AnimatePresence>
-            {activeFiltersCount > 0 && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }} 
-                animate={{ opacity: 1, height: 'auto' }} 
-                exit={{ opacity: 0, height: 0 }}
-                className="active-filters-area"
-              >
-                <div className="active-chips">
-                  {activeCategories.map(c => (
-                    <button key={c} onClick={() => toggleCategory(c)} className="filter-chip">
-                      {c} <X size={12} />
-                    </button>
-                  ))}
-                  {activeBrands.map(b => (
-                    <button key={b} onClick={() => toggleBrand(b)} className="filter-chip">
-                      {b} <X size={12} />
-                    </button>
-                  ))}
-                </div>
-                <button onClick={clearAllFilters} className="clear-all-btn">Clear All</button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+      <section className="shop-layout container no-sidebar">
 
-          <CollapsibleFilter title="Category">
-            {categories.map((item) => (
-              <label key={item} className="custom-checkbox">
-                <input 
-                  suppressHydrationWarning 
-                  type="checkbox" 
-                  checked={activeCategories.includes(item)}
-                  onChange={() => toggleCategory(item)}
-                /> 
-                <span className="checkmark"></span>
-                {item}
-              </label>
-            ))}
-          </CollapsibleFilter>
 
-          <CollapsibleFilter title="Brand">
-            {filterBrands.map((brand) => (
-              <label key={brand.value} className="custom-checkbox">
-                <input 
-                  suppressHydrationWarning 
-                  type="checkbox" 
-                  checked={activeBrands.includes(brand.value)}
-                  onChange={() => toggleBrand(brand.value)}
-                /> 
-                <span className="checkmark"></span>
-                {brand.label}
-              </label>
-            ))}
-          </CollapsibleFilter>
-        </aside>
-
-        {/* Mobile Filter Modal */}
-        <AnimatePresence>
-          {isMobileFiltersOpen && (
-            <motion.div 
-              className="mobile-filter-overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <div className="mobile-filter-backdrop" onClick={() => setIsMobileFiltersOpen(false)} />
-              <motion.div 
-                className="mobile-filter-sheet"
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              >
-                <div className="sheet-header">
-                  <h3>Filters</h3>
-                  <button onClick={() => setIsMobileFiltersOpen(false)} className="close-sheet"><X size={20}/></button>
-                </div>
-                <div className="sheet-body">
-                  <CollapsibleFilter title="Category" defaultOpen>
-                    {categories.map((item) => (
-                      <label key={item} className="custom-checkbox">
-                        <input type="checkbox" checked={activeCategories.includes(item)} onChange={() => toggleCategory(item)}/> 
-                        <span className="checkmark"></span> {item}
-                      </label>
-                    ))}
-                  </CollapsibleFilter>
-                  <CollapsibleFilter title="Brand">
-                    {filterBrands.map((brand) => (
-                      <label key={brand.value} className="custom-checkbox">
-                        <input type="checkbox" checked={activeBrands.includes(brand.value)} onChange={() => toggleBrand(brand.value)}/> 
-                        <span className="checkmark"></span> {brand.label}
-                      </label>
-                    ))}
-                  </CollapsibleFilter>
-                </div>
-                <div className="sheet-footer">
-                  <button className="button secondary" onClick={clearAllFilters}>Clear All</button>
-                  <button className="button" onClick={() => setIsMobileFiltersOpen(false)}>Apply Filters</button>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         <div className="shop-results">
           <div className="shop-toolbar sticky-toolbar">
             <span className="result-count">Showing 1-{Math.min(displayedProducts.length, filteredProducts.length)} of {filteredProducts.length}</span>
             <div className="toolbar-actions">
-              <button className="mobile-filter-btn" onClick={() => setIsMobileFiltersOpen(true)}>
-                <SlidersHorizontal size={16} /> Filters
-                {activeFiltersCount > 0 && <span className="mobile-filter-badge">{activeFiltersCount}</span>}
-              </button>
+
               <PremiumSortDropdown value={sortBy} onChange={setSortBy} />
               <div className="view-toggles">
                 <button suppressHydrationWarning className={`icon-button ${isGrid ? 'active' : ''}`} onClick={() => setIsGrid(true)} aria-label="Grid view"><Grid2X2 size={18} /></button>

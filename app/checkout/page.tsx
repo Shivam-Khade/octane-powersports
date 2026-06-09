@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { SessionProvider, useSession } from "next-auth/react";
 import { useProfileModal } from "@/components/profile-context";
 import { useCart } from "@/components/cart-context";
+import { useLoginModal } from "@/components/login-context";
 import "./checkout.css";
 
 export default function CheckoutPage() {
@@ -19,7 +20,8 @@ export default function CheckoutPage() {
 function CheckoutContent() {
   const router = useRouter();
   const { data: session } = useSession();
-  const { openModal } = useProfileModal();
+  const { openModal: openProfileModal } = useProfileModal();
+  const { openModal: openLoginModal } = useLoginModal();
   
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -62,6 +64,17 @@ function CheckoutContent() {
   const finalTotal = totalPrice - discount;
 
   const handleSubmit = async () => {
+    if (!session?.user) {
+      openLoginModal();
+      return;
+    }
+
+    if (!selectedAddress) {
+      setError("Please add a delivery address before making payment.");
+      openProfileModal();
+      return;
+    }
+
     if (cartItems.length === 0) {
       setError("Your cart is empty");
       return;
@@ -196,7 +209,7 @@ function CheckoutContent() {
                       </>
                     )}
                   </div>
-                  <button className="change-btn shrink-0" onClick={openModal}>
+                  <button className="change-btn shrink-0" onClick={openProfileModal}>
                     {selectedAddress ? 'Change' : 'Add Address'}
                   </button>
                 </div>

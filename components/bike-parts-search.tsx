@@ -28,7 +28,7 @@ const bikeData: Record<string, Record<string, Record<string, string[]>>> = {
   }
 };
 
-export function BikePartsSearch() {
+export function BikePartsSearch({ variant = "vertical" }: { variant?: "vertical" | "horizontal" }) {
   const router = useRouter();
   
   const [make, setMake] = useState("");
@@ -45,7 +45,6 @@ export function BikePartsSearch() {
     const parts = bikeData[make][series][model];
     
     if (parts && parts.length > 0) {
-      // Construct the URL with multiple brand parameters
       const params = new URLSearchParams();
       parts.forEach(part => params.append("brand", part));
       router.push(`/shop?${params.toString()}`);
@@ -56,20 +55,26 @@ export function BikePartsSearch() {
 
   return (
     <motion.div 
-      className="bike-parts-search"
+      className={`bike-parts-search variant-${variant}`}
       initial={{ opacity: 0, x: -30 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
     >
       <div className="bps-header">
-        <p>Bike-Specific Parts</p>
-        <h2>Find Parts for Your Ride</h2>
+        {variant === "horizontal" ? (
+          <p className="bps-horizontal-title">Select bike-specific parts</p>
+        ) : (
+          <>
+            <p>Bike-Specific Parts</p>
+            <h2>Find Parts for Your Ride</h2>
+          </>
+        )}
       </div>
 
       <div className="bps-body">
         {/* Make Dropdown */}
         <CustomDropdown 
-          label="Select Make"
+          label="Make"
           value={make}
           options={makes}
           onChange={(v) => {
@@ -81,7 +86,7 @@ export function BikePartsSearch() {
 
         {/* Series Dropdown */}
         <CustomDropdown 
-          label="Select Series"
+          label="Series"
           value={series}
           options={seriesList}
           onChange={(v) => {
@@ -93,21 +98,32 @@ export function BikePartsSearch() {
 
         {/* Model Dropdown */}
         <CustomDropdown 
-          label="Select Model"
+          label="Model"
           value={model}
           options={modelList}
           onChange={setModel}
           disabled={!series}
         />
 
-        <button 
-          className="bps-submit button primary"
-          disabled={!make || !series || !model}
-          onClick={handleSearch}
-        >
-          <Search size={18} />
-          Search Parts
-        </button>
+        {variant === "horizontal" ? (
+          <button 
+            className="bps-submit-btn-horizontal" 
+            onClick={handleSearch}
+            disabled={!make || !series || !model}
+            aria-label="Search"
+          >
+            <Search size={20} strokeWidth={1.5} />
+          </button>
+        ) : (
+          <button 
+            className="bps-submit button primary" 
+            onClick={handleSearch}
+            disabled={!make || !series || !model}
+          >
+            <Search size={18} />
+            Search Parts
+          </button>
+        )}
       </div>
     </motion.div>
   );

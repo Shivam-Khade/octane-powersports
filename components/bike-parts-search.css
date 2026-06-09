@@ -150,18 +150,144 @@
   font-weight: 600;
 }
 
-.bps-submit {
+.bps-submit.button.primary {
   width: 100%;
-  margin-top: 16px;
+  border-radius: 12px;
+  padding: 18px 24px;
+  font-size: 16px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.bps-submit.button.primary:hover:not(:disabled) {
+  background: #e65c00;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 107, 0, 0.3);
+}
+
+.bps-submit.button.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Horizontal Variant */
+.bike-parts-search.variant-horizontal {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  width: 100%;
+  padding: 0;
+  margin-top: 24px;
+}
+
+.variant-horizontal .bps-header {
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.bps-horizontal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.variant-horizontal .bps-body {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
-  padding: 18px;
-  font-size: 17px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  border-radius: 12px;
+}
+
+.variant-horizontal .bps-select-wrapper {
+  width: 200px;
+}
+
+.variant-horizontal .custom-bps-select {
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 14px 18px;
+  padding-right: 40px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  transition: all 0.3s ease;
+}
+
+.variant-horizontal .custom-bps-select:hover:not(.disabled) {
+  border-color: rgba(255, 107, 0, 0.4);
+  background: rgba(255, 107, 0, 0.02);
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.05);
+}
+
+.variant-horizontal .custom-bps-select:focus,
+.variant-horizontal .custom-bps-select.open {
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+}
+
+.variant-horizontal .bps-dropdown-menu {
+  background: #fff;
+  border: 1px solid rgba(255, 107, 0, 0.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+.variant-horizontal .bps-dropdown-option {
+  color: var(--text);
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.variant-horizontal .bps-dropdown-option:hover {
+  background: rgba(255, 107, 0, 0.06);
+  color: var(--accent);
+  padding-left: 24px;
+}
+
+.bps-submit-btn-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+}
+
+.bps-submit-btn-horizontal:hover:not(:disabled) {
+  background: #e65c00;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 107, 0, 0.35);
+}
+
+.bps-submit-btn-horizontal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .bps-submit:disabled {

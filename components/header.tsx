@@ -119,8 +119,6 @@ export function Header({ session }: { session: any }) {
               </div>
             </div>
 
-            <Link href="/shop" className={`nav-link ${pathname?.startsWith('/shop') && !searchOpen ? '!text-[#ff6b00]' : ''}`}>Shop All</Link>
-
             <Link href="/blog" className={`nav-link ${pathname?.startsWith('/blog') ? '!text-[#ff6b00]' : ''}`}>Journal</Link>
             
             {session ? (
@@ -188,7 +186,10 @@ export function Header({ session }: { session: any }) {
                         </div>
                       )}
                       <div className="border-t border-gray-800 p-2">
-                        <button onClick={() => signOut({ callbackUrl: '/' })} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-medium text-red-400 hover:!text-white hover:bg-red-500/80 rounded-lg transition-colors text-left">
+                        <button onClick={() => {
+                          localStorage.removeItem("octane_cart");
+                          signOut({ callbackUrl: '/' });
+                        }} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-medium text-red-400 hover:!text-white hover:bg-red-500/80 rounded-lg transition-colors text-left">
                           <LogOut size={16} /> Log Out
                         </button>
                       </div>
@@ -277,9 +278,6 @@ export function Header({ session }: { session: any }) {
                   </div>
                 )}
               </div>
-
-              <Link href="/shop" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Shop All</Link>
-
               <Link href="/blog" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Journal</Link>
               <Link href="/service-booking" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Service Booking</Link>
               <Link href="/contact" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Contact</Link>
@@ -300,7 +298,11 @@ export function Header({ session }: { session: any }) {
                   )}
                   <button 
                     className="mobile-nav-link text-left text-red-500" 
-                    onClick={() => { setMobileOpen(false); signOut({ callbackUrl: '/' }); }}
+                    onClick={() => { 
+                      localStorage.removeItem("octane_cart");
+                      setMobileOpen(false); 
+                      signOut({ callbackUrl: '/' }); 
+                    }}
                   >
                     Log Out
                   </button>

@@ -7,6 +7,8 @@
   padding: 100px 0 60px;
   background: linear-gradient(180deg, rgba(248, 249, 250, 0.68), rgba(255, 255, 255, 0) 42%), #fff;
   border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 150;
 }
 
 .shop-hero h1 {
@@ -54,15 +56,15 @@
   color: var(--muted);
 }
 
-.curated-collections {
+.horizontal-sub-filters {
   margin-top: 24px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-direction: column;
   gap: 12px;
-  flex-wrap: wrap;
 }
 
-.curated-label {
+.sub-filters-label {
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -70,7 +72,14 @@
   letter-spacing: 0.1em;
 }
 
-.curated-btn {
+.sub-filters-scroll {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sub-filter-chip {
   background: #fff;
   border: 1px solid var(--border);
   color: var(--text);
@@ -80,12 +89,35 @@
   border-radius: 999px;
   cursor: pointer;
   transition: all 200ms ease;
+  white-space: nowrap;
 }
 
-.curated-btn:hover {
-  background: rgba(255, 107, 0, 0.1);
+.sub-filter-chip:hover {
+  background: rgba(255, 107, 0, 0.05);
   border-color: rgba(255, 107, 0, 0.4);
   color: var(--accent);
+}
+
+.sub-filter-chip.active {
+  background: rgba(255, 107, 0, 0.12);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.sub-filter-clear {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px;
+  white-space: nowrap;
+  text-decoration: underline;
+}
+
+.sub-filter-clear:hover {
+  color: var(--text);
 }
 
 .shop-layout {
@@ -94,6 +126,10 @@
   gap: 48px;
   padding-top: 48px;
   padding-bottom: 96px;
+}
+
+.shop-layout.no-sidebar {
+  grid-template-columns: 1fr;
 }
 
 /* Sidebar Filters */
