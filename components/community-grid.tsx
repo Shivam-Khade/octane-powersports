@@ -1,34 +1,66 @@
 "use client";
 
 import Image from "next/image";
-import { ExternalLink } from "lucide-react";
-import { motion } from "framer-motion";
-import { communityImages } from "@/lib/data";
+import { Play, Share2, Clock } from "lucide-react";
 import "./community-grid.css";
+
+const sideVideos = [
+  {
+    id: "bnyeS1wHJ1c",
+    url: "https://youtu.be/bnyeS1wHJ1c?si=uuHuKZNb24kohe0d",
+    title: "Kawasaki Ninja 650 Akrapovič Full System & Rapid Bike Tuning!",
+  },
+  {
+    id: "WZtnOA5u77s",
+    url: "https://youtu.be/WZtnOA5u77s?si=pV2NlQrE9M6sPp0M",
+    title: "Octane Powersports Custom Build Review",
+  },
+  {
+    id: "3vxPDnZhcuE",
+    url: "https://youtu.be/3vxPDnZhcuE?si=AeTgScOvzyg_MfKB",
+    title: "Kawasaki Z900 SC Project CRT Titanium Slip-on Exhaust",
+  },
+  {
+    id: "9lhzKzzmxXI",
+    url: "https://youtu.be/9lhzKzzmxXI?si=BKUhQSMfT5Af6BOG",
+    title: "2023 BMW S1000RR PRO Arrow Pista Exhaust Build",
+  }
+];
 
 export function CommunityGrid() {
   return (
-    <div className="community-grid">
-      {communityImages.map((src, i) => (
-        <motion.div
-          key={i}
-          className="community-cell"
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Image
-            src={src}
-            alt={`Rider community photo ${i + 1}`}
-            fill
-            sizes="(max-width: 640px) 50vw, 33vw"
+    <div className="youtube-feed">
+      {/* Left Large Video */}
+      <div className="yt-main-video group">
+        <div className="yt-thumbnail">
+          <iframe 
+            src="https://www.youtube.com/embed/WLpi1vSPPdY?rel=0" 
+            title="Octane Powersports YouTube Video" 
+            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowFullScreen
           />
-          <div className="community-overlay">
-            <ExternalLink size={24} />
+        </div>
+      </div>
+      
+      {/* Right Column Videos */}
+      <div className="yt-side-videos">
+        {sideVideos.map((video) => (
+          <div key={video.id} className="yt-side-card">
+            <div className="yt-side-thumbnail">
+              <img 
+                src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`} 
+                alt={video.title} 
+                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }}
+              />
+            </div>
+            <div className="yt-side-info">
+              <h4>{video.title}</h4>
+              <a href={video.url} target="_blank" rel="noreferrer" className="yt-watch-link">Watch on YouTube</a>
+            </div>
           </div>
-        </motion.div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

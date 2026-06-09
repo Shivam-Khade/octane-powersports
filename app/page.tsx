@@ -207,56 +207,23 @@ export default function HomePage() {
             variants={{ show: { transition: { staggerChildren: 0.1 } } }}
           >
             <div>
-              <motion.p className="eyebrow" variants={fadeUp}>The Community</motion.p>
-              <motion.h2 variants={fadeUp}>Riders on the Road</motion.h2>
+              <motion.p className="eyebrow" variants={fadeUp}>Octane Garage</motion.p>
+              <motion.h2 variants={fadeUp} style={{ textTransform: "uppercase" }}>LATEST PERFORMANCE BUILDS</motion.h2>
             </div>
             <motion.a
-              href="https://instagram.com/octanepowersports"
+              href="https://www.youtube.com/@OctanePowersports"
               target="_blank"
               rel="noopener noreferrer"
               className="button outline-dark"
               variants={fadeUp}
             >
-              @octanepowersports <ArrowRight size={16} />
+              @OctanePowersports <ArrowRight size={16} />
             </motion.a>
           </motion.div>
           <CommunityGrid />
         </div>
       </section>
 
-      {/* ===== NEWSLETTER ===== */}
-      <section className="newsletter-section">
-        <div className="container newsletter-inner">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <p className="eyebrow">Octane Insider</p>
-            <h2 className="newsletter-heading">New drops, fitment guides<br />and exclusive deals.</h2>
-            <p className="newsletter-body">Join 5,000+ riders. No spam, only what matters.</p>
-          </motion.div>
-          <motion.form
-            className="newsletter-form"
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <input
-              suppressHydrationWarning
-              aria-label="Email address"
-              placeholder="Enter your email"
-              type="email"
-              className="newsletter-input"
-            />
-            <button suppressHydrationWarning type="submit" className="button primary newsletter-submit">
-              Subscribe
-            </button>
-          </motion.form>
-        </div>
-      </section>
     </main>
   );
 }
