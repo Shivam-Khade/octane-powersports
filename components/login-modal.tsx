@@ -53,7 +53,7 @@ export function LoginModal() {
         if (isAdmin) {
           router.push("/admin");
         } else {
-          router.push("/checkout");
+          router.push("/");
         }
         router.refresh();
       }
@@ -113,7 +113,7 @@ export function LoginModal() {
               style: { background: '#16a34a', color: '#fff', fontWeight: '600', padding: '12px 20px', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(22, 163, 74, 0.4)' }, 
               iconTheme: { primary: '#fff', secondary: '#16a34a' } 
             });
-            router.push("/checkout");
+            router.push("/");
             router.refresh();
           }
         }

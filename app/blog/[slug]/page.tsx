@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import pool from "@/lib/db";
 import { ArticleCard } from "@/components/article-card";
+import DOMPurify from 'isomorphic-dompurify';
 import "../blog.css";
 
 function parseArticle(a: any) {
@@ -99,7 +100,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 )}
 
                 {article.content && (
-                  <div dangerouslySetInnerHTML={{ __html: article.content }} />
+                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }} />
                 )}
               </div>
             </div>
