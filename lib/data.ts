@@ -15,6 +15,7 @@ export const categories = [
   "GPS", "Hand Guards", "Led Bulbs", "Indicators"
 ];
 
+
 export const testimonials = [
   {
     name: "Arjun Mehta",
