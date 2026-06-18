@@ -9,21 +9,21 @@ import "./bike-parts-search.css";
 const bikeData: Record<string, Record<string, Record<string, string[]>>> = {
   "BMW": {
     "R": {
-      "GS1300": ["Engine ice", "Brembo"]
+      "1300 GS": []
     }
   },
   "Kawasaki": {
     "Ninja ZX": {
-      "Zx10r": ["Engine ice", "Eazi grip"]
+      "ZX10R": []
     },
     "z": {
-      "z900": ["Engine ice", "R&G", "Pirelli"]
+      "Z900": []
     }
   },
   "Royal Enfield": {
     "650": {
-      "Interceptor": ["K&N"],
-      "GT": ["K&N"]
+      "Interceptor 650": [],
+      "Continental GT 650": []
     }
   }
 };
@@ -42,15 +42,9 @@ export function BikePartsSearch({ variant = "vertical" }: { variant?: "vertical"
   const handleSearch = () => {
     if (!make || !series || !model) return;
     
-    const parts = bikeData[make][series][model];
-    
-    if (parts && parts.length > 0) {
-      const params = new URLSearchParams();
-      parts.forEach(part => params.append("brand", part));
-      router.push(`/shop?${params.toString()}`);
-    } else {
-      router.push("/shop");
-    }
+    const params = new URLSearchParams();
+    params.append("model", model);
+    router.push(`/shop?${params.toString()}`);
   };
 
   return (

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, X, Upload } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export default function CategoriesClient({ initialCategories, saveAction, deleteAction }: any) {
   const [categories, setCategories] = useState(initialCategories);
@@ -80,11 +81,47 @@ export default function CategoriesClient({ initialCategories, saveAction, delete
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (confirm("Are you sure you want to delete this category?")) {
-      await deleteAction(id);
-      setCategories(categories.filter((c: any) => c.id !== id));
-    }
+  const handleDelete = (id: number) => {
+    toast.custom((t) => (
+      <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-sm w-full bg-[#0a0a0a]/90 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-2xl pointer-events-auto flex flex-col border border-gray-800 overflow-hidden transform transition-all`}>
+        <div className="p-6 border-b border-gray-800/50">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+              <Trash2 size={16} className="text-red-500" />
+            </div>
+            <p className="text-base font-black uppercase tracking-wide text-white">Delete Category</p>
+          </div>
+          <p className="text-sm text-gray-400 font-medium">Are you sure you want to permanently remove this category? This action cannot be undone.</p>
+        </div>
+        <div className="flex">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="flex-1 p-4 text-sm font-bold uppercase tracking-wide text-gray-400 hover:bg-white/5 hover:text-white transition-colors border-r border-gray-800/50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
+              try {
+                await deleteAction(id);
+                setCategories((prev: any) => prev.filter((c: any) => c.id !== id));
+                toast.success("Category deleted successfully", {
+                  style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333', borderRadius: '12px' }
+                });
+              } catch (err) {
+                toast.error("Failed to delete category", {
+                  style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333', borderRadius: '12px' }
+                });
+              }
+            }}
+            className="flex-1 p-4 text-sm font-black uppercase tracking-wide text-red-500 hover:bg-red-500/10 transition-colors"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    ), { duration: Infinity, position: "top-center" });
   };
 
   return (

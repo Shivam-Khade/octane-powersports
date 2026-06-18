@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { FooterWrapper } from "@/components/footer-wrapper";
 import { CartDrawer } from "@/components/cart-drawer";
 import { CursorGlow } from "@/components/cursor-glow";
+import { WhatsappButton } from "@/components/whatsapp-button";
 import { LoginModalProvider } from "@/components/login-context";
 import { LoginModal } from "@/components/login-modal";
 import { ProfileModalProvider } from "@/components/profile-context";
@@ -111,6 +112,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <FooterWrapper>
                 <Footer />
               </FooterWrapper>
+              <WhatsappButton />
               <CartDrawer />
               <LoginModal />
               <ProfileModal />

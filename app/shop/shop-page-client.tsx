@@ -20,21 +20,25 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
   const searchParams = useSearchParams();
   const initialBrands = searchParams.getAll("brand");
   const initialCategory = searchParams.get("category");
+  const initialModel = searchParams.get("model");
   const initialQ = searchParams.get("q");
 
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [activeCategories, setActiveCategories] = useState<string[]>(initialCategory ? [initialCategory] : []);
   const [activeBrands, setActiveBrands] = useState<string[]>(initialBrands.length > 0 ? initialBrands : []);
+  const [activeModel, setActiveModel] = useState<string | null>(initialModel);
 
   useEffect(() => {
     // When URL search params change (i.e. user clicked a header link), 
     // completely reset the filters to match the new URL.
     const brands = searchParams.getAll("brand");
     const category = searchParams.get("category");
+    const model = searchParams.get("model");
     const q = searchParams.get("q");
 
     setActiveBrands(brands);
     setActiveCategories(category ? [category] : []);
+    setActiveModel(model);
     setSearchQuery(q || "");
     setPage(1);
   }, [searchParams]);
@@ -64,6 +68,8 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
       const safeName = p.name || "";
       const safeCategory = p.category || "";
       const safeBrand = p.brand || "";
+      const compatibility = Array.isArray(p.compatibility) ? p.compatibility : 
+                           (typeof p.compatibility === 'string' ? JSON.parse(p.compatibility || '[]') : []);
 
       const normalize = (str: string) => str.toLowerCase().replace(/[-_]/g, ' ');
       const normQuery = normalize(searchQuery);
@@ -73,18 +79,21 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
       // Case-insensitive, hyphen-insensitive brand match
       const matchBrand = activeBrands.length === 0 || activeBrands.some(b => normalize(b) === normalize(safeBrand));
       
+      const matchModel = !activeModel || compatibility.some((m: string) => normalize(m).includes(normalize(activeModel)) || normalize(activeModel).includes(normalize(m)));
+
       const matchSearch = normalize(safeName).includes(normQuery) || 
                           normalize(safeCategory).includes(normQuery) ||
-                          normalize(safeBrand).includes(normQuery);
+                          normalize(safeBrand).includes(normQuery) ||
+                          compatibility.some((m: string) => normalize(m).includes(normQuery));
                           
-      return matchCategory && matchBrand && matchSearch;
+      return matchCategory && matchBrand && matchModel && matchSearch;
     }).sort((a, b) => {
       if (sortBy === "Price Low-High") return a.price - b.price;
       if (sortBy === "Price High-Low") return b.price - a.price;
       if (sortBy === "Top Rated") return b.rating - a.rating;
       return 0; // "Best Sellers" default
     });
-  }, [initialProducts, activeCategories, activeBrands, searchQuery, sortBy]);
+  }, [initialProducts, activeCategories, activeBrands, activeModel, searchQuery, sortBy]);
 
   const displayedProducts = filteredProducts.slice(0, page * itemsPerPage);
   
@@ -102,6 +111,7 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
   const clearAllFilters = () => {
     setActiveCategories([]);
     setActiveBrands([]);
+    setActiveModel(null);
     setSearchQuery("");
     setPage(1);
   };

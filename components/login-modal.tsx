@@ -4,7 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Mail, Lock, ArrowRight, Loader2, X } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, Loader2, X, Phone } from "lucide-react";
 import { useLoginModal } from "./login-context";
 import toast from "react-hot-toast";
 
@@ -12,6 +12,7 @@ export function LoginModal() {
   const { isOpen, closeModal } = useLoginModal();
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -64,7 +65,7 @@ export function LoginModal() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, phone, password }),
       });
 
       if (!res.ok) {
@@ -98,7 +99,7 @@ export function LoginModal() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -155,6 +156,17 @@ export function LoginModal() {
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
+                          required={!isLogin}
+                          className="h-14 w-full rounded-xl border-1.5 border-gray-200 bg-gray-50 pl-[50px] pr-5 text-[15px] outline-none transition-all focus:border-[#ff6b00] focus:bg-white focus:ring-4 focus:ring-[#ff6b00]/10"
+                        />
+                      </div>
+                      <div className="relative flex items-center mt-4">
+                        <Phone size={20} className="absolute left-4 text-gray-400" />
+                        <input
+                          placeholder="Phone Number"
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
                           required={!isLogin}
                           className="h-14 w-full rounded-xl border-1.5 border-gray-200 bg-gray-50 pl-[50px] pr-5 text-[15px] outline-none transition-all focus:border-[#ff6b00] focus:bg-white focus:ring-4 focus:ring-[#ff6b00]/10"
                         />

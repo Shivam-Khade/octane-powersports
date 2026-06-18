@@ -82,6 +82,7 @@ export function Header({ session }: { session: any }) {
           </Link>
 
           <nav className="main-nav" aria-label="Primary navigation">
+            <Link href="/shop" className={`nav-link ${pathname === '/shop' ? '!text-[#ff6b00]' : ''}`}>Shop</Link>
             <div className="mega-trigger">
               <button suppressHydrationWarning className="nav-link nav-btn">
                 Shop By Type <ChevronDown size={13} className="nav-chevron" />
@@ -236,6 +237,7 @@ export function Header({ session }: { session: any }) {
               <small className="logo-sub">POWERSPORTS</small>
             </Link>
             <nav className="mobile-nav">
+              <Link href="/shop" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Shop</Link>
               <div className="mobile-accordion">
                 <button 
                   className="mobile-nav-link w-full flex items-center justify-between" 

@@ -26,7 +26,11 @@ export function CartDrawer() {
       </div>
       {item && (
         <div className="cart-line">
-          <Image src={item.image} alt={item.name} width={78} height={78} />
+          {item.image ? (
+            <Image src={item.image} alt={item.name} width={78} height={78} />
+          ) : (
+            <div style={{ width: 78, height: 78, backgroundColor: '#f3f4f6', borderRadius: 8, flexShrink: 0 }} />
+          )}
           <div>
             <strong>{item.name}</strong>
             <p>$1,199 · Qty 1</p>

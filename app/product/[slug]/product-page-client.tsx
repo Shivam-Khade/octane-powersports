@@ -23,6 +23,7 @@ type Product = {
   availability: string;
   badge: string;
   image: string;
+  relatedThumbs?: string[];
   description?: string;
   compatibility?: string[];
   warranty?: string;
@@ -37,7 +38,7 @@ export function ProductPageClient({
   product: Product;
   related: Product[];
 }) {
-  const allImages = [product.image, ...related.slice(0, 3).map((r) => r.image)];
+  const allImages = [product.image, ...(product.relatedThumbs || [])].filter(Boolean);
   const [activeImg, setActiveImg] = useState(0);
   const [qty, setQty] = useState(1);
   const [zoomStyle, setZoomStyle] = useState<{ transformOrigin: string; transform: string } | null>(null);
@@ -99,33 +100,45 @@ export function ProductPageClient({
               onMouseLeave={handleMouseLeave}
             >
               <div className="gallery-main-img-wrap">
-                <Image
-                  src={allImages[activeImg]}
-                  alt={`${product.name} — view ${activeImg + 1}`}
-                  fill
-                  sizes="(max-width: 900px) 100vw, 50vw"
-                  priority
-                  style={zoomStyle || { transform: "scale(1)", transformOrigin: "center" }}
-                  className="gallery-main-img"
-                />
+                {allImages[activeImg] ? (
+                  <Image
+                    src={allImages[activeImg]}
+                    alt={`${product.name} — view ${activeImg + 1}`}
+                    fill
+                    sizes="(max-width: 900px) 100vw, 50vw"
+                    priority
+                    style={zoomStyle || { transform: "scale(1)", transformOrigin: "center" }}
+                    className="gallery-main-img"
+                  />
+                ) : (
+                  <div className="gallery-main-img bg-gray-100 absolute inset-0 flex items-center justify-center text-sm font-bold text-gray-400 uppercase tracking-widest">
+                    No Image Available
+                  </div>
+                )}
               </div>
               <div className="gallery-badge">
                 <span className="product-badge-lg">{product.badge}</span>
               </div>
             </div>
-            <div className="gallery-thumbs">
-              {allImages.map((src, i) => (
-                <button
-                  key={i}
-                  className={`gallery-thumb${i === activeImg ? " active" : ""}`}
-                  onClick={() => setActiveImg(i)}
-                  aria-label={`View image ${i + 1}`}
-                  suppressHydrationWarning
-                >
-                  <Image src={src} alt={`View ${i + 1}`} fill sizes="100px" />
-                </button>
-              ))}
-            </div>
+            {allImages.length > 1 && (
+              <div className="gallery-thumbs">
+                {allImages.map((src, i) => (
+                  <button
+                    key={i}
+                    className={`gallery-thumb${i === activeImg ? " active" : ""}`}
+                    onClick={() => setActiveImg(i)}
+                    aria-label={`View image ${i + 1}`}
+                    suppressHydrationWarning
+                  >
+                    {src ? (
+                      <Image src={src} alt={`View ${i + 1}`} fill sizes="100px" />
+                    ) : (
+                      <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">None</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Purchase Panel */}
@@ -144,7 +157,7 @@ export function ProductPageClient({
                 </span>
                 {product.stockCount !== undefined && product.stockCount <= 3 && (
                   <span className="product-badge product-badge--stock" style={{fontSize: '10px', padding: '4px 8px', margin: 0, textTransform: 'uppercase', fontWeight: 800}}>
-                    {product.stockCount} remaining
+                    More than 1 available
                   </span>
                 )}
               </div>

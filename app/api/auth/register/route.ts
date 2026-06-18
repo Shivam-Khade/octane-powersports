@@ -5,9 +5,9 @@ import { RowDataPacket } from 'mysql2';
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, phone, password } = await req.json();
 
-    if (!name || !email || !password) {
+    if (!name || !email || !phone || !password) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
@@ -26,8 +26,8 @@ export async function POST(req: Request) {
 
     // Insert user into database (default role 'user')
     const [result] = await pool.query(
-      'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-      [name, email, hashedPassword, 'user']
+      'INSERT INTO users (name, email, phone, password, role) VALUES (?, ?, ?, ?, ?)',
+      [name, email, phone, hashedPassword, 'user']
     );
 
     return NextResponse.json({ message: 'User registered successfully' }, { status: 201 });

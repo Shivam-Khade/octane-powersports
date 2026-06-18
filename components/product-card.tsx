@@ -20,6 +20,7 @@ export type Product = {
   options?: string[];
   stockCount?: number;
   relatedThumbs?: string[];
+  compatibility?: string[];
 };
 
 export function ProductCard({ product }: { product: Product }) {
@@ -36,7 +37,11 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="product-card">
       <Link href={`/product/${product.slug}`} className="product-image-wrap">
-        <Image src={product.image} alt={product.name} fill sizes="(max-width: 800px) 50vw, 25vw" className="main-img" />
+        {product.image ? (
+          <Image src={product.image} alt={product.name} fill sizes="(max-width: 800px) 50vw, 25vw" className="main-img" />
+        ) : (
+          <div className="main-img bg-gray-100 absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-400 uppercase tracking-widest">No Image</div>
+        )}
 
         <div className="product-badge-row">
           <span className="product-badge product-badge--category">{product.category}</span>

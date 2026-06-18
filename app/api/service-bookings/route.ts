@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   try {
     const { name, phone, email, bikeModel, date, timeSlot, serviceType, notes } = await req.json();
 
-    if (!name || !phone || !email || !bikeModel || !date || !timeSlot || !serviceType) {
+    if (!name || !phone || !bikeModel || !date || !timeSlot || !serviceType) {
       return NextResponse.json({ error: "All required fields must be provided" }, { status: 400 });
     }
 

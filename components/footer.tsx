@@ -29,20 +29,17 @@ export async function Footer() {
             <small className="footer-logo-sub">POWERSPORTS</small>
           </Link>
           <p className="footer-brand-desc">
-            India's premium motorcycle gear and performance parts store. Authentic products, expert support, and Pan India delivery.
+            India's premium motorcycle parts store. Authentic products, expert support, and Pan India delivery.
           </p>
           <div className="footer-contact">
-            <a href="tel:+917420919711" className="footer-contact-link">
-              <Phone size={14} /> +91 7420919711 / 7420949711
+            <a href="tel:+917420949711" className="footer-contact-link">
+              <Phone size={14} /> +91 7420949711
             </a>
             <a href="mailto:info@octaneps.com" className="footer-contact-link">
               <Mail size={14} /> info@octaneps.com
             </a>
             <span className="footer-contact-link">
               <MapPin size={14} /> Shop no 5, 30/8A/1 Ramwadi, Pune 411014
-            </span>
-            <span className="footer-contact-link">
-              GST: 27AAHFO8248F1ZZ
             </span>
           </div>
           <div className="footer-socials">
@@ -115,7 +112,6 @@ export async function Footer() {
             <span className="payment-badge">Mastercard</span>
             <span className="payment-badge">RuPay</span>
             <span className="payment-badge">EMI</span>
-            <span className="payment-badge">COD</span>
           </div>
           <div className="footer-legal">
             <Link href="#">Privacy Policy</Link>
