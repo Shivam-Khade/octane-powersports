@@ -36,10 +36,10 @@ export function LifestyleSection() {
               <span className="lifestyle-headline--accent">Designed For Adventure.</span>
             </h2>
             <p className="lifestyle-body">
-              Whether you're carving mountain passes, touring across India, or pushing limits at the track — we have the gear that matches your ambition.
+              Whether you're carving mountain passes, touring across India, or pushing limits at the track — we have the parts that match your ambition.
             </p>
             <Link href="/shop" className="hero-btn hero-btn--primary lifestyle-cta">
-              <span>Explore All Gear</span>
+              <span>Explore All Parts</span>
               <ArrowRight size={18} />
             </Link>
           </motion.div>

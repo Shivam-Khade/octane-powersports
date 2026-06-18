@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Truck, CreditCard, Headphones, RotateCcw } from "lucide-react";
-import { motion, type Variants } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { ProductCard } from "@/components/product-card";
 import { BrandMarquee } from "@/components/brand-marquee";
 import { LifestyleSection } from "@/components/lifestyle-section";
@@ -29,6 +29,15 @@ const fadeUp: Variants = {
 export default function HomePage() {
   const [products, setProducts] = useState<any[]>([]);
   const [categoryCards, setCategoryCards] = useState<any[]>([]);
+  const [currentCatIndex, setCurrentCatIndex] = useState(0);
+
+  useEffect(() => {
+    if (categoryCards.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentCatIndex((prev) => (prev + 1) % categoryCards.length);
+    }, 2500); // slides every 2.5s for readability
+    return () => clearInterval(interval);
+  }, [categoryCards.length]);
 
   useEffect(() => {
     fetch('/api/products')
@@ -39,7 +48,6 @@ export default function HomePage() {
     fetch('/api/categories')
       .then(res => res.json())
       .then(data => {
-        // filter featured ones
         setCategoryCards(data.filter((c: any) => c.featured));
       })
       .catch(console.error);
@@ -67,34 +75,78 @@ export default function HomePage() {
               <motion.p className="eyebrow" variants={fadeUp}>Shop by Category</motion.p>
               <motion.h2 variants={fadeUp}>Everything You Need.<br />Built to Perform.</motion.h2>
             </div>
-            <motion.div variants={fadeUp}>
-              <Link href="/shop" className="button outline-dark">
-                View All Categories <ArrowRight size={16} />
-              </Link>
-            </motion.div>
           </motion.div>
 
-          <div className="category-grid">
-            {categoryCards.map((cat, i) => (
-              <motion.div
-                key={cat.name}
-                initial={{ opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <Link href={`/shop?category=${encodeURIComponent(cat.name)}`} className="category-card">
-                  <Image src={cat.image} alt={cat.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
-                  <div className="category-card-body">
-                    <h3 className="category-card-title">{cat.name}</h3>
-                    <p className="category-card-desc">{cat.description}</p>
-                    <span className="category-card-arrow">
-                      <ArrowRight size={16} />
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+          <div className="relative w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden shadow-2xl group border border-white/10">
+            <AnimatePresence>
+              {categoryCards.length > 0 && (
+                <motion.div
+                  key={currentCatIndex}
+                  initial={{ x: "100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "-100%" }}
+                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0"
+                >
+                  <Link href={`/shop?category=${encodeURIComponent(categoryCards[currentCatIndex].name)}`} className="w-full h-full block">
+                    {categoryCards[currentCatIndex].image ? (
+                      <Image 
+                        src={categoryCards[currentCatIndex].image} 
+                        alt={categoryCards[currentCatIndex].name} 
+                        fill 
+                        sizes="100vw" 
+                        className="object-cover" 
+                        priority
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-[#1a1a1a]" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
+                    
+                    <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16 z-20 text-white flex flex-col md:flex-row md:items-end justify-between gap-6">
+                      <div className="max-w-3xl">
+                        <motion.h3 
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ delay: 0.2, duration: 0.5 }}
+                          className="font-montserrat text-4xl md:text-5xl lg:text-6xl font-black mb-4 tracking-tight leading-none text-white"
+                        >
+                          {categoryCards[currentCatIndex].name}
+                        </motion.h3>
+                        <motion.p 
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ delay: 0.3, duration: 0.5 }}
+                          className="text-lg md:text-xl text-white/80 max-w-2xl m-0 leading-relaxed"
+                        >
+                          {categoryCards[currentCatIndex].description}
+                        </motion.p>
+                      </div>
+                      <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4, duration: 0.5 }}
+                        className="shrink-0 flex items-center justify-center w-14 h-14 rounded-full bg-[#ff6b00] text-white hover:bg-[#ff8533] transition-colors shadow-lg shadow-[#ff6b00]/30"
+                      >
+                        <ArrowRight size={24} />
+                      </motion.div>
+                    </div>
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            
+            {/* Progress Indicators */}
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+              {categoryCards.map((_, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => setCurrentCatIndex(i)} 
+                  className={`w-12 h-1.5 rounded-full transition-all duration-300 ${i === currentCatIndex ? 'bg-[#ff6b00] shadow-[0_0_10px_#ff6b00]' : 'bg-white/30 hover:bg-white/60'}`}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -111,7 +163,7 @@ export default function HomePage() {
           >
             <div>
               <motion.p className="eyebrow" variants={fadeUp}>Best Sellers</motion.p>
-              <motion.h2 variants={fadeUp}>Premium Gear,<br />Proven by Riders.</motion.h2>
+              <motion.h2 variants={fadeUp}>Premium Parts,<br />Proven by Riders.</motion.h2>
             </div>
             <motion.div variants={fadeUp}>
               <Link href="/shop" className="button outline-dark">View All Products <ArrowRight size={16} /></Link>
@@ -179,20 +231,7 @@ export default function HomePage() {
           </motion.div>
           <TestimonialCarousel />
 
-          {/* Trust stats */}
-          <div className="trust-stats">
-            {[
-              { value: "4.9", label: "Average Rating" },
-              { value: "5,000+", label: "Orders Delivered" },
-              { value: "98%", label: "Happy Customers" },
-              { value: "15 Day", label: "Easy Returns" }
-            ].map(({ value, label }) => (
-              <div key={label} className="trust-stat">
-                <strong>{value}</strong>
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
+
         </div>
       </section>
 

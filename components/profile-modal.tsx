@@ -89,6 +89,9 @@ function ProfileModalContent() {
         // Refresh addresses
         const newRes = await fetch("/api/user/address");
         if (newRes.ok) setAddresses(await newRes.json());
+        
+        // Auto-close modal after successful save
+        closeModal();
       } else {
         toast.error("Failed to save address");
       }
@@ -149,15 +152,13 @@ function ProfileModalContent() {
                         <h3 className="text-base font-bold">Delivery Address</h3>
                         {!showAddressForm && (
                           <button onClick={() => {
-                            if (addresses.length > 0) {
-                              setAddressData({
-                                full_name: addresses[0].full_name || session?.user?.name || "",
-                                phone: addresses[0].phone || "",
-                                address_line: addresses[0].address_line || "",
-                                city: addresses[0].city || "",
-                                postal_code: addresses[0].postal_code || ""
-                              });
-                            }
+                            setAddressData({
+                              full_name: addresses[0]?.full_name || session?.user?.name || "",
+                              phone: addresses[0]?.phone || (session?.user as any)?.phone || "",
+                              address_line: addresses[0]?.address_line || "",
+                              city: addresses[0]?.city || "",
+                              postal_code: addresses[0]?.postal_code || ""
+                            });
                             setShowAddressForm(true);
                           }} className="flex items-center gap-1.5 bg-[#ff6b00]/10 text-[#ff6b00] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide hover:bg-[#ff6b00] hover:text-white transition-colors">
                             <Plus size={14} /> {addresses.length > 0 ? "Update Details" : "Add Details"}

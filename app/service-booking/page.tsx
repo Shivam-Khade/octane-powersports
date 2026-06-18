@@ -27,12 +27,11 @@ export default async function ServiceBookingPage() {
 
     try {
       const [rows] = await pool.query<RowDataPacket[]>(
-        "SELECT phone, bike_garage FROM users WHERE email = ?",
+        "SELECT phone FROM users WHERE email = ?",
         [session.user.email]
       );
       if (rows.length > 0) {
         initialData.phone = rows[0].phone || "";
-        initialData.bikeModel = rows[0].bike_garage || "";
       }
     } catch (e) {
       console.error("Failed to fetch user profile for service booking", e);

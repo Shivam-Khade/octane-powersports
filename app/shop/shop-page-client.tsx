@@ -190,19 +190,37 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
             </>
           )}
 
-          {/* Recommendations Carousel */}
-          {!isLoading && (
-            <div className="recommendations-section">
-              <h3 className="section-eyebrow">You Might Like</h3>
-              <div className="recommendations-carousel">
-                {initialProducts.slice(0, 3).map(p => (
-                  <div key={p.slug} className="carousel-item">
-                    <ProductCard product={p} />
-                  </div>
-                ))}
+          {/* Recommendations Carousel (Only visible when filtering) */}
+          {!isLoading && (activeCategories.length > 0 || activeBrands.length > 0) && (
+            <div className="recommendations-section mt-12 pt-8 border-t border-gray-100">
+              <h3 className="section-eyebrow mb-6">You Might Also Like</h3>
+              <div className="recommendations-carousel grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {initialProducts
+                  .filter(p => !displayedProducts.some(dp => dp.slug === p.slug))
+                  .slice(0, 4)
+                  .map(p => (
+                    <div key={p.slug} className="carousel-item">
+                      <ProductCard product={p} />
+                    </div>
+                  ))}
               </div>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* WhatsApp Contact Banner */}
+      <section className="container mt-12 mb-20">
+        <div className="bg-[#111] rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 border border-gray-800 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#ff6b00] rounded-full filter blur-[100px] opacity-10 pointer-events-none"></div>
+          <div className="z-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Can't find what you're looking for?</h2>
+            <p className="text-gray-400 max-w-xl">We have access to thousands of premium parts not listed online. Drop us a message on WhatsApp and our experts will source it for you.</p>
+          </div>
+          <a href="https://wa.me/910000000000?text=Hi,%20I'm%20looking%20for%20a%20specific%20part..." target="_blank" rel="noopener noreferrer" className="z-10 shrink-0 bg-[#25D366] hover:bg-[#128C7E] !text-white px-8 py-4 rounded-full font-bold uppercase tracking-wide flex items-center gap-3 transition-colors shadow-[0_0_20px_rgba(37,211,102,0.3)] hover:shadow-[0_0_30px_rgba(37,211,102,0.5)]">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="css-i6dzq1"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            Message on WhatsApp
+          </a>
         </div>
       </section>
     </main>

@@ -15,6 +15,8 @@ export function LoginModal() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -62,38 +64,69 @@ export function LoginModal() {
         return;
       }
       
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, password }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.message || "Registration failed");
-      } else {
-        const loginRes = await signIn("credentials", {
-          redirect: false,
-          email,
-          password,
+      if (!otpSent) {
+        // Step 1: Request OTP
+        const res = await fetch("/api/auth/send-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
         });
 
-        if (loginRes?.error) {
-          setError("Registered successfully, but failed to log in automatically");
+        if (!res.ok) {
+          const data = await res.json();
+          setError(data.error || "Failed to send OTP");
         } else {
-          closeModal();
-          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-          toast.success("Logged in successfully", { 
-            position: isMobile ? 'bottom-center' : 'top-right',
-            style: { background: '#16a34a', color: '#fff', fontWeight: '600', padding: '12px 20px', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(22, 163, 74, 0.4)' }, 
-            iconTheme: { primary: '#fff', secondary: '#16a34a' } 
+          setOtpSent(true);
+          toast.success("Verification code sent to your email");
+        }
+      } else {
+        // Step 2: Verify OTP and Register
+        if (!otp) {
+          setError("Verification code is required");
+          setLoading(false);
+          return;
+        }
+
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, phone, password, otp }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          setError(data.message || "Registration failed");
+        } else {
+          const loginRes = await signIn("credentials", {
+            redirect: false,
+            email,
+            password,
           });
-          router.push("/checkout");
-          router.refresh();
+
+          if (loginRes?.error) {
+            setError("Registered successfully, but failed to log in automatically");
+          } else {
+            closeModal();
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+            toast.success("Logged in successfully", { 
+              position: isMobile ? 'bottom-center' : 'top-right',
+              style: { background: '#16a34a', color: '#fff', fontWeight: '600', padding: '12px 20px', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(22, 163, 74, 0.4)' }, 
+              iconTheme: { primary: '#fff', secondary: '#16a34a' } 
+            });
+            router.push("/checkout");
+            router.refresh();
+          }
         }
       }
     }
     setLoading(false);
+  };
+
+  const resetForm = () => {
+    setIsLogin(!isLogin);
+    setError("");
+    setOtpSent(false);
+    setOtp("");
   };
 
   return (
@@ -142,7 +175,7 @@ export function LoginModal() {
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <AnimatePresence mode="popLayout">
-                  {!isLogin && (
+                  {!isLogin && !otpSent && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
@@ -175,29 +208,57 @@ export function LoginModal() {
                   )}
                 </AnimatePresence>
 
-                <div className="relative flex items-center">
-                  <Mail size={20} className="absolute left-4 text-gray-400" />
-                  <input
-                    placeholder="Email Address"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="h-14 w-full rounded-xl border-1.5 border-gray-200 bg-gray-50 pl-[50px] pr-5 text-[15px] outline-none transition-all focus:border-[#ff6b00] focus:bg-white focus:ring-4 focus:ring-[#ff6b00]/10"
-                  />
-                </div>
+                {!otpSent && (
+                  <>
+                    <div className="relative flex items-center">
+                      <Mail size={20} className="absolute left-4 text-gray-400" />
+                      <input
+                        placeholder="Email Address"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="h-14 w-full rounded-xl border-1.5 border-gray-200 bg-gray-50 pl-[50px] pr-5 text-[15px] outline-none transition-all focus:border-[#ff6b00] focus:bg-white focus:ring-4 focus:ring-[#ff6b00]/10"
+                      />
+                    </div>
 
-                <div className="relative flex items-center">
-                  <Lock size={20} className="absolute left-4 text-gray-400" />
-                  <input
-                    placeholder="Password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="h-14 w-full rounded-xl border-1.5 border-gray-200 bg-gray-50 pl-[50px] pr-5 text-[15px] outline-none transition-all focus:border-[#ff6b00] focus:bg-white focus:ring-4 focus:ring-[#ff6b00]/10"
-                  />
-                </div>
+                    <div className="relative flex items-center">
+                      <Lock size={20} className="absolute left-4 text-gray-400" />
+                      <input
+                        placeholder="Password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="h-14 w-full rounded-xl border-1.5 border-gray-200 bg-gray-50 pl-[50px] pr-5 text-[15px] outline-none transition-all focus:border-[#ff6b00] focus:bg-white focus:ring-4 focus:ring-[#ff6b00]/10"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {otpSent && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="relative flex flex-col items-center"
+                  >
+                    <p className="text-sm text-gray-500 mb-4 text-center">
+                      We've sent a 6-digit code to <strong>{email}</strong>
+                    </p>
+                    <div className="relative flex items-center w-full">
+                      <Lock size={20} className="absolute left-4 text-gray-400" />
+                      <input
+                        placeholder="Enter 6-digit OTP"
+                        type="text"
+                        maxLength={6}
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                        required
+                        className="h-14 w-full text-center tracking-[0.5em] font-bold rounded-xl border-1.5 border-gray-200 bg-gray-50 pl-[50px] pr-5 text-[18px] outline-none transition-all focus:border-[#ff6b00] focus:bg-white focus:ring-4 focus:ring-[#ff6b00]/10"
+                      />
+                    </div>
+                  </motion.div>
+                )}
 
                 {error && (
                   <motion.p
@@ -220,7 +281,7 @@ export function LoginModal() {
                     <Loader2 className="animate-spin" size={20} />
                   ) : (
                     <>
-                      {isLogin ? "Login" : "Register"} <ArrowRight size={18} />
+                      {isLogin ? "Login" : (!otpSent ? "Send OTP" : "Verify & Sign Up")} <ArrowRight size={18} />
                     </>
                   )}
                 </motion.button>
@@ -232,7 +293,7 @@ export function LoginModal() {
                   <button
                     type="button"
                     className="ml-2 font-semibold text-[#ff6b00] hover:underline"
-                    onClick={() => { setIsLogin(!isLogin); setError(""); }}
+                    onClick={resetForm}
                   >
                     {isLogin ? "Sign up" : "Log in"}
                   </button>

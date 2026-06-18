@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import pool from "@/lib/db";
 import { RowDataPacket } from "mysql2";
+import { sendOrderConfirmationEmail, sendAdminOrderNotification, OrderDetails } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 export async function GET() {
@@ -65,6 +66,42 @@ export async function POST(req: Request) {
         [item.quantity, item.product_name]
       );
     }
+
+    // Fetch user address for email
+    let shippingAddress = "Address not provided";
+    let customerPhone = "N/A";
+    try {
+      const [addressRows] = await pool.query<RowDataPacket[]>(
+        "SELECT * FROM addresses WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+        [session.user.id]
+      );
+      if (addressRows.length > 0) {
+        const addr = addressRows[0];
+        shippingAddress = `${addr.full_name}\n${addr.address_line}\n${addr.city}, ${addr.postal_code}`;
+        customerPhone = addr.phone || "N/A";
+      }
+    } catch (e) {
+      console.error("Error fetching address for email:", e);
+    }
+
+    // Send emails asynchronously
+    const orderDetails: OrderDetails = {
+      orderId,
+      customerName: session.user.name || "Customer",
+      customerEmail: session.user.email || "",
+      customerPhone,
+      totalAmount: total_amount,
+      paymentMethod: razorpay_payment_id ? "Razorpay" : "Unknown",
+      paymentStatus: razorpay_payment_id ? "Paid" : "Pending",
+      items,
+      shippingAddress,
+      orderTime: new Date().toISOString(),
+    };
+
+    if (orderDetails.customerEmail) {
+      sendOrderConfirmationEmail(orderDetails.customerEmail, orderDetails).catch(e => console.error("Customer email error:", e));
+    }
+    sendAdminOrderNotification(orderDetails).catch(e => console.error("Admin email error:", e));
 
     return NextResponse.json({ message: "Order created successfully", orderId }, { status: 201 });
   } catch (error) {

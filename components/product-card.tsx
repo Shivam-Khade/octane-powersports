@@ -31,7 +31,7 @@ export function ProductCard({ product }: { product: Product }) {
   else if (stock > 0) dynamicAvailability = "Low Stock";
 
   const isLimited = dynamicAvailability === "Limited" || dynamicAvailability === "Low Stock";
-  const lowStock = stock > 0 && stock <= 3;
+  const lowStock = stock > 0 && stock < 5;
   const { addToCart } = useCart();
 
   return (
@@ -46,7 +46,7 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="product-badge-row">
           <span className="product-badge product-badge--category">{product.category}</span>
           <span className={`product-badge product-badge--status ${isLimited ? 'limited' : ''}`}>{product.badge}</span>
-          {lowStock && <span className="product-badge product-badge--stock">{product.stockCount} remaining</span>}
+          {lowStock && <span className="product-badge product-badge--stock">Limited</span>}
         </div>
 
       </Link>

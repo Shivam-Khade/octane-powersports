@@ -43,6 +43,7 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
             email: user.email,
             role: user.role,
+            phone: user.phone,
           };
         } catch (error) {
           console.error("Database error during authorization:", error);
@@ -56,6 +57,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.phone = (user as any).phone;
       }
       return token;
     },
@@ -63,6 +65,7 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        (session.user as any).phone = token.phone as string;
       }
       return session;
     }

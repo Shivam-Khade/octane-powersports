@@ -20,7 +20,7 @@ export default function CheckoutPage() {
 function CheckoutContent() {
   const router = useRouter();
   const { data: session } = useSession();
-  const { openModal: openProfileModal } = useProfileModal();
+  const { openModal: openProfileModal, isOpen: isProfileModalOpen } = useProfileModal();
   const { openModal: openLoginModal } = useLoginModal();
   
   const [submitting, setSubmitting] = useState(false);
@@ -46,7 +46,7 @@ function CheckoutContent() {
         })
         .catch(err => console.error("Checkout address fetch error:", err));
     }
-  }, [session]);
+  }, [session, isProfileModalOpen]);
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
