@@ -46,7 +46,7 @@ export function CommunityGrid() {
       {/* Right Column Videos */}
       <div className="yt-side-videos">
         {sideVideos.map((video) => (
-          <div key={video.id} className="yt-side-card">
+          <a key={video.id} href={video.url} target="_blank" rel="noreferrer" className="yt-side-card group">
             <div className="yt-side-thumbnail">
               <img 
                 src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`} 
@@ -56,9 +56,9 @@ export function CommunityGrid() {
             </div>
             <div className="yt-side-info">
               <h4>{video.title}</h4>
-              <a href={video.url} target="_blank" rel="noreferrer" className="yt-watch-link">Watch on YouTube</a>
+              <span className="yt-watch-link">Watch on YouTube</span>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </div>

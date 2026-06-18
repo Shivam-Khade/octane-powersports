@@ -271,9 +271,30 @@
   .hero-cinematic__copy {
     padding: 0;
   }
+  .hero-cinematic__content {
+    justify-content: center;
+  }
+  .hero-cinematic__search-wrapper {
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 640px) {
+  .hero-cinematic,
+  .hero-cinematic__container,
+  .hero-cinematic__content {
+    min-height: auto;
+    height: 100dvh;
+    box-sizing: border-box;
+  }
+  
+  .hero-cinematic__content {
+    padding-top: 0;
+    padding-bottom: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
   .hero-headline {
     font-size: clamp(40px, 11vw, 56px);
   }
@@ -282,6 +303,7 @@
     display: grid;
     width: 100%;
   }
+
 
   .hero-stats {
     display: grid;

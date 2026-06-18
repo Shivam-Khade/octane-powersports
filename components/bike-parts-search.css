@@ -299,9 +299,43 @@
 }
 
 @media (max-width: 1024px) {
-  .bike-parts-search {
+  .bike-parts-search:not(.variant-horizontal) {
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .variant-horizontal .bps-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .variant-horizontal .bps-select-wrapper {
+    width: 100%;
+  }
+  .variant-horizontal .bps-submit-btn-horizontal {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .bike-parts-search {
+    padding: 32px;
+    gap: 24px;
+  }
+  .bps-header h2 {
+    font-size: 24px;
+  }
+  .bps-body {
+    gap: 16px;
+  }
+  .custom-bps-select {
+    padding: 16px 20px;
+    font-size: 16px;
+  }
+  .bps-submit.button.primary {
+    padding: 16px 24px;
+    font-size: 16px;
   }
 }

@@ -195,3 +195,47 @@ a.footer-contact-link:hover {
     gap: 16px;
   }
 }
+
+@media (max-width: 640px) {
+  .footer {
+    padding: 50px 0 30px;
+  }
+  
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 16px;
+  }
+  
+  .footer-brand {
+    grid-column: 1 / -1;
+    margin-bottom: 8px;
+  }
+
+  .footer-brand-desc {
+    font-size: 13px;
+  }
+
+  .footer-contact-link {
+    font-size: 12px;
+  }
+  
+  .footer-col-title {
+    margin: 0 0 12px;
+    font-size: 11px;
+  }
+
+  .footer-link {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .footer-bottom {
+    margin-top: 40px;
+    padding-top: 24px;
+  }
+  
+  .footer-payments {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}

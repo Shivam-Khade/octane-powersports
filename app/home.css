@@ -71,7 +71,7 @@
 .category-slider > * {
   scroll-snap-align: start;
   flex: 0 0 calc(35% - 16px);
-  min-width: 310px;
+  min-width: min(85vw, 310px);
 }
 
 .category-card {
@@ -519,7 +519,6 @@
 }
 
 @media (max-width: 640px) {
-  .product-grid,
   .why-grid,
   .brand-strip {
     grid-template-columns: 1fr;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle2, Loader2, Minus, Plus, MapPin } from "lucide-react";
+import { CheckCircle2, Loader2, Minus, Plus, MapPin, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { SessionProvider, useSession } from "next-auth/react";
 import { useProfileModal } from "@/components/profile-context";
@@ -258,7 +258,7 @@ function CheckoutContent() {
               </div>
               
               {cartItems.length > 0 && (
-                <div className="place-order-wrapper">
+                <div className="place-order-wrapper desktop-place-order">
                   <button onClick={handleSubmit} disabled={submitting} className="place-order-btn">
                     {submitting ? <Loader2 className="animate-spin" size={20} /> : "PLACE ORDER"}
                   </button>
@@ -297,7 +297,29 @@ function CheckoutContent() {
                     You will save ₹{discount.toLocaleString('en-IN')} on this order
                   </div>
                 )}
-                {error && <div className="p-3 bg-red-500/10 text-red-500 rounded-lg text-sm font-medium border border-red-500/20 m-4 mb-0">{error}</div>}
+                
+                {cartItems.length > 0 && (
+                  <div className="mobile-place-order">
+                    <button onClick={handleSubmit} disabled={submitting} className="place-order-btn">
+                      {submitting ? <Loader2 className="animate-spin" size={20} /> : "PLACE ORDER"}
+                    </button>
+                  </div>
+                )}
+                
+                {error && (
+                  <div className="mx-0 mt-6 mb-2 p-4 border border-[#e53935]/30 bg-[#e53935]/5 rounded-md flex gap-3 items-start shadow-[0_2px_10px_rgba(229,57,53,0.05)] relative overflow-hidden">
+                    <div className="absolute top-0 left-0 bottom-0 w-1 bg-[#e53935]"></div>
+                    <AlertCircle className="text-[#e53935] shrink-0 mt-0.5 ml-1" size={18} />
+                    <div className="flex flex-col">
+                      <span className="font-bold text-[#e53935] text-xs mb-1 uppercase tracking-wider">Transaction Failed</span>
+                      <span className="text-[#d32f2f] text-sm leading-relaxed font-medium">
+                        {error.includes("declined by the bank") 
+                          ? "Your transaction was declined by the bank. Please use an alternative payment method to complete your order." 
+                          : error}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             

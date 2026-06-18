@@ -35,6 +35,7 @@ export function ServiceClient({
   initialData?: InitialData; 
 }) {
   const { openModal } = useLoginModal();
+  const [mobileTab, setMobileTab] = useState<"book" | "visit">("book");
 
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
@@ -162,8 +163,24 @@ export function ServiceClient({
 
   return (
     <div className="service-split-layout">
+      {/* Mobile Tabs */}
+      <div className="service-mobile-tabs">
+        <button 
+          className={`service-mobile-tab ${mobileTab === 'book' ? 'active' : ''}`}
+          onClick={() => setMobileTab('book')}
+        >
+          Request Booking
+        </button>
+        <button 
+          className={`service-mobile-tab ${mobileTab === 'visit' ? 'active' : ''}`}
+          onClick={() => setMobileTab('visit')}
+        >
+          Visit the Store
+        </button>
+      </div>
+
       {/* Left Form Side */}
-      <div className="service-form-side">
+      <div className={`service-form-side ${mobileTab !== 'book' ? 'mobile-hidden' : ''}`}>
         <motion.div 
           className="service-form-container"
           variants={formVariants}
@@ -286,13 +303,13 @@ export function ServiceClient({
       </div>
 
       {/* Center Divider */}
-      <div className="service-divider">
+      <div className="service-divider hide-on-mobile">
         <div className="service-divider-line" />
         <div className="service-divider-badge">OR</div>
       </div>
 
       {/* Right Map Side */}
-      <div className="service-map-side">
+      <div className={`service-map-side ${mobileTab !== 'visit' ? 'mobile-hidden' : ''}`}>
         <div className="service-map-content">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

@@ -24,11 +24,26 @@ const getBrandGroups = () => {
   }));
 };
 
+const getTypeGroups = () => {
+  const groups: Record<string, string[]> = {};
+  categories.forEach(c => {
+    const letter = c.charAt(0).toUpperCase();
+    if (!groups[letter]) groups[letter] = [];
+    groups[letter].push(c);
+  });
+  return Object.keys(groups).sort().map(letter => ({
+    letter,
+    types: groups[letter].sort()
+  }));
+};
+
 export function Header({ session }: { session: any }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileTypeOpen, setMobileTypeOpen] = useState(false);
   const [mobileBrandOpen, setMobileBrandOpen] = useState(false);
+  const [expandedBrandLetter, setExpandedBrandLetter] = useState<string | null>(null);
+  const [expandedTypeLetter, setExpandedTypeLetter] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const router = useRouter();
@@ -74,7 +89,7 @@ export function Header({ session }: { session: any }) {
 
   return (
     <>
-      <header className={`site-header${scrolled ? " is-scrolled" : ""}`}>
+      <header className={`site-header${scrolled ? " is-scrolled" : ""}${pathname?.startsWith('/blog') ? " is-journal" : ""}`}>
         <div className="nav-shell">
           <Link href="/" className="logo" aria-label="Octane Powersports home">
             <span className="logo-main">OCTANE</span>
@@ -86,7 +101,7 @@ export function Header({ session }: { session: any }) {
             <Link href="/shop" className={`nav-link ${pathname === '/shop' ? '!text-[#ff6b00]' : ''}`}>Shop</Link>
             <div className="mega-trigger">
               <button suppressHydrationWarning className="nav-link nav-btn">
-                Shop By Type <ChevronDown size={13} className="nav-chevron" />
+                Shop By Category <ChevronDown size={13} className="nav-chevron" />
               </button>
               <div className="mega-menu types-menu">
                 <div className="mega-type-grid">
@@ -134,7 +149,8 @@ export function Header({ session }: { session: any }) {
           </nav>
 
           <div className="nav-actions">
-            <div ref={searchContainerRef} className={`nav-search-wrapper ${searchOpen ? "open" : ""}`}>
+            {/* Desktop Search */}
+            <div ref={searchContainerRef} className={`nav-search-wrapper desktop-search ${searchOpen ? "open" : ""}`}>
               <button 
                 suppressHydrationWarning 
                 className="search-trigger-btn" 
@@ -161,6 +177,19 @@ export function Header({ session }: { session: any }) {
                 />
               </form>
             </div>
+
+            {/* Mobile Search Trigger */}
+            <button 
+              suppressHydrationWarning 
+              className="search-trigger-btn mobile-search-trigger" 
+              aria-label="Search"
+              onClick={(e) => {
+                e.preventDefault();
+                setSearchOpen(!searchOpen);
+              }}
+            >
+              <Search size={18} />
+            </button>
             
             {session ? (
               <>
@@ -219,6 +248,24 @@ export function Header({ session }: { session: any }) {
             </button>
           </div>
         </div>
+
+        {/* Global Search Dropdown Row (Mobile Only) */}
+        <div className={`global-search-container mobile-search-dropdown ${searchOpen ? "open" : ""}`}>
+          <form onSubmit={handleSearch} className="global-search-inner">
+            <Search size={20} className="global-search-icon" />
+            <input 
+              autoFocus={searchOpen}
+              type="text" 
+              placeholder="Search for premium parts, brands, or categories..." 
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="global-search-input"
+            />
+            <button type="button" className="global-search-close" onClick={() => setSearchOpen(false)}>
+              <X size={20} />
+            </button>
+          </form>
+        </div>
       </header>
 
       {/* Mobile Drawer */}
@@ -242,18 +289,33 @@ export function Header({ session }: { session: any }) {
               <Link href="/shop" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Shop</Link>
               <div className="mobile-accordion">
                 <button 
-                  className="mobile-nav-link w-full flex items-center justify-between" 
+                  className="mobile-nav-link w-full text-left flex items-center justify-between" 
                   onClick={() => setMobileTypeOpen(!mobileTypeOpen)}
                 >
-                  Shop By Type
-                  <ChevronDown size={18} className={`transition-transform ${mobileTypeOpen ? 'rotate-180' : ''}`} />
+                  <span>Shop By Category</span>
+                  <ChevronDown size={18} className={`transition-transform shrink-0 ${mobileTypeOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {mobileTypeOpen && (
                   <div className="mobile-accordion-content">
-                    {categories.map((cat) => (
-                      <Link key={cat} href={`/shop?category=${encodeURIComponent(cat)}`} className="mobile-sub-link" onClick={() => setMobileOpen(false)}>
-                        {cat}
-                      </Link>
+                    {getTypeGroups().map(group => (
+                      <div key={group.letter} className="mobile-brand-group mb-2">
+                        <button 
+                          className="mobile-brand-letter flex items-center justify-between w-full font-bold text-gray-300 py-2"
+                          onClick={() => setExpandedTypeLetter(expandedTypeLetter === group.letter ? null : group.letter)}
+                        >
+                          <span>{group.letter}</span>
+                          <ChevronDown size={14} className={`transition-transform ${expandedTypeLetter === group.letter ? 'rotate-180' : ''}`} />
+                        </button>
+                        {expandedTypeLetter === group.letter && (
+                          <div className="mobile-brand-sub-list flex flex-col pl-4 border-l border-gray-800/50 ml-1.5 mt-1">
+                            {group.types.map(type => (
+                              <Link key={type} href={`/shop?category=${encodeURIComponent(type)}`} className="mobile-sub-link" onClick={() => setMobileOpen(false)}>
+                                {type}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 )}
@@ -261,22 +323,32 @@ export function Header({ session }: { session: any }) {
 
               <div className="mobile-accordion">
                 <button 
-                  className="mobile-nav-link w-full flex items-center justify-between" 
+                  className="mobile-nav-link w-full text-left flex items-center justify-between" 
                   onClick={() => setMobileBrandOpen(!mobileBrandOpen)}
                 >
-                  Shop By Brand
-                  <ChevronDown size={18} className={`transition-transform ${mobileBrandOpen ? 'rotate-180' : ''}`} />
+                  <span>Shop By Brand</span>
+                  <ChevronDown size={18} className={`transition-transform shrink-0 ${mobileBrandOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {mobileBrandOpen && (
                   <div className="mobile-accordion-content">
                     {getBrandGroups().map(group => (
-                      <div key={group.letter} className="mobile-brand-group">
-                        <span className="mobile-brand-letter">{group.letter}</span>
-                        {group.brands.map(brand => (
-                          <Link key={brand} href={`/shop?brand=${encodeURIComponent(brand)}`} className="mobile-sub-link" onClick={() => setMobileOpen(false)}>
-                            {brand}
-                          </Link>
-                        ))}
+                      <div key={group.letter} className="mobile-brand-group mb-2">
+                        <button 
+                          className="mobile-brand-letter flex items-center justify-between w-full font-bold text-gray-300 py-2"
+                          onClick={() => setExpandedBrandLetter(expandedBrandLetter === group.letter ? null : group.letter)}
+                        >
+                          <span>{group.letter}</span>
+                          <ChevronDown size={14} className={`transition-transform ${expandedBrandLetter === group.letter ? 'rotate-180' : ''}`} />
+                        </button>
+                        {expandedBrandLetter === group.letter && (
+                          <div className="mobile-brand-sub-list flex flex-col pl-4 border-l border-gray-800/50 ml-1.5 mt-1">
+                            {group.brands.map(brand => (
+                              <Link key={brand} href={`/shop?brand=${encodeURIComponent(brand)}`} className="mobile-sub-link" onClick={() => setMobileOpen(false)}>
+                                {brand}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

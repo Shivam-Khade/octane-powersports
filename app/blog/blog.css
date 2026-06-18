@@ -579,12 +579,28 @@ button:focus-visible {
     font-size: 36px;
   }
 
-  .featured-article {
+  .featured-article:not(.slider-slide) {
     height: 340px;
   }
 
   .featured-content {
     padding: 24px;
+  }
+
+  .full-screen-slider {
+    margin-top: 0;
+  }
+  
+  .full-screen-slider .featured-slider-container {
+    height: 380px;
+  }
+  
+  .full-screen-slider .featured-content {
+    padding-bottom: 40px;
+  }
+  
+  .full-screen-slider .slider-dots {
+    bottom: 16px;
   }
 
   .featured-category {
@@ -593,7 +609,17 @@ button:focus-visible {
   }
 
   .featured-title {
-    font-size: 24px;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .featured-meta {
+    font-size: 10px;
+  }
+  
+  .featured-cta {
+    padding: 6px 12px;
+    font-size: 12px;
   }
 
   .featured-desc {
@@ -836,6 +862,38 @@ button:focus-visible {
   }
   .article-detail-title {
     font-size: 36px;
+  }
+}
+
+@media (max-width: 640px) {
+  .article-detail-title {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  .article-lead {
+    font-size: 16px;
+    margin-bottom: 32px;
+    padding-left: 16px;
+  }
+  .article-content {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .article-content > p:first-of-type::first-letter {
+    font-size: 48px;
+    line-height: 40px;
+  }
+  .article-content h2 {
+    font-size: 24px;
+    margin: 32px 0 16px;
+  }
+  .article-content blockquote {
+    font-size: 18px;
+    padding: 20px 24px;
+    margin: 32px 0;
+  }
+  .article-detail-image-wrapper {
+    margin-bottom: 32px;
   }
 }
 

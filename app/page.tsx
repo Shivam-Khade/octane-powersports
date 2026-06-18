@@ -255,6 +255,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="button outline-dark"
               variants={fadeUp}
+              style={{ position: "relative", top: "6px" }}
             >
               @OctanePowersports <ArrowRight size={16} />
             </motion.a>

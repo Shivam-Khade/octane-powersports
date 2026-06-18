@@ -160,12 +160,28 @@
   display: grid;
   grid-template-columns: 160px 1fr;
   gap: 20px;
-  align-items: start;
+  align-items: stretch;
+  text-decoration: none;
+  color: inherit;
 }
 
 @media (max-width: 640px) {
   .yt-side-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+  }
+  .yt-side-videos {
+    padding-right: 0;
+    gap: 16px;
+  }
+  .yt-side-info h4 {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+  .yt-watch-link {
+    font-size: 0.8rem;
   }
 }
 
@@ -174,6 +190,12 @@
   aspect-ratio: 16 / 9;
   border-radius: 8px;
   overflow: hidden;
+}
+
+.yt-side-info {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .yt-side-info h4 {
@@ -195,6 +217,7 @@
   font-weight: 600;
   text-decoration: none;
   display: inline-block;
+  margin-top: auto;
 }
 
 .yt-watch-link:hover {

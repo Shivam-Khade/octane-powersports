@@ -81,3 +81,23 @@
   transform: translateY(-3px);
   box-shadow: 0 20px 50px rgba(255, 107, 0, 0.4);
 }
+
+@media (max-width: 640px) {
+  .lifestyle-content {
+    padding: 80px 0;
+  }
+  .lifestyle-headline {
+    font-size: clamp(40px, 11vw, 52px);
+    margin-bottom: 16px;
+  }
+  .lifestyle-body {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .lifestyle-cta {
+    min-height: 50px;
+    padding: 0 24px;
+    font-size: 14px;
+  }
+}

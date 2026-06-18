@@ -148,8 +148,8 @@ function ProfileModalContent() {
                     <div className="py-8 flex justify-center"><Loader2 className="animate-spin text-[#ff6b00]" size={28} /></div>
                   ) : (
                     <>
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-base font-bold">Delivery Address</h3>
+                      <div className="flex justify-between items-center mb-4 gap-3">
+                        <h3 className="text-base font-bold shrink-0">Delivery Address</h3>
                         {!showAddressForm && (
                           <button onClick={() => {
                             setAddressData({
@@ -160,8 +160,8 @@ function ProfileModalContent() {
                               postal_code: addresses[0]?.postal_code || ""
                             });
                             setShowAddressForm(true);
-                          }} className="flex items-center gap-1.5 bg-[#ff6b00]/10 text-[#ff6b00] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide hover:bg-[#ff6b00] hover:text-white transition-colors">
-                            <Plus size={14} /> {addresses.length > 0 ? "Update Details" : "Add Details"}
+                          }} className="flex items-center gap-1 bg-[#ff6b00]/10 text-[#ff6b00] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide hover:bg-[#ff6b00] hover:text-white transition-colors shrink-0">
+                            <Plus size={12} /> {addresses.length > 0 ? "Update Details" : "Add Details"}
                           </button>
                         )}
                       </div>
