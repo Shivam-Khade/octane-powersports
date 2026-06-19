@@ -55,10 +55,20 @@ export async function POST(req: Request) {
 
     // Send Email
     const result = await sendOTPEmail(email, otp);
-    console.log("Resend API Response:", result);
+    
+    console.log("\n=====================================");
+    console.log(`🔑 DEVELOPMENT OTP FOR ${email}: ${otp}`);
+    console.log("=====================================\n");
     
     if (!result.success) {
       console.error("Resend API Error details:", result.error);
+      
+      // Allow local testing even if Resend restricts the email domain
+      if (result.error?.name === 'validation_error' && result.error?.message?.includes('testing emails')) {
+        console.warn("⚠️ Bypassing Resend domain restriction for local testing. Use the OTP printed above.");
+        return NextResponse.json({ message: "OTP logged to console for testing" }, { status: 200 });
+      }
+
       return NextResponse.json({ error: "Failed to send OTP email. Please check the email address." }, { status: 500 });
     }
 
