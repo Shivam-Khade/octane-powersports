@@ -88,7 +88,7 @@ export default function HomePage() {
                   transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                   className="absolute inset-0"
                 >
-                  <Link href={`/shop?category=${encodeURIComponent(categoryCards[currentCatIndex].name)}`} className="w-full h-full block">
+                  <Link href={`/shop?category=${encodeURIComponent(categoryCards[currentCatIndex].name)}`} className="relative w-full h-full block">
                     {categoryCards[currentCatIndex].image ? (
                       <Image 
                         src={categoryCards[currentCatIndex].image} 
