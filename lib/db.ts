@@ -17,7 +17,7 @@ const pool = global._mysqlPool || mysql.createPool({
     minVersion: 'TLSv1.2',
     rejectUnauthorized: true,
     servername: process.env.DB_SERVERNAME || undefined
-  } : undefined
+  } as any : undefined
 });
 
 if (process.env.NODE_ENV !== 'production') {
