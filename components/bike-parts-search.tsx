@@ -1,32 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./bike-parts-search.css";
-
-const bikeData: Record<string, Record<string, Record<string, string[]>>> = {
-  "BMW": {
-    "R": {
-      "1300 GS": []
-    }
-  },
-  "Kawasaki": {
-    "Ninja ZX": {
-      "ZX10R": []
-    },
-    "z": {
-      "Z900": []
-    }
-  },
-  "Royal Enfield": {
-    "650": {
-      "Interceptor 650": [],
-      "Continental GT 650": []
-    }
-  }
-};
 
 export function BikePartsSearch({ variant = "vertical" }: { variant?: "vertical" | "horizontal" }) {
   const router = useRouter();
@@ -34,10 +12,26 @@ export function BikePartsSearch({ variant = "vertical" }: { variant?: "vertical"
   const [make, setMake] = useState("");
   const [series, setSeries] = useState("");
   const [model, setModel] = useState("");
+  
+  const [bikeData, setBikeData] = useState<Record<string, Record<string, Record<string, string[]>>>>({});
+  const [loadingData, setLoadingData] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/bike-models')
+      .then(res => res.json())
+      .then(data => {
+        setBikeData(data);
+        setLoadingData(false);
+      })
+      .catch(err => {
+        console.error("Failed to load bike models:", err);
+        setLoadingData(false);
+      });
+  }, []);
 
   const makes = Object.keys(bikeData);
-  const seriesList = make ? Object.keys(bikeData[make]) : [];
-  const modelList = make && series ? Object.keys(bikeData[make][series]) : [];
+  const seriesList = make && bikeData[make] ? Object.keys(bikeData[make]) : [];
+  const modelList = make && series && bikeData[make][series] ? Object.keys(bikeData[make][series]) : [];
 
   const handleSearch = () => {
     if (!make || !series || !model) return;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Package } from "lucide-react";
+import { Package, Mail, Phone, MapPin } from "lucide-react";
 
 export default function OrdersClient({ initialOrders, updateStatusAction }: any) {
   const [orders, setOrders] = useState(initialOrders);
@@ -35,30 +35,53 @@ export default function OrdersClient({ initialOrders, updateStatusAction }: any)
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Order ID</th>
-              <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Date</th>
-              <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Customer</th>
-              <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Total</th>
-              <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Items</th>
-              <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider text-right">Status</th>
+              <th className="px-4 py-3 font-bold text-gray-500 uppercase text-xs tracking-wider">Order ID</th>
+              <th className="px-4 py-3 font-bold text-gray-500 uppercase text-xs tracking-wider">Date</th>
+              <th className="px-4 py-3 font-bold text-gray-500 uppercase text-xs tracking-wider">Customer</th>
+              <th className="px-4 py-3 font-bold text-gray-500 uppercase text-xs tracking-wider">Total</th>
+              <th className="px-4 py-3 font-bold text-gray-500 uppercase text-xs tracking-wider">Items</th>
+              <th className="px-4 py-3 font-bold text-gray-500 uppercase text-xs tracking-wider text-right">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {orders.map((order: any) => (
               <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                <td className="p-4 font-mono font-bold text-[#0a0a0a]">OCT-{order.id.toString().padStart(5, '0')}</td>
-                <td className="p-4 text-sm text-gray-500" suppressHydrationWarning>
+                <td className="px-4 py-3 font-mono font-bold text-[#0a0a0a] align-top">OCT-{order.id.toString().padStart(5, '0')}</td>
+                <td className="px-4 py-3 text-sm text-gray-500 align-top" suppressHydrationWarning>
                   {new Date(order.created_at).toLocaleDateString('en-IN')}
                 </td>
-                <td className="p-4">
-                  <p className="font-medium text-[#0a0a0a]">{order.customer_name || 'Guest'}</p>
-                  <p className="text-xs text-gray-500">{order.customer_email || 'No email'}</p>
+                <td className="px-4 py-3 align-top min-w-[250px]">
+                  <div className="flex flex-col gap-1">
+                    <p className="font-bold text-[#0a0a0a]">{order.customer_name || 'Guest'}</p>
+                    <div className="flex flex-col gap-1 mt-1">
+                      {order.customer_email && (
+                        <div className="flex items-center gap-1.5 text-[12px] text-gray-500 leading-none">
+                          <Mail size={12} className="text-gray-400 shrink-0" />
+                          <span className="truncate">{order.customer_email}</span>
+                        </div>
+                      )}
+                      {order.customer_phone && (
+                        <div className="flex items-center gap-1.5 text-[12px] text-gray-500 leading-none">
+                          <Phone size={12} className="text-gray-400 shrink-0" />
+                          <span>{order.customer_phone}</span>
+                        </div>
+                      )}
+                      {order.address && (
+                        <div className="flex items-start gap-1.5 text-[12px] text-gray-500 mt-0.5">
+                          <MapPin size={12} className="mt-[2px] shrink-0 text-gray-400" />
+                          <span className="leading-tight">
+                            {order.address.address_line}, {order.address.city}, {order.address.state} {order.address.postal_code}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </td>
-                <td className="p-4 font-bold">₹{Number(order.total_amount).toLocaleString('en-IN')}</td>
-                <td className="p-4 text-sm text-gray-500 flex items-center gap-2">
-                  <Package size={14} /> {order.items?.length || 0} items
+                <td className="px-4 py-3 font-bold align-top">₹{Number(order.total_amount).toLocaleString('en-IN')}</td>
+                <td className="px-4 py-3 text-sm text-gray-500 align-top">
+                  <div className="flex items-center gap-1.5"><Package size={14} className="text-gray-400" /> {order.items?.length || 0}</div>
                 </td>
-                <td className="p-4 text-right">
+                <td className="px-4 py-3 text-right align-top">
                   <select 
                     value={order.status}
                     onChange={(e) => handleStatusChange(order.id, e.target.value)}

@@ -48,7 +48,7 @@ export default async function AdminOrdersPage() {
 
   // Fetch orders with user details
   const [rows] = await pool.query(`
-    SELECT o.*, u.name as customer_name, u.email as customer_email 
+    SELECT o.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone
     FROM orders o 
     LEFT JOIN users u ON o.user_id = u.id 
     ORDER BY o.id DESC
@@ -59,10 +59,15 @@ export default async function AdminOrdersPage() {
   const [itemsRows] = await pool.query('SELECT * FROM order_items');
   const allItems = itemsRows as any[];
 
-  // Attach items to orders
+  // Fetch addresses
+  const [addressRows] = await pool.query('SELECT * FROM addresses ORDER BY created_at DESC');
+  const allAddresses = addressRows as any[];
+
+  // Attach items and address to orders
   const ordersWithItems = orders.map(order => ({
     ...order,
-    items: allItems.filter(item => item.order_id === order.id)
+    items: allItems.filter(item => item.order_id === order.id),
+    address: allAddresses.find(addr => addr.user_id === order.user_id)
   }));
 
   return (
