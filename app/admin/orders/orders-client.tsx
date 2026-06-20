@@ -78,8 +78,23 @@ export default function OrdersClient({ initialOrders, updateStatusAction }: any)
                   </div>
                 </td>
                 <td className="px-4 py-3 font-bold align-top">₹{Number(order.total_amount).toLocaleString('en-IN')}</td>
-                <td className="px-4 py-3 text-sm text-gray-500 align-top">
-                  <div className="flex items-center gap-1.5"><Package size={14} className="text-gray-400" /> {order.items?.length || 0}</div>
+                <td className="px-4 py-3 text-sm text-gray-500 align-top min-w-[200px]">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-1.5 font-medium text-[#0a0a0a]">
+                      <Package size={14} className="text-gray-400" /> 
+                      {order.items?.length || 0} items
+                    </div>
+                    {order.items && order.items.length > 0 && (
+                      <ul className="flex flex-col gap-1.5 border-l-2 border-gray-100 pl-2.5">
+                        {order.items.map((item: any, idx: number) => (
+                          <li key={idx} className="flex flex-col text-[12px] leading-tight">
+                            <span className="font-medium text-gray-700 line-clamp-1" title={item.product_name}>{item.product_name}</span>
+                            <span className="text-gray-400">{item.quantity} × ₹{Number(item.price).toLocaleString('en-IN')}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-right align-top">
                   <select 

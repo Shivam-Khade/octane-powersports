@@ -9,6 +9,7 @@ type OrderItem = {
   product_name: string;
   price: string;
   quantity: number;
+  image?: string;
 };
 
 type Order = {
@@ -162,18 +163,7 @@ export default function OrdersClient({ session }: { session: any }) {
                         <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">Order Number</p>
                         <p className="text-sm font-mono bg-white/10 px-2 py-0.5 rounded">OCT-{order.id.toString().padStart(5, '0')}</p>
                       </div>
-                      <div>
-                        <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">
-                          {order.status === 'Delivered' ? 'Delivered On' : 'Expected Delivery'}
-                        </p>
-                        <p className="text-sm font-semibold">
-                          {(() => {
-                            const d = new Date(order.created_at);
-                            d.setDate(d.getDate() + 5);
-                            return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-                          })()}
-                        </p>
-                      </div>
+
                     </div>
                     <div>
                       <span className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider border ${getStatusColor(order.status)}`}>
@@ -186,14 +176,12 @@ export default function OrdersClient({ session }: { session: any }) {
                   <div className="p-6 md:p-8">
                     <ul className="divide-y divide-gray-100">
                       {order.items?.map((item) => {
-                        const productData = products.find(p => p.name === item.product_name) || 
-                                            products.find(p => item.product_name.toLowerCase().includes(p.name.split(' ')[0].toLowerCase()));
                         return (
                         <li key={item.id} className="py-5 flex justify-between items-center group/item first:pt-0 last:pb-0">
                           <div className="flex items-center gap-6">
-                            <div className="w-20 h-20 bg-gray-50 border border-gray-100 rounded-lg flex items-center justify-center group-hover/item:border-[#ff6b00] transition-colors overflow-hidden">
-                              {productData?.image ? (
-                                <img src={productData.image} alt={item.product_name} className="w-full h-full object-cover" />
+                            <div className="w-20 h-20 bg-gray-50 border border-gray-100 rounded-lg flex items-center justify-center group-hover/item:border-[#ff6b00] transition-colors overflow-hidden shrink-0">
+                              {item.image ? (
+                                <img src={item.image} alt={item.product_name} className="w-full h-full object-cover" />
                               ) : (
                                 <Package className="text-gray-300 group-hover/item:text-[#ff6b00] transition-colors" size={28} />
                               )}

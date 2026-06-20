@@ -21,7 +21,10 @@ export async function GET() {
     // Fetch items for each order
     for (const order of orders) {
       const [items] = await pool.query<RowDataPacket[]>(
-        "SELECT * FROM order_items WHERE order_id = ?",
+        `SELECT oi.*, p.image 
+         FROM order_items oi 
+         LEFT JOIN products p ON oi.product_name = p.name 
+         WHERE oi.order_id = ?`,
         [order.id]
       );
       order.items = items;

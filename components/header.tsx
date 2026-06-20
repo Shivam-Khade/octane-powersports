@@ -174,6 +174,7 @@ export function Header({ session }: { session: any }) {
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   className="nav-search-input"
+                  suppressHydrationWarning
                 />
               </form>
             </div>
@@ -260,6 +261,7 @@ export function Header({ session }: { session: any }) {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               className="global-search-input"
+              suppressHydrationWarning
             />
             <button type="button" className="global-search-close" onClick={() => setSearchOpen(false)}>
               <X size={20} />
