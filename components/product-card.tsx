@@ -38,7 +38,7 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="product-card">
       <Link href={`/product/${product.slug}`} className="product-image-wrap">
         {product.image ? (
-          <Image src={product.image} alt={product.name} fill sizes="(max-width: 800px) 50vw, 25vw" className="main-img" />
+          <Image src={product.image} alt={product.name} fill sizes="(max-width: 800px) 50vw, 25vw" className="main-img" unoptimized />
         ) : (
           <div className="main-img bg-gray-100 absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-400 uppercase tracking-widest">No Image</div>
         )}

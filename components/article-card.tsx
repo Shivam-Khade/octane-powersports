@@ -13,6 +13,7 @@ export function ArticleCard({ article }: { article: Article }) {
           fill 
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="card-image"
+          unoptimized
         />
         <span className="card-category-badge">{article.category}</span>
         <span className="card-read-time">{article.readTime} min read</span>

@@ -4,12 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Truck, CreditCard, Headphones, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
+import dynamic from "next/dynamic";
 import { ProductCard } from "@/components/product-card";
-import { BrandMarquee } from "@/components/brand-marquee";
-import { LifestyleSection } from "@/components/lifestyle-section";
-import { TestimonialCarousel } from "@/components/testimonial-carousel";
-import { CommunityGrid } from "@/components/community-grid";
 import { HeroCinematic } from "@/components/hero-cinematic";
+
+const BrandMarquee = dynamic(() => import("@/components/brand-marquee").then(mod => ({ default: mod.BrandMarquee })), { ssr: true });
+const LifestyleSection = dynamic(() => import("@/components/lifestyle-section").then(mod => ({ default: mod.LifestyleSection })), { ssr: true });
+const TestimonialCarousel = dynamic(() => import("@/components/testimonial-carousel").then(mod => ({ default: mod.TestimonialCarousel })), { ssr: true });
+const CommunityGrid = dynamic(() => import("@/components/community-grid").then(mod => ({ default: mod.CommunityGrid })), { ssr: true });
 import { useEffect, useState } from "react";
 import "./home.css";
 
@@ -97,6 +99,7 @@ export default function HomePage() {
                         sizes="100vw" 
                         className="object-cover" 
                         priority
+                        unoptimized
                       />
                     ) : (
                       <div className="absolute inset-0 bg-[#1a1a1a]" />

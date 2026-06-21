@@ -1,21 +1,42 @@
 # Dependencies
 node_modules/
+/.pnp
+.pnp.js
 
-# Video files
+# Video files (large assets)
 hero.mp4
 
 # Next.js
 .next/
 out/
+build/
+*.tsbuildinfo
+next-env.d.ts
 
-# Environment variables
+# Environment variables (Confidential)
 .env
+.env.*.local
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .env.production
 
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vercel
+.vercel
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
 
 # OS files
 .DS_Store
-Thumbs.db
+Thumbs.db

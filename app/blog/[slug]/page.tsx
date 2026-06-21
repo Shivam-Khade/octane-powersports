@@ -25,9 +25,31 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const [rows] = await pool.query('SELECT * FROM blogs WHERE slug = ?', [slug]);
   const articles = rows as any[];
   const article = articles.length > 0 ? articles[0] : null;
+  
+  if (!article) return { title: "Article Not Found" };
+
+  const title = `${article.title} | Octane Powersports Journal`;
+  const description = article.description;
+
   return {
-    title: article?.title ?? "Article",
-    description: article?.description
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://octanepowersports.in/blog/${article.slug}`,
+      images: [{ url: article.image, width: 1200, height: 630, alt: article.title }],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [article.image],
+    },
+    alternates: {
+      canonical: `https://octanepowersports.in/blog/${article.slug}`
+    }
   };
 }
 
@@ -41,12 +63,36 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   const article = parseArticle(matched[0]);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": article.title,
+    "image": [article.image],
+    "datePublished": new Date(article.publishDate).toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": article.author
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Octane Powersports",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://octanepowersports.in/logo.png"
+      }
+    }
+  };
+
   const [allRows] = await pool.query('SELECT * FROM blogs LIMIT 4');
   const allArticles = (allRows as any[]).map(parseArticle);
   const related = allArticles.filter((item) => item.slug !== article.slug).slice(0, 3);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ViewTracker type="blog" id={article.slug} />
       <main className="blog-main-bg">
         <article className="article-detail-page">
@@ -74,7 +120,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </div>
             
             <div className="article-detail-image-wrapper">
-              <Image src={article.image} alt={article.title} fill priority className="article-detail-image" />
+              <Image src={article.image} alt={article.title} fill priority unoptimized className="article-detail-image" />
             </div>
           </div>
 

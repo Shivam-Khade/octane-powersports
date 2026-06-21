@@ -31,11 +31,30 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const products = rows as any[];
   const product = products.length > 0 ? products[0] : null;
   
+  if (!product) return { title: "Product Not Found" };
+
+  const title = `${product.name} — Buy Online India | Octane Powersports`;
+  const description = `Buy ${product.name} by ${product.brand} online in India. Genuine product with fast Pan India delivery and easy returns.`;
+
   return {
-    title: product ? `${product.name} — Buy Online India` : "Product",
-    description: product
-      ? `Buy ${product.name} by ${product.brand} online in India. Genuine product with fast Pan India delivery and easy returns.`
-      : "Premium motorcycle gear and accessories"
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://octanepowersports.in/product/${product.slug}`,
+      images: [{ url: product.image, width: 800, height: 800, alt: product.name }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [product.image],
+    },
+    alternates: {
+      canonical: `https://octanepowersports.in/product/${product.slug}`
+    }
   };
 }
 
@@ -49,12 +68,37 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   
   const product = parseProduct(matched[0]);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "image": product.image,
+    "description": `Buy ${product.name} by ${product.brand} online in India.`,
+    "sku": product.slug,
+    "brand": {
+      "@type": "Brand",
+      "name": product.brand
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://octanepowersports.in/product/${product.slug}`,
+      "priceCurrency": "INR",
+      "price": product.price,
+      "itemCondition": "https://schema.org/NewCondition",
+      "availability": product.stockCount > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+    }
+  };
+
   const [allRows] = await pool.query('SELECT * FROM products WHERE stockCount > 0 LIMIT 5');
   const allProducts = (allRows as any[]).map(parseProduct);
   const related = allProducts.filter((item) => item.slug !== product.slug).slice(0, 4);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ViewTracker type="product" id={product.id} />
       <ProductPageClient product={product} related={related} />
     </>

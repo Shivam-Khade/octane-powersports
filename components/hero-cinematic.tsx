@@ -14,11 +14,6 @@ const stats = [
 ];
 
 export function HeroCinematic() {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
   const { scrollYProgress } = useScroll({
     offset: ["start start", "end start"]
   });
@@ -32,21 +27,18 @@ export function HeroCinematic() {
       {/* Video Background */}
       <motion.div
         className="hero-cinematic__videoWrap"
-        style={{ scale: videoScale, opacity: isMounted ? 1 : 0 }}
+        style={{ scale: videoScale }}
       >
         <div suppressHydrationWarning style={{ width: '100%', height: '100%' }}>
-          {isMounted && (
             <video
               className="hero-cinematic__video"
               autoPlay
               muted
               loop
               playsInline
-              preload="auto"
             >
               <source src="/hero.mp4" type="video/mp4" />
             </video>
-          )}
         </div>
       </motion.div>
 

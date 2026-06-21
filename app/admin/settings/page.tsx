@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import pool from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import SettingsClient from "./settings-client";
+import bcrypt from "bcryptjs";
 
 // --- SERVER ACTIONS ---
 export async function updateAdminProfile(data: any) {
@@ -15,11 +16,10 @@ export async function updateAdminProfile(data: any) {
   const adminEmail = session.user.email; // get current email to find the user
 
   if (password && password.trim() !== "") {
-    // In a real app, you MUST hash the password here (e.g. bcrypt)
-    // Assuming simple plain text or let's use what they had, I'll just save it directly.
+    const hashedPassword = await bcrypt.hash(password, 10);
     await pool.query(
       'UPDATE users SET name = ?, email = ?, password = ? WHERE email = ?',
-      [name, email, password, adminEmail]
+      [name, email, hashedPassword, adminEmail]
     );
   } else {
     await pool.query(
