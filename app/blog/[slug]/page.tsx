@@ -68,7 +68,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     "@type": "Article",
     "headline": article.title,
     "image": [article.image],
-    "datePublished": new Date(article.publishDate).toISOString(),
+    "datePublished": (() => {
+      try {
+        return new Date(article.publishDate).toISOString();
+      } catch (e) {
+        return new Date().toISOString();
+      }
+    })(),
     "author": {
       "@type": "Person",
       "name": article.author
