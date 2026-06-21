@@ -38,14 +38,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title,
       description,
       url: `https://octanepowersports.in/blog/${article.slug}`,
-      images: [{ url: article.image, width: 1200, height: 630, alt: article.title }],
+      images: [{ url: article.image || 'https://octanepowersports.in/logo.png', width: 1200, height: 630, alt: article.title || 'Blog' }],
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [article.image],
+      images: [article.image || 'https://octanepowersports.in/logo.png'],
     },
     alternates: {
       canonical: `https://octanepowersports.in/blog/${article.slug}`
@@ -67,7 +67,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": article.title,
-    "image": [article.image],
+    "image": [article.image || 'https://octanepowersports.in/logo.png'],
     "datePublished": (() => {
       try {
         return new Date(article.publishDate).toISOString();
@@ -117,16 +117,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <span className="card-category-badge static-badge">{article.category}</span>
               <h1 className="article-detail-title">{article.title}</h1>
               <div className="article-detail-meta">
-                <span>By {article.author}</span>
+                <span>By {article.author || 'Octane Powersports'}</span>
                 <span>•</span>
-                <span>{article.publishDate}</span>
+                <span>{article.publishDate ? String(article.publishDate) : ''}</span>
                 <span>•</span>
-                <span>{article.readTime} min read</span>
+                <span>{article.readTime || 5} min read</span>
               </div>
             </div>
             
             <div className="article-detail-image-wrapper">
-              <Image src={article.image} alt={article.title} fill priority unoptimized className="article-detail-image" />
+              <Image src={article.image || '/logo.png'} alt={article.title || 'Blog post'} fill priority unoptimized className="article-detail-image" />
             </div>
           </div>
 
