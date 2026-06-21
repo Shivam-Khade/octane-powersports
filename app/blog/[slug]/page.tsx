@@ -4,7 +4,20 @@ import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import pool from "@/lib/db";
 import { ArticleCard } from "@/components/article-card";
-import DOMPurify from 'isomorphic-dompurify';
+// Simple server-safe HTML sanitizer (no jsdom dependency)
+function sanitizeHtml(html: string): string {
+  // Strip script tags and their content
+  let clean = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  // Strip event handlers (onclick, onerror, etc.)
+  clean = clean.replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, '');
+  clean = clean.replace(/\s*on\w+\s*=\s*\S+/gi, '');
+  // Strip javascript: URLs
+  clean = clean.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
+  // Strip iframe, object, embed tags
+  clean = clean.replace(/<(iframe|object|embed|form)\b[^>]*>[\s\S]*?<\/\1>/gi, '');
+  clean = clean.replace(/<(iframe|object|embed|form)\b[^>]*\/>/gi, '');
+  return clean;
+}
 import "../blog.css";
 
 function parseArticle(a: any) {
@@ -152,7 +165,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 )}
 
                 {article.content && (
-                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }} />
+                  <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }} />
                 )}
               </div>
             </div>
