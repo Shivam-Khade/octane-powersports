@@ -85,7 +85,7 @@ export const sendOrderConfirmationEmail = async (customerEmail: string, details:
 
   try {
     const response = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'Octane Powersports <noreply@octaneps.com>',
       to: customerEmail,
       subject,
       html: htmlContent,
@@ -160,7 +160,7 @@ export const sendAdminOrderNotification = async (details: OrderDetails) => {
 
   try {
     const response = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'Octane Powersports <noreply@octaneps.com>',
       to: adminEmail,
       subject,
       html: htmlContent,
@@ -210,7 +210,7 @@ export const sendOTPEmail = async (email: string, otp: string) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'onboarding@resend.dev',
+        from: 'Octane Powersports <noreply@octaneps.com>',
         to: email,
         subject: subject,
         html: htmlContent
