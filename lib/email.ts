@@ -229,3 +229,57 @@ export const sendOTPEmail = async (email: string, otp: string) => {
     return { success: false, error };
   }
 };
+
+/**
+ * Sends an OTP email for password reset
+ */
+export const sendPasswordResetEmail = async (email: string, otp: string) => {
+  const subject = `Password Reset Request - Octane Powersports`;
+  
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+      <h2 style="color: #ff6b00; text-align: center;">Reset Your Password</h2>
+      <p style="font-size: 16px;">Hello,</p>
+      <p style="font-size: 16px;">We received a request to reset your password for your Octane Powersports account. Please use the verification code below to securely reset it. This code will expire in 10 minutes.</p>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; background-color: #f4f4f4; padding: 15px 30px; border-radius: 5px; color: #0a0a0a;">
+          ${otp}
+        </span>
+      </div>
+      
+      <p style="font-size: 14px; color: #666; text-align: center;">If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+      
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+        <p style="margin: 0; font-size: 14px;">Ride Safe,<br/><strong>Octane Powersports</strong></p>
+      </div>
+    </div>
+  `;
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'Octane Powersports <noreply@octaneps.com>',
+        to: email,
+        subject: subject,
+        html: htmlContent
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      console.error('Resend API Error (Password Reset via fetch):', data);
+      return { success: false, error: data };
+    }
+    return { success: true, data };
+  } catch (error) {
+    console.error('Exception sending password reset email:', error);
+    return { success: false, error };
+  }
+};
