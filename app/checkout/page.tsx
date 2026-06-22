@@ -56,8 +56,8 @@ function CheckoutContent() {
 
   // Calculations
   const totalPrice = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const discount = cartItems.length > 0 ? totalPrice * 0.1 : 0; // 10% premium discount
-  const finalTotal = totalPrice - discount;
+  const deliveryCharge = (totalPrice < 5000 && cartItems.length > 0) ? 300 : 0;
+  const finalTotal = totalPrice + deliveryCharge;
 
   const handleSubmit = async () => {
     if (!session?.user) {
@@ -275,24 +275,16 @@ function CheckoutContent() {
                   <span>₹{totalPrice.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="price-row">
-                  <span>Discount</span>
-                  <span className="free-text">− ₹{discount.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="price-row">
                   <span>Delivery Charges</span>
-                  <span className="free-text">Free</span>
+                  <span className={deliveryCharge === 0 ? "free-text" : ""}>
+                    {deliveryCharge === 0 ? "Free" : `₹${deliveryCharge}`}
+                  </span>
                 </div>
                 
                 <div className="price-row total">
                   <span>Total Amount</span>
                   <span>₹{finalTotal.toLocaleString('en-IN')}</span>
                 </div>
-                
-                {discount > 0 && (
-                  <div className="savings-msg">
-                    You will save ₹{discount.toLocaleString('en-IN')} on this order
-                  </div>
-                )}
                 
                 {cartItems.length > 0 && (
                   <div className="mobile-place-order">

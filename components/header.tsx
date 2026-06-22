@@ -5,18 +5,19 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Menu, Search, User, ShoppingBag, ChevronDown, X, LogOut, MapPin, Package, Shield } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { brands, categories } from "@/lib/data";
 import { useLoginModal } from "./login-context";
 import { useProfileModal } from "./profile-context";
 import { useCart } from "./cart-context";
 import "./header.css";
 
-const getBrandGroups = () => {
+const getBrandGroups = (brands: string[]) => {
   const groups: Record<string, string[]> = {};
   brands.forEach(b => {
     const letter = b.charAt(0).toUpperCase();
     if (!groups[letter]) groups[letter] = [];
-    groups[letter].push(b);
+    if (!groups[letter].includes(b)) {
+      groups[letter].push(b);
+    }
   });
   return Object.keys(groups).sort().map(letter => ({
     letter,
@@ -26,7 +27,7 @@ const getBrandGroups = () => {
 
 
 
-export function Header({ session }: { session: any }) {
+export function Header({ session, categories = [], brands = [] }: { session: any, categories?: string[], brands?: string[] }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileTypeOpen, setMobileTypeOpen] = useState(false);
@@ -107,7 +108,7 @@ export function Header({ session }: { session: any }) {
               </button>
               <div className="mega-menu brands-menu">
                 <div className="mega-brand-grid">
-                  {getBrandGroups().map(group => (
+                  {getBrandGroups(brands).map(group => (
                     <div key={group.letter} className="brand-group">
                       <h4 className="brand-letter">{group.letter}</h4>
                       <div className="brand-links">
@@ -123,7 +124,7 @@ export function Header({ session }: { session: any }) {
               </div>
             </div>
 
-            <Link href="/blog" className={`nav-link ${pathname?.startsWith('/blog') ? '!text-[#ff6b00]' : ''}`}>Journal</Link>
+            <Link href="/blog" className={`nav-link ${pathname?.startsWith('/blog') ? '!text-[#ff6b00]' : ''}`}>Blog</Link>
             
             {session ? (
               <>
@@ -311,7 +312,7 @@ export function Header({ session }: { session: any }) {
                 </button>
                 {mobileBrandOpen && (
                   <div className="mobile-accordion-content">
-                    {getBrandGroups().map(group => (
+                    {getBrandGroups(brands).map(group => (
                       <div key={group.letter} className="mobile-brand-group mb-2">
                         <button 
                           className="mobile-brand-letter flex items-center justify-between w-full font-bold text-gray-300 py-2"
@@ -334,7 +335,7 @@ export function Header({ session }: { session: any }) {
                   </div>
                 )}
               </div>
-              <Link href="/blog" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Journal</Link>
+              <Link href="/blog" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Blog</Link>
               <Link href="/service-booking" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Service Booking</Link>
             </nav>
           </div>

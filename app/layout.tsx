@@ -16,6 +16,7 @@ import NextAuthSessionProvider from "@/components/session-provider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { Toaster } from "react-hot-toast";
+import pool from "@/lib/db";
 
 // Configure Next.js font loading
 const bebasNeue = Bebas_Neue({
@@ -91,6 +92,37 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   const session = await getServerSession(authOptions);
 
+  let categories: string[] = [];
+  let brands: string[] = [];
+  try {
+    const normalizeName = (name: string) => {
+      if (name && name === name.toUpperCase() && name.length > 3) {
+        return name.charAt(0) + name.slice(1).toLowerCase();
+      }
+      return name;
+    };
+
+    const [catRows] = await pool.query('SELECT name FROM categories ORDER BY name ASC');
+    const dbCategories = (catRows as any[]).map(c => normalizeName(c.name));
+    
+    const [prodRows] = await pool.query('SELECT brand, category FROM products');
+    const products = prodRows as any[];
+    
+    const productCategories = products.map(p => normalizeName(p.category)).filter(Boolean);
+    categories = Array.from(new Set([...dbCategories, ...productCategories])).sort();
+    
+    const rawBrands = products.map(p => p.brand).filter(Boolean);
+    const dbBrands = new Set<string>();
+    rawBrands.forEach(b => {
+      if (typeof b === 'string') {
+        b.split(',').forEach(part => dbBrands.add(normalizeName(part.trim())));
+      }
+    });
+    brands = Array.from(dbBrands).sort();
+  } catch (error) {
+    console.error("Failed to fetch brands/categories for layout:", error);
+  }
+
   return (
     <html 
       lang="en" 
@@ -109,7 +141,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <ProfileModalProvider>
                 <Toaster position="top-right" toastOptions={{ duration: 3000, style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333' } }} />
                 <CursorGlow />
-                <Header session={session} />
+                <Header session={session} categories={categories} brands={brands} />
                 {children}
                 <FooterWrapper>
                   <Footer />

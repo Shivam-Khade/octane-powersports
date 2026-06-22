@@ -56,6 +56,43 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
     return uniqueBrands.sort().map(b => ({ value: b, label: b }));
   }, [initialProducts]);
 
+  const getBucket = (str: string) => {
+    const char = str.charAt(0).toUpperCase();
+    if (/[A-D]/i.test(char)) return "ABCD";
+    if (/[E-H]/i.test(char)) return "EFGH";
+    if (/[I-L]/i.test(char)) return "IJKL";
+    if (/[M-P]/i.test(char)) return "MNOP";
+    if (/[Q-T]/i.test(char)) return "QRST";
+    if (/[U-Z]/i.test(char)) return "UVWXYZ";
+    return "#";
+  };
+
+  const groupedCategories = useMemo(() => {
+    const groups: Record<string, string[]> = {};
+    categories.forEach(c => {
+      const bucket = getBucket(c);
+      if (!groups[bucket]) groups[bucket] = [];
+      groups[bucket].push(c);
+    });
+    return Object.keys(groups).sort().map(bucket => ({
+      letter: bucket,
+      items: groups[bucket].sort()
+    }));
+  }, [categories]);
+
+  const groupedBrands = useMemo(() => {
+    const groups: Record<string, { value: string, label: string }[]> = {};
+    filterBrands.forEach(b => {
+      const bucket = getBucket(b.label);
+      if (!groups[bucket]) groups[bucket] = [];
+      groups[bucket].push(b);
+    });
+    return Object.keys(groups).sort().map(bucket => ({
+      letter: bucket,
+      items: groups[bucket].sort((a, b) => a.label.localeCompare(b.label))
+    }));
+  }, [filterBrands]);
+
   // Simulate loading on mount
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 800);
@@ -126,15 +163,63 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
     <main className="shop-premium-bg">
       <section className="shop-hero">
         <div className="container">
-          <AnimatePresence>
-            <BikePartsSearch variant="horizontal" />
-          </AnimatePresence>
+          <h1>Shop Premium Parts</h1>
         </div>
       </section>
 
-      <section className="shop-layout container no-sidebar">
+      <section className="shop-layout container">
+        <div className="desktop-filters filters">
+          <h2 className="filter-title">
+            Filters
+            {activeFiltersCount > 0 && <span className="filter-count">{activeFiltersCount}</span>}
+          </h2>
 
+          {activeFiltersCount > 0 && (
+            <div className="active-filters-area">
+              <div className="active-chips">
+                {activeCategories.map(c => (
+                  <button key={c} className="filter-chip" onClick={() => toggleCategory(c)}>
+                    {c} <X size={12} />
+                  </button>
+                ))}
+                {activeBrands.map(b => (
+                  <button key={b} className="filter-chip" onClick={() => toggleBrand(b)}>
+                    {b} <X size={12} />
+                  </button>
+                ))}
+              </div>
+              <button className="clear-all-btn" onClick={clearAllFilters}>Clear All</button>
+            </div>
+          )}
 
+          <CollapsibleFilter title="Categories" defaultOpen={true}>
+            {groupedCategories.map(group => (
+              <SubCollapsibleFilter key={group.letter} title={group.letter} defaultOpen={false}>
+                {group.items.map(c => (
+                  <label key={c} className="custom-checkbox">
+                    <input type="checkbox" checked={activeCategories.includes(c)} onChange={() => toggleCategory(c)} />
+                    <span className="checkmark"></span>
+                    {c}
+                  </label>
+                ))}
+              </SubCollapsibleFilter>
+            ))}
+          </CollapsibleFilter>
+
+          <CollapsibleFilter title="Brands" defaultOpen={true}>
+            {groupedBrands.map(group => (
+              <SubCollapsibleFilter key={group.letter} title={group.letter} defaultOpen={false}>
+                {group.items.map(b => (
+                  <label key={b.value} className="custom-checkbox">
+                    <input type="checkbox" checked={activeBrands.includes(b.value)} onChange={() => toggleBrand(b.value)} />
+                    <span className="checkmark"></span>
+                    {b.label}
+                  </label>
+                ))}
+              </SubCollapsibleFilter>
+            ))}
+          </CollapsibleFilter>
+        </div>
 
         <div className="shop-results">
           <div className="shop-toolbar sticky-toolbar">
@@ -194,10 +279,10 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
           {!isLoading && (activeCategories.length > 0 || activeBrands.length > 0) && (
             <div className="recommendations-section mt-12 pt-8 border-t border-gray-100">
               <h3 className="section-eyebrow mb-6">You Might Also Like</h3>
-              <div className="recommendations-carousel grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="recommendations-carousel grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 {initialProducts
                   .filter(p => !displayedProducts.some(dp => dp.slug === p.slug))
-                  .slice(0, 4)
+                  .slice(0, 5)
                   .map(p => (
                     <div key={p.slug} className="carousel-item">
                       <ProductCard product={p} />
@@ -243,6 +328,31 @@ function CollapsibleFilter({ title, children, defaultOpen = true }: { title: str
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             className="filter-group-content"
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function SubCollapsibleFilter({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div className="sub-filter-group mb-1">
+      <button className="flex items-center justify-between w-full text-left py-2 text-[13px] font-bold text-gray-500 hover:text-gray-900 transition-colors uppercase tracking-wider" onClick={() => setIsOpen(!isOpen)}>
+        <span>{title}</span>
+        {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden pl-2 border-l-2 border-gray-100 ml-1.5"
           >
             {children}
           </motion.div>

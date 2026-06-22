@@ -2,7 +2,7 @@ import pool from "@/lib/db";
 import { BlogPageClient } from "./blog-page-client";
 
 export const metadata = {
-  title: "Journal | Octane Powersports",
+  title: "Blog | Octane Powersports",
   description: "Fitment guides, buying advice and performance notes."
 };
 

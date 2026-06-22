@@ -43,13 +43,17 @@ export default function HomePage() {
   useEffect(() => {
     fetch('/api/products')
       .then(res => res.json())
-      .then(data => setProducts(data))
+      .then(data => {
+        if (Array.isArray(data)) setProducts(data);
+      })
       .catch(console.error);
 
     fetch('/api/categories')
       .then(res => res.json())
       .then(data => {
-        setCategoryCards(data.filter((c: any) => c.featured));
+        if (Array.isArray(data)) {
+          setCategoryCards(data.filter((c: any) => c.featured));
+        }
       })
       .catch(console.error);
   }, []);
@@ -172,7 +176,7 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
           <div className="product-grid">
-            {products.slice(0, 4).map((product) => (
+            {(Array.isArray(products) ? products : []).slice(0, 4).map((product) => (
               <ProductCard key={product.slug} product={product} />
             ))}
           </div>

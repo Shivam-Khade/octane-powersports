@@ -114,23 +114,23 @@
 }
 
 .product-badge--status.limited {
-  background: linear-gradient(135deg, #e11d48, #be123c);
+  background: linear-gradient(135deg, #10b981, #059669);
   color: #fff;
 }
 
 .product-badge--stock {
-  background: #e11d48;
+  background: #10b981;
   color: #ffffff;
-  border: 1px solid #be123c;
+  border: 1px solid #059669;
   font-weight: 900;
   letter-spacing: 0.5px;
   animation: pulse-stock 2s infinite;
 }
 
 @keyframes pulse-stock {
-  0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.6); }
-  70% { box-shadow: 0 0 0 6px rgba(225, 29, 72, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+  70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
 /* Hover overlay */

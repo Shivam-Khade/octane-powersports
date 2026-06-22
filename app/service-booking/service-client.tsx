@@ -44,7 +44,6 @@ export function ServiceClient({
     bikeModel: initialData?.bikeModel || "",
     date: "",
     timeSlot: "",
-    serviceType: "Part Installation",
     notes: ""
   });
 
@@ -105,14 +104,6 @@ export function ServiceClient({
   const availableCount = formData.date ? TIME_SLOTS.filter(slot => !bookedSlots.includes(slot) && !isSlotPassed(formData.date, slot)).length : 0;
   const allSlotsBooked = formData.date ? availableCount === 0 : false;
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const serviceOptions = ["Part Installation", "General Maintenance", "Fitment & Diagnostics", "Performance Tuning"];
-
-  const handleSelect = (option: string) => {
-    setFormData({ ...formData, serviceType: option });
-    setDropdownOpen(false);
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -148,7 +139,7 @@ export function ServiceClient({
       if (res.ok) {
         toast.success("Booking request submitted successfully! We'll contact you soon.", { position: "top-right" });
         setFormData({
-          name: "", phone: "", email: "", bikeModel: "", date: "", timeSlot: "", serviceType: "Part Installation", notes: ""
+          name: "", phone: "", email: "", bikeModel: "", date: "", timeSlot: "", notes: ""
         });
       } else {
         const data = await res.json();
@@ -169,7 +160,7 @@ export function ServiceClient({
           className={`service-mobile-tab ${mobileTab === 'book' ? 'active' : ''}`}
           onClick={() => setMobileTab('book')}
         >
-          Request Booking
+          Book Your Appointment
         </button>
         <button 
           className={`service-mobile-tab ${mobileTab === 'visit' ? 'active' : ''}`}
@@ -188,7 +179,7 @@ export function ServiceClient({
           animate="show"
         >
           <motion.div variants={itemVariants} className="form-header">
-            <h2>Request Booking</h2>
+            <h2>Book Your Appointment</h2>
             <p>Tell us about your machine and what you need.</p>
           </motion.div>
 
@@ -253,40 +244,6 @@ export function ServiceClient({
               </motion.div>
             )}
 
-            <motion.div variants={itemVariants} className="input-group custom-select-group">
-              <div 
-                className={`custom-select-trigger ${dropdownOpen ? "open" : ""}`}
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              >
-                <span>{formData.serviceType}</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </div>
-              <label className="active-label">Service Type</label>
-              
-              <AnimatePresence>
-                {dropdownOpen && (
-                  <motion.div 
-                    className="custom-select-menu"
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {serviceOptions.map(option => (
-                      <div 
-                        key={option} 
-                        className={`custom-select-option ${formData.serviceType === option ? "selected" : ""}`}
-                        onClick={() => handleSelect(option)}
-                      >
-                        {option}
-                      </div>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
 
             <motion.div variants={itemVariants} className="input-group textarea-group">
               <textarea name="notes" id="notes" rows={4} value={formData.notes} onChange={handleChange} placeholder=" "></textarea>
@@ -295,7 +252,7 @@ export function ServiceClient({
 
             <motion.div variants={itemVariants} className="form-submit-wrapper">
               <button type="submit" className="button submit-btn" disabled={submitting || allSlotsBooked}>
-                {submitting ? "Submitting..." : "Confirm Request"}
+                {submitting ? "Scheduling..." : "Schedule Appointment"}
               </button>
             </motion.div>
           </form>

@@ -82,7 +82,6 @@ export default function OrdersClient({ session }: { session: any }) {
       <section className="container max-w-5xl mx-auto px-4">
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <p className="text-sm font-bold tracking-[0.2em] text-[#ff6b00] uppercase mb-2">Your Garage</p>
             <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight text-[#0a0a0a] m-0 leading-none">Order Tracking</h1>
           </div>
           

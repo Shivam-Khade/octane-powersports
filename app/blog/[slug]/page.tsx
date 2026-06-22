@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   
   if (!article) return { title: "Article Not Found" };
 
-  const title = `${article.title} | Octane Powersports Journal`;
+  const title = `${article.title} | Octane Powersports Blog`;
   const description = article.description;
 
   return {
@@ -119,7 +119,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           <div className="container">
             <nav className="breadcrumb">
               <Link href="/">Home</Link> <ChevronRight size={14} />
-              <Link href="/blog">Journal</Link> <ChevronRight size={14} />
+              <Link href="/blog">Blog</Link> <ChevronRight size={14} />
               <span className="current">{article.title}</span>
             </nav>
           </div>
@@ -190,7 +190,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           <div className="container">
             <div className="section-head">
               <div>
-                <p className="eyebrow">More from the Journal</p>
+                <p className="eyebrow">More from the Blog</p>
                 <h2 className="related-heading">Keep Building Your Setup</h2>
               </div>
             </div>

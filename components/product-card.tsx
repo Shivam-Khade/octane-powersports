@@ -45,7 +45,7 @@ export function ProductCard({ product }: { product: Product }) {
 
         <div className="product-badge-row">
           <span className="product-badge product-badge--category">{product.category}</span>
-          <span className={`product-badge product-badge--status ${isLimited ? 'limited' : ''}`}>{product.badge}</span>
+          {product.badge && <span className={`product-badge product-badge--status ${isLimited ? 'limited' : ''}`}>{product.badge}</span>}
           {lowStock && <span className="product-badge product-badge--stock">More than 1 available</span>}
         </div>
 

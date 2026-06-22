@@ -22,11 +22,33 @@ export default async function ShopPage() {
     p.rating = Number(p.rating);
     p.price = Number(p.price);
     p.stockCount = Number(p.stockCount);
+    
+    const normalizeName = (name: string) => {
+      if (name && name === name.toUpperCase() && name.length > 3) {
+        return name.charAt(0) + name.slice(1).toLowerCase();
+      }
+      return name;
+    };
+
+    if (typeof p.brand === 'string') {
+      const uniqueBrands = Array.from(new Set(p.brand.split(',').map((b: string) => normalizeName(b.trim()))));
+      p.brand = uniqueBrands.join(', ');
+    }
+    if (typeof p.category === 'string') {
+      p.category = normalizeName(p.category);
+    }
     return p;
   });
 
+  const normalizeName = (name: string) => {
+    if (name && name === name.toUpperCase() && name.length > 3) {
+      return name.charAt(0) + name.slice(1).toLowerCase();
+    }
+    return name;
+  };
+
   const [catRows] = await pool.query('SELECT name FROM categories ORDER BY name ASC');
-  const dbCategories = (catRows as any[]).map(c => c.name);
+  const dbCategories = (catRows as any[]).map(c => normalizeName(c.name));
   const productCategories = products.map(p => p.category).filter(Boolean);
   const categories = Array.from(new Set([...dbCategories, ...productCategories])).sort();
 

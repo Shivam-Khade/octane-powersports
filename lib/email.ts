@@ -110,51 +110,33 @@ export const sendAdminOrderNotification = async (details: OrderDetails) => {
 
   const itemsHtml = details.items.map(item => `
     <tr>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.product_name}</td>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;">${item.quantity}</td>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">${formatCurrency(item.price)}</td>
+      <td style="padding: 10px; border: 1px solid #000;">${item.product_name}</td>
+      <td style="padding: 10px; border: 1px solid #000;">Default Title</td>
+      <td style="padding: 10px; border: 1px solid #000;">N/A</td>
+      <td style="padding: 10px; border: 1px solid #000;">₹ ${item.price.toFixed(2)}</td>
+      <td style="padding: 10px; border: 1px solid #000;">${item.quantity}</td>
     </tr>
   `).join('');
 
   const htmlContent = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-      <h2 style="color: #d32f2f;">New Order Alert!</h2>
-      <p>A new order <strong>#${details.orderId}</strong> has been placed.</p>
+    <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0; color: #000;">
+      <p style="margin-bottom: 20px;">Hello Octane Powersports LLP,</p>
+      <p style="margin-bottom: 30px;">Your Order, # ${details.orderId}, has been placed successfully.</p>
       
-      <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-        <h3 style="margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 10px;">Customer Details</h3>
-        <p><strong>Name:</strong> ${details.customerName}</p>
-        <p><strong>Email:</strong> <a href="mailto:${details.customerEmail}">${details.customerEmail}</a></p>
-        <p><strong>Phone:</strong> ${details.customerPhone}</p>
-        <p><strong>Order Time:</strong> ${new Date(details.orderTime).toLocaleString('en-IN')}</p>
-      </div>
-
-      <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">Ordered Products</h3>
-      <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
         <thead>
-          <tr style="background-color: #f8f8f8;">
-            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd;">Product</th>
-            <th style="padding: 10px; text-align: center; border-bottom: 2px solid #ddd;">Qty</th>
-            <th style="padding: 10px; text-align: right; border-bottom: 2px solid #ddd;">Price</th>
+          <tr>
+            <th style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">Product</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">Variant</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">SKU</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">Price</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">Quantity</th>
           </tr>
         </thead>
         <tbody>
           ${itemsHtml}
         </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2" style="padding: 10px; text-align: right; font-weight: bold;">Total Amount:</td>
-            <td style="padding: 10px; text-align: right; font-weight: bold;">${formatCurrency(details.totalAmount)}</td>
-          </tr>
-        </tfoot>
       </table>
-
-      <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-        <h3 style="margin-top: 0;">Payment & Shipping</h3>
-        <p><strong>Payment Method:</strong> ${details.paymentMethod}</p>
-        <p><strong>Payment Status:</strong> ${details.paymentStatus}</p>
-        <p><strong>Shipping Address:</strong><br/>${details.shippingAddress.replace(/\n/g, '<br/>')}</p>
-      </div>
     </div>
   `;
 

@@ -30,8 +30,19 @@ export function Footer() {
       <div className="container footer-grid">
         {/* Brand Column */}
         <div className="footer-brand">
-          <Link href="/" className="footer-logo" aria-label="Octane Powersports">
-            <img src="/logo.png" alt="Octane Powersports" style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
+          <Link href="/" className="footer-logo" aria-label="Octane Powersports" style={{ position: 'relative', display: 'block', width: 'fit-content' }}>
+            <img src="/logo.png" alt="Octane Powersports" style={{ height: '44px', width: 'auto', objectFit: 'contain', display: 'block' }} />
+            <img src="/logo.png" alt="" aria-hidden="true" style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0, 
+              height: '44px', 
+              width: '100%', 
+              objectFit: 'contain',
+              filter: 'brightness(0) invert(1)',
+              clipPath: 'inset(52% 0 0 0)',
+              pointerEvents: 'none'
+            }} />
           </Link>
           <p className="footer-brand-desc">
             India's premium motorcycle parts store. Authentic products, expert support, and Pan India delivery.
@@ -73,7 +84,7 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="footer-bottom">
         <div className="container footer-bottom-inner">
-          <span className="footer-copy">© 2026 Octane Powersports LLP. All rights reserved.</span>
+          <span className="footer-copy">© 2026 Octane <span style={{ color: '#ffffff', fontWeight: 'bold' }}>Powersports</span> LLP. All rights reserved.</span>
           <div className="footer-legal">
             <Link href="/privacy-policy">Privacy Policy</Link>
             <Link href="/terms">Terms & Conditions</Link>

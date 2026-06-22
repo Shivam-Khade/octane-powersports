@@ -20,6 +20,10 @@ export async function GET() {
       p.rating = Number(p.rating);
       p.price = Number(p.price);
       p.stockCount = Number(p.stockCount);
+      if (typeof p.brand === 'string') {
+        const uniqueBrands = Array.from(new Set(p.brand.split(',').map((b: string) => b.trim())));
+        p.brand = uniqueBrands.join(', ');
+      }
       return p;
     });
     return NextResponse.json(products);

@@ -55,7 +55,7 @@ export default async function AdminBlogsPage() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-black uppercase tracking-tight text-[#0a0a0a]">Blog Management</h1>
-          <p className="text-gray-500">Add, update, and remove articles from the journal.</p>
+          <p className="text-gray-500">Add, update, and remove articles from the blog.</p>
         </div>
       </div>
 

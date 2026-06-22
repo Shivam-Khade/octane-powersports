@@ -30,9 +30,9 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { name, phone, email, bikeModel, date, timeSlot, serviceType, notes } = await req.json();
+    const { name, phone, email, bikeModel, date, timeSlot, notes } = await req.json();
 
-    if (!name || !phone || !bikeModel || !date || !timeSlot || !serviceType) {
+    if (!name || !phone || !bikeModel || !date || !timeSlot) {
       return NextResponse.json({ error: "All required fields must be provided" }, { status: 400 });
     }
 
@@ -57,8 +57,8 @@ export async function POST(req: Request) {
     }
 
     const [result] = await pool.query(
-      "INSERT INTO service_bookings (user_id, name, phone, email, bike_model, service_type, booking_date, time_slot, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [session.user.id, name, phone, email, bikeModel, serviceType, date, timeSlot, notes || null]
+      "INSERT INTO service_bookings (user_id, name, phone, email, bike_model, booking_date, time_slot, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [session.user.id, name, phone, email, bikeModel, date, timeSlot, notes || null]
     );
 
     return NextResponse.json({ message: "Booking created successfully", id: (result as any).insertId }, { status: 201 });

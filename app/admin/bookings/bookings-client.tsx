@@ -33,7 +33,6 @@ export default function BookingsClient({ initialBookings, deleteAction }: any) {
               <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Date & Time</th>
               <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Customer</th>
               <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Phone</th>
-              <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Service Type</th>
               <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider">Status</th>
               <th className="p-4 font-bold text-gray-500 uppercase text-xs tracking-wider text-right">Actions</th>
             </tr>
@@ -67,11 +66,6 @@ export default function BookingsClient({ initialBookings, deleteAction }: any) {
                     <a href={`tel:${booking.phone}`} className="flex items-center gap-2 text-blue-600 hover:underline">
                       <Phone size={14} /> {booking.phone}
                     </a>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-700 bg-gray-100 px-3 py-1 rounded-full inline-flex font-medium">
-                      <Wrench size={14} /> {booking.service_type}
-                    </div>
                   </td>
                   <td className="p-4">
                     {upcoming ? (
