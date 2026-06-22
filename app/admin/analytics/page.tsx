@@ -22,7 +22,7 @@ export default async function AnalyticsPage() {
   }));
 
   // Fetch Service Booking Breakdown
-  const [bookingStatsRows] = await pool.query('SELECT service_type as name, COUNT(*) as value FROM service_bookings GROUP BY service_type ORDER BY value DESC');
+  const [bookingStatsRows] = await pool.query('SELECT status as name, COUNT(*) as value FROM service_bookings GROUP BY status ORDER BY value DESC');
   const bookingStats = (bookingStatsRows as any[]).map(row => ({
     name: row.name || 'Other',
     value: Number(row.value) || 0

@@ -114,29 +114,51 @@ export const sendAdminOrderNotification = async (details: OrderDetails) => {
       <td style="padding: 10px; border: 1px solid #000;">Default Title</td>
       <td style="padding: 10px; border: 1px solid #000;">N/A</td>
       <td style="padding: 10px; border: 1px solid #000;">₹ ${item.price.toFixed(2)}</td>
-      <td style="padding: 10px; border: 1px solid #000;">${item.quantity}</td>
+      <td style="padding: 10px; border: 1px solid #000; text-align: center;">${item.quantity}</td>
     </tr>
   `).join('');
 
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0; color: #000;">
-      <p style="margin-bottom: 20px;">Hello Octane Powersports LLP,</p>
-      <p style="margin-bottom: 30px;">Your Order, # ${details.orderId}, has been placed successfully.</p>
+      <p style="margin-bottom: 20px; font-size: 16px;">Hello Octane Powersports LLP,</p>
+      <p style="margin-bottom: 30px; font-size: 16px;">Your Order, # ${details.orderId}, has been placed successfully.</p>
       
+      <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin-bottom: 30px; border: 1px solid #ddd;">
+        <h3 style="margin-top: 0; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Customer Information</h3>
+        <p style="margin: 8px 0;"><strong>Name:</strong> ${details.customerName}</p>
+        <p style="margin: 8px 0;"><strong>Email:</strong> <a href="mailto:${details.customerEmail}">${details.customerEmail}</a></p>
+        <p style="margin: 8px 0;"><strong>Phone:</strong> ${details.customerPhone}</p>
+        <p style="margin: 8px 0;"><strong>Order Time:</strong> ${new Date(details.orderTime).toLocaleString('en-IN')}</p>
+      </div>
+      
+      <h3 style="margin-bottom: 15px;">Order Items</h3>
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
         <thead>
-          <tr>
+          <tr style="background-color: #f1f1f1;">
             <th style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">Product</th>
             <th style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">Variant</th>
             <th style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">SKU</th>
             <th style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">Price</th>
-            <th style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">Quantity</th>
+            <th style="padding: 10px; text-align: center; border: 1px solid #000; font-weight: bold;">Quantity</th>
           </tr>
         </thead>
         <tbody>
           ${itemsHtml}
         </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" style="padding: 10px; text-align: right; border: 1px solid #000; font-weight: bold;">Total Amount:</td>
+            <td colspan="2" style="padding: 10px; text-align: left; border: 1px solid #000; font-weight: bold;">₹ ${details.totalAmount.toFixed(2)}</td>
+          </tr>
+        </tfoot>
       </table>
+
+      <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ddd;">
+        <h3 style="margin-top: 0; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Payment & Shipping</h3>
+        <p style="margin: 8px 0;"><strong>Payment Method:</strong> ${details.paymentMethod}</p>
+        <p style="margin: 8px 0;"><strong>Payment Status:</strong> ${details.paymentStatus}</p>
+        <p style="margin: 8px 0;"><strong>Shipping Address:</strong><br/>${details.shippingAddress.replace(/\n/g, '<br/>')}</p>
+      </div>
     </div>
   `;
 
