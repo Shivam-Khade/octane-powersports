@@ -3,18 +3,14 @@
 import { useState, useEffect } from "react";
 import { CheckCircle2, Loader2, Minus, Plus, MapPin, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { SessionProvider, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useProfileModal } from "@/components/profile-context";
 import { useCart } from "@/components/cart-context";
 import { useLoginModal } from "@/components/login-context";
 import "./checkout.css";
 
 export default function CheckoutPage() {
-  return (
-    <SessionProvider>
-      <CheckoutContent />
-    </SessionProvider>
-  );
+  return <CheckoutContent />;
 }
 
 function CheckoutContent() {
