@@ -1,7 +1,73 @@
 "use client";
 
-import { useState } from "react";
-import { Package, Mail, Phone, MapPin } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Package, Mail, Phone, MapPin, ChevronDown, Check } from "lucide-react";
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case "Pending": return "bg-amber-100 text-amber-800 border-amber-200";
+    case "Shipped": return "bg-blue-100 text-blue-800 border-blue-200";
+    case "Delivered": return "bg-emerald-100 text-emerald-800 border-emerald-200";
+    case "Cancelled": return "bg-rose-100 text-rose-800 border-rose-200";
+    default: return "bg-gray-100 text-gray-800 border-gray-200";
+  }
+};
+
+function StatusDropdown({ status, isUpdating, onChange }: { status: string, isUpdating: boolean, onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const statuses = ["Pending", "Shipped", "Delivered", "Cancelled"];
+
+  return (
+    <div className="relative inline-block text-left" ref={ref}>
+      <button
+        onClick={() => !isUpdating && setOpen(!open)}
+        disabled={isUpdating}
+        className={`flex items-center justify-between min-w-[130px] gap-2 px-3 py-2 rounded-lg border text-[11px] font-bold uppercase tracking-wider transition-all duration-200 ${getStatusColor(status)} ${isUpdating ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md cursor-pointer hover:-translate-y-0.5'}`}
+      >
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2 w-2">
+            {isUpdating && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>}
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
+          </span>
+          {status}
+        </div>
+        <ChevronDown size={14} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 mt-2 w-44 origin-top-right rounded-xl bg-white border border-gray-100 shadow-2xl ring-1 ring-black/5 focus:outline-none z-50 overflow-hidden">
+          <div className="p-1.5 flex flex-col gap-1">
+            {statuses.map((s) => (
+              <button
+                key={s}
+                onClick={() => {
+                  onChange(s);
+                  setOpen(false);
+                }}
+                className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors ${s === status ? 'bg-gray-100 text-[#ff6b00]' : 'text-gray-600 hover:bg-gray-50 hover:text-[#0a0a0a]'}`}
+              >
+                {s}
+                {s === status && <Check size={14} className="text-[#ff6b00]" />}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function OrdersClient({ initialOrders, updateStatusAction }: any) {
   const [orders, setOrders] = useState(initialOrders);
@@ -19,15 +85,7 @@ export default function OrdersClient({ initialOrders, updateStatusAction }: any)
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Pending": return "bg-yellow-100 text-yellow-800";
-      case "Shipped": return "bg-blue-100 text-blue-800";
-      case "Delivered": return "bg-green-100 text-green-800";
-      case "Cancelled": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
+
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -97,17 +155,11 @@ export default function OrdersClient({ initialOrders, updateStatusAction }: any)
                   </div>
                 </td>
                 <td className="px-4 py-3 text-right align-top">
-                  <select 
-                    value={order.status}
-                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                    disabled={isUpdating === order.id}
-                    className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border-none focus:ring-2 focus:ring-[#ff6b00] outline-none cursor-pointer ${getStatusColor(order.status)} ${isUpdating === order.id ? 'opacity-50' : ''}`}
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </select>
+                  <StatusDropdown 
+                    status={order.status} 
+                    isUpdating={isUpdating === order.id} 
+                    onChange={(newStatus) => handleStatusChange(order.id, newStatus)} 
+                  />
                 </td>
               </tr>
             ))}

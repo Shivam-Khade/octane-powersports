@@ -301,7 +301,7 @@
 @media (max-width: 1024px) {
   .bike-parts-search:not(.variant-horizontal) {
     width: 100%;
-    max-width: 400px;
+    max-width: 560px;
     margin: 0 auto;
   }
 }

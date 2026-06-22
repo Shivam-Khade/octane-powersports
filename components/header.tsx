@@ -24,18 +24,7 @@ const getBrandGroups = () => {
   }));
 };
 
-const getTypeGroups = () => {
-  const groups: Record<string, string[]> = {};
-  categories.forEach(c => {
-    const letter = c.charAt(0).toUpperCase();
-    if (!groups[letter]) groups[letter] = [];
-    groups[letter].push(c);
-  });
-  return Object.keys(groups).sort().map(letter => ({
-    letter,
-    types: groups[letter].sort()
-  }));
-};
+
 
 export function Header({ session }: { session: any }) {
   const [scrolled, setScrolled] = useState(false);
@@ -43,7 +32,6 @@ export function Header({ session }: { session: any }) {
   const [mobileTypeOpen, setMobileTypeOpen] = useState(false);
   const [mobileBrandOpen, setMobileBrandOpen] = useState(false);
   const [expandedBrandLetter, setExpandedBrandLetter] = useState<string | null>(null);
-  const [expandedTypeLetter, setExpandedTypeLetter] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const router = useRouter();
@@ -92,8 +80,7 @@ export function Header({ session }: { session: any }) {
       <header className={`site-header${scrolled ? " is-scrolled" : ""}${pathname?.startsWith('/blog') ? " is-journal" : ""}`}>
         <div className="nav-shell">
           <Link href="/" className="logo" aria-label="Octane Powersports home">
-            <span className="logo-main">OCTANE</span>
-            <small className="logo-sub">POWERSPORTS</small>
+            <img src="/logo.png" alt="Octane Powersports" style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
           </Link>
 
           <nav className="main-nav" aria-label="Primary navigation">
@@ -283,8 +270,7 @@ export function Header({ session }: { session: any }) {
               <X size={22} />
             </button>
             <Link href="/" className="logo mobile-logo" onClick={() => setMobileOpen(false)}>
-              <span className="logo-main">OCTANE</span>
-              <small className="logo-sub">POWERSPORTS</small>
+              <img src="/logo.png" alt="Octane Powersports" style={{ height: '38px', width: 'auto', objectFit: 'contain' }} />
             </Link>
             <nav className="mobile-nav">
               <Link href="/" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Home</Link>
@@ -298,27 +284,19 @@ export function Header({ session }: { session: any }) {
                   <ChevronDown size={18} className={`transition-transform shrink-0 ${mobileTypeOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {mobileTypeOpen && (
-                  <div className="mobile-accordion-content">
-                    {getTypeGroups().map(group => (
-                      <div key={group.letter} className="mobile-brand-group mb-2">
-                        <button 
-                          className="mobile-brand-letter flex items-center justify-between w-full font-bold text-gray-300 py-2"
-                          onClick={() => setExpandedTypeLetter(expandedTypeLetter === group.letter ? null : group.letter)}
+                  <div className="py-3 pl-4 border-l border-white/10 ml-3 mt-1">
+                    <div className="grid grid-cols-3 gap-2">
+                      {categories.map((cat) => (
+                        <Link 
+                          key={cat} 
+                          href={`/shop?category=${encodeURIComponent(cat)}`} 
+                          className="mobile-cat-grid-item"
+                          onClick={() => setMobileOpen(false)}
                         >
-                          <span>{group.letter}</span>
-                          <ChevronDown size={14} className={`transition-transform ${expandedTypeLetter === group.letter ? 'rotate-180' : ''}`} />
-                        </button>
-                        {expandedTypeLetter === group.letter && (
-                          <div className="mobile-brand-sub-list flex flex-col pl-4 border-l border-gray-800/50 ml-1.5 mt-1">
-                            {group.types.map(type => (
-                              <Link key={type} href={`/shop?category=${encodeURIComponent(type)}`} className="mobile-sub-link" onClick={() => setMobileOpen(false)}>
-                                {type}
-                              </Link>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                          {cat}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -358,41 +336,6 @@ export function Header({ session }: { session: any }) {
               </div>
               <Link href="/blog" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Journal</Link>
               <Link href="/service-booking" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Service Booking</Link>
-              <Link href="/contact" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Contact</Link>
-              
-              {session ? (
-                <>
-                  {session.user?.role === 'admin' ? (
-                    <Link href="/admin" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
-                      Admin Dashboard
-                    </Link>
-                  ) : (
-                    <button 
-                      className="mobile-nav-link text-left" 
-                      onClick={() => { setMobileOpen(false); openProfileModal(); }}
-                    >
-                      Profile Details
-                    </button>
-                  )}
-                  <button 
-                    className="mobile-nav-link text-left text-red-500" 
-                    onClick={() => { 
-                      localStorage.removeItem("octane_cart");
-                      setMobileOpen(false); 
-                      signOut({ callbackUrl: '/' }); 
-                    }}
-                  >
-                    Log Out
-                  </button>
-                </>
-              ) : (
-                <button 
-                  className="mobile-nav-link text-left" 
-                  onClick={() => { setMobileOpen(false); openModal(); }}
-                >
-                  Log In / Sign Up
-                </button>
-              )}
             </nav>
           </div>
         </div>

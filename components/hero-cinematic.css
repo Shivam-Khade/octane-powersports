@@ -267,7 +267,13 @@
   100% { transform: translateY(200%); }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+  .hero-cinematic,
+  .hero-cinematic__container,
+  .hero-cinematic__content {
+    min-height: 65vh;
+  }
+  
   .hero-cinematic__copy {
     padding: 0;
   }
@@ -276,6 +282,9 @@
   }
   .hero-cinematic__search-wrapper {
     margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 }
 

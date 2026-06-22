@@ -49,9 +49,9 @@ export function HeroCinematic() {
       <div className="container hero-cinematic__content">
         <motion.div 
           className="hero-cinematic__search-wrapper"
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          initial={{ opacity: 0, y: 40, scale: 0.98, filter: "blur(8px)" }}
+          animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
           <BikePartsSearch />
         </motion.div>

@@ -217,12 +217,11 @@
 
 .why-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 32px;
 }
 
 .why-card {
-  grid-column: span 2;
   padding: 48px 36px;
   border: 1.5px solid rgba(10, 10, 10, 0.05);
   border-radius: var(--radius-lg);
@@ -238,11 +237,7 @@
   flex-direction: column;
 }
 
-/* Center the last two cards on the second row */
-.why-card:nth-child(4) {
-  grid-column-start: 2;
-  grid-column-end: span 2;
-}
+/* Removed nth-child(4) alignment as we now have exactly 4 cards in a perfect grid */
 
 .why-card:hover {
   transform: translateY(-12px) scale(1.02);
@@ -500,11 +495,6 @@
   .why-card {
     grid-column: span 1 !important;
     padding: 36px 28px;
-  }
-
-  .why-card:nth-child(4) {
-    grid-column-start: auto !important;
-    grid-column-end: auto !important;
   }
 
   .upgrade-grid,

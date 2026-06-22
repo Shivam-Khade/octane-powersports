@@ -50,10 +50,10 @@ export function ProductPageClient({
   const stock = product.stockCount ?? 0;
   let dynamicAvailability = "Out of Stock";
   if (stock > 5) dynamicAvailability = "In Stock";
-  else if (stock > 3) dynamicAvailability = "Limited";
+  else if (stock > 3) dynamicAvailability = "More than 1 available";
   else if (stock > 0) dynamicAvailability = "Low Stock";
 
-  const isLimited = dynamicAvailability === "Limited" || dynamicAvailability === "Low Stock";
+  const isLimited = dynamicAvailability === "More than 1 available" || dynamicAvailability === "Low Stock";
   // Hover zoom handler
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
