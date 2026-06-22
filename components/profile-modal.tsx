@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SessionProvider, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { User, MapPin, Save, Loader2, X, Plus, Search } from "lucide-react";
 import { useProfileModal } from "./profile-context";
 import toast from "react-hot-toast";
@@ -18,11 +18,7 @@ type Address = {
 };
 
 export function ProfileModal() {
-  return (
-    <SessionProvider>
-      <ProfileModalContent />
-    </SessionProvider>
-  );
+  return <ProfileModalContent />;
 }
 
 function ProfileModalContent() {
