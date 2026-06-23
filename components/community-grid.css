@@ -158,7 +158,7 @@
 
 .yt-side-card {
   display: grid;
-  grid-template-columns: 160px 1fr;
+  grid-template-columns: 160px minmax(0, 1fr);
   gap: 20px;
   align-items: stretch;
   text-decoration: none;
@@ -167,7 +167,7 @@
 
 @media (max-width: 640px) {
   .yt-side-card {
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 120px minmax(0, 1fr);
     gap: 12px;
   }
   .yt-side-videos {
