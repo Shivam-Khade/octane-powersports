@@ -77,10 +77,6 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="product-footer">
           <div className="product-price-block">
             <strong className="product-price">₹{product.price.toLocaleString("en-IN")}</strong>
-            <span className="product-emi">
-              <Zap size={11} />
-              EMI from ₹{Math.round(product.price / 12).toLocaleString("en-IN")}/mo
-            </span>
           </div>
           <button 
             suppressHydrationWarning 

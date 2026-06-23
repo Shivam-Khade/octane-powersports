@@ -56,10 +56,10 @@ export const metadata: Metadata = {
     siteName: "Octane Powersports",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1600&q=80",
-        width: 1600,
-        height: 900,
-        alt: "Premium motorcycle helmets and riding gear — Octane Powersports"
+        url: "/logo.png",
+        width: 800,
+        height: 600,
+        alt: "Octane Powersports Logo"
       }
     ],
     locale: "en_IN",
@@ -94,6 +94,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   let categories: string[] = [];
   let brands: string[] = [];
+  let gridSettings = { 
+    categoryDesktopCols: 4, 
+    categoryMobileCols: 3,
+    brandDesktopCols: 4,
+    brandMobileCols: 3
+  };
   try {
     const normalizeName = (name: string) => {
       if (name && name === name.toUpperCase() && name.length > 3) {
@@ -119,6 +125,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       }
     });
     brands = Array.from(dbBrands).sort();
+
+    const [settingsRows] = await pool.query('SELECT value_data FROM settings WHERE key_name = ?', ['navigation_grid']);
+    if ((settingsRows as any[])[0]?.value_data) {
+      const data = (settingsRows as any[])[0].value_data;
+      gridSettings = {
+        categoryDesktopCols: data.categoryDesktopCols || data.desktopColumns || 4,
+        categoryMobileCols: data.categoryMobileCols || data.mobileColumns || 3,
+        brandDesktopCols: data.brandDesktopCols || data.desktopColumns || 4,
+        brandMobileCols: data.brandMobileCols || data.mobileColumns || 3,
+      };
+    }
   } catch (error) {
     console.error("Failed to fetch brands/categories for layout:", error);
   }
@@ -141,7 +158,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <ProfileModalProvider>
                 <Toaster position="top-right" toastOptions={{ duration: 3000, style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333' } }} />
                 <CursorGlow />
-                <Header session={session} categories={categories} brands={brands} />
+                <Header session={session} categories={categories} brands={brands} gridSettings={gridSettings} />
                 {children}
                 <FooterWrapper>
                   <Footer />

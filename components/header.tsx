@@ -10,24 +10,9 @@ import { useProfileModal } from "./profile-context";
 import { useCart } from "./cart-context";
 import "./header.css";
 
-const getBrandGroups = (brands: string[]) => {
-  const groups: Record<string, string[]> = {};
-  brands.forEach(b => {
-    const letter = b.charAt(0).toUpperCase();
-    if (!groups[letter]) groups[letter] = [];
-    if (!groups[letter].includes(b)) {
-      groups[letter].push(b);
-    }
-  });
-  return Object.keys(groups).sort().map(letter => ({
-    letter,
-    brands: groups[letter].sort()
-  }));
-};
 
 
-
-export function Header({ session, categories = [], brands = [] }: { session: any, categories?: string[], brands?: string[] }) {
+export function Header({ session, categories = [], brands = [], gridSettings = { categoryDesktopCols: 4, categoryMobileCols: 3, brandDesktopCols: 4, brandMobileCols: 3 } }: { session: any, categories?: string[], brands?: string[], gridSettings?: any }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileTypeOpen, setMobileTypeOpen] = useState(false);
@@ -97,7 +82,7 @@ export function Header({ session, categories = [], brands = [] }: { session: any
                 Shop By Category <ChevronDown size={13} className="nav-chevron" />
               </button>
               <div className="mega-menu types-menu">
-                <div className="mega-type-grid">
+                <div className="mega-type-grid" style={{ gridTemplateColumns: `repeat(${gridSettings.categoryDesktopCols}, 1fr)` }}>
                   {categories.map((cat) => (
                     <Link key={cat} href={`/shop?category=${encodeURIComponent(cat)}`} className="type-item">
                       {cat}
@@ -112,18 +97,11 @@ export function Header({ session, categories = [], brands = [] }: { session: any
                 Shop By Brand <ChevronDown size={13} className="nav-chevron" />
               </button>
               <div className="mega-menu brands-menu">
-                <div className="mega-brand-grid">
-                  {getBrandGroups(brands).map(group => (
-                    <div key={group.letter} className="brand-group">
-                      <h4 className="brand-letter">{group.letter}</h4>
-                      <div className="brand-links">
-                        {group.brands.map(brand => (
-                          <Link key={brand} href={`/shop?brand=${encodeURIComponent(brand)}`} className="brand-item">
-                            {brand}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
+                <div className="mega-brand-grid" style={{ gridTemplateColumns: `repeat(${gridSettings.brandDesktopCols}, 1fr)` }}>
+                  {brands.map(brand => (
+                    <Link key={brand} href={`/shop?brand=${encodeURIComponent(brand)}`} className="type-item">
+                      {brand}
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -289,7 +267,7 @@ export function Header({ session, categories = [], brands = [] }: { session: any
               <X size={22} />
             </button>
             <Link href="/" className="logo mobile-logo" onClick={() => setMobileOpen(false)}>
-              <img src="/logo.png" alt="Octane Powersports" style={{ height: '38px', width: 'auto', objectFit: 'contain' }} />
+              <img src="/logo.png" alt="Octane Powersports" style={{ height: '44px', width: 'auto', objectFit: 'contain', filter: 'invert(1) hue-rotate(180deg) brightness(1.2)' }} />
             </Link>
             <nav className="mobile-nav">
               <Link href="/" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Home</Link>
@@ -304,7 +282,7 @@ export function Header({ session, categories = [], brands = [] }: { session: any
                 </button>
                 {mobileTypeOpen && (
                   <div className="py-3 pl-4 border-l border-white/10 ml-3 mt-1">
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${gridSettings.categoryMobileCols}, 1fr)` }}>
                       {categories.map((cat) => (
                         <Link
                           key={cat}
@@ -329,27 +307,19 @@ export function Header({ session, categories = [], brands = [] }: { session: any
                   <ChevronDown size={18} className={`transition-transform shrink-0 ${mobileBrandOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {mobileBrandOpen && (
-                  <div className="mobile-accordion-content">
-                    {getBrandGroups(brands).map(group => (
-                      <div key={group.letter} className="mobile-brand-group mb-2">
-                        <button
-                          className="mobile-brand-letter flex items-center justify-between w-full font-bold text-gray-300 py-2"
-                          onClick={() => setExpandedBrandLetter(expandedBrandLetter === group.letter ? null : group.letter)}
+                  <div className="py-3 pl-4 border-l border-white/10 ml-3 mt-1">
+                    <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${gridSettings.brandMobileCols}, 1fr)` }}>
+                      {brands.map((brand) => (
+                        <Link
+                          key={brand}
+                          href={`/shop?brand=${encodeURIComponent(brand)}`}
+                          className="mobile-cat-grid-item"
+                          onClick={() => setMobileOpen(false)}
                         >
-                          <span>{group.letter}</span>
-                          <ChevronDown size={14} className={`transition-transform ${expandedBrandLetter === group.letter ? 'rotate-180' : ''}`} />
-                        </button>
-                        {expandedBrandLetter === group.letter && (
-                          <div className="mobile-brand-sub-list flex flex-col pl-4 border-l border-gray-800/50 ml-1.5 mt-1">
-                            {group.brands.map(brand => (
-                              <Link key={brand} href={`/shop?brand=${encodeURIComponent(brand)}`} className="mobile-sub-link" onClick={() => setMobileOpen(false)}>
-                                {brand}
-                              </Link>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                          {brand}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

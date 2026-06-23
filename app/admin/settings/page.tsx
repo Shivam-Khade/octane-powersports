@@ -12,7 +12,7 @@ export async function updateAdminProfile(data: any) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") throw new Error("Unauthorized");
 
-  const { name, email, password } = data;
+  const { name, email, password, gridSettings } = data;
   const adminEmail = session.user.email; // get current email to find the user
 
   if (password && password.trim() !== "") {
@@ -25,6 +25,13 @@ export async function updateAdminProfile(data: any) {
     await pool.query(
       'UPDATE users SET name = ?, email = ? WHERE email = ?',
       [name, email, adminEmail]
+    );
+  }
+  
+  if (gridSettings) {
+    await pool.query(
+      'INSERT INTO settings (key_name, value_data) VALUES (?, ?) ON DUPLICATE KEY UPDATE value_data = VALUES(value_data)',
+      ['navigation_grid', JSON.stringify(gridSettings)]
     );
   }
   
@@ -43,6 +50,10 @@ export default async function AdminSettingsPage() {
   const [rows] = await pool.query('SELECT name, email FROM users WHERE email = ?', [session.user.email]);
   const user = (rows as any[])[0];
 
+  // Fetch grid settings
+  const [settingsRows] = await pool.query('SELECT value_data FROM settings WHERE key_name = ?', ['navigation_grid']);
+  const gridSettings = (settingsRows as any[])[0]?.value_data || { desktopColumns: 4, mobileColumns: 3 };
+
   return (
     <div className="p-8 max-w-4xl">
       <div className="mb-8">
@@ -51,8 +62,8 @@ export default async function AdminSettingsPage() {
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
-        <h2 className="text-xl font-black uppercase mb-6 pb-4 border-b border-gray-100">Profile Settings</h2>
-        <SettingsClient initialData={user} updateAction={updateAdminProfile} />
+        <h2 className="text-xl font-black uppercase mb-6 pb-4 border-b border-gray-100">Store Configurations</h2>
+        <SettingsClient initialData={user} initialGridSettings={gridSettings} updateAction={updateAdminProfile} />
       </div>
     </div>
   );

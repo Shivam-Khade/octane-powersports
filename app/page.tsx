@@ -18,7 +18,7 @@ import "./home.css";
 const whyUs = [
   { title: "Authentic Products", text: "Every product is 100% genuine, sourced directly from authorised brand distributors.", Icon: ShieldCheck },
   { title: "Fast Delivery", text: "Priority shipping across India. Same-day dispatch on all in-stock orders placed before 2 PM.", Icon: Truck },
-  { title: "Secure Payments", text: "UPI, cards, net banking and EMI — all transactions encrypted with bank-grade security.", Icon: CreditCard },
+  { title: "Secure Payments", text: "UPI, cards, and net banking — all transactions encrypted with bank-grade security.", Icon: CreditCard },
   { title: "Expert Support", text: "Speak to our riding gear experts for fitment advice, compatibility checks and recommendations.", Icon: Headphones }
 ];
 

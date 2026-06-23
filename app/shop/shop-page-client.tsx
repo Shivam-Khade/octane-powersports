@@ -317,7 +317,7 @@ function CollapsibleFilter({ title, children, defaultOpen = true }: { title: str
 
   return (
     <div className="filter-group">
-      <button className="filter-group-header" onClick={() => setIsOpen(!isOpen)}>
+      <button suppressHydrationWarning className="filter-group-header" onClick={() => setIsOpen(!isOpen)}>
         <h3>{title}</h3>
         {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
       </button>
@@ -342,7 +342,7 @@ function SubCollapsibleFilter({ title, children, defaultOpen = false }: { title:
 
   return (
     <div className="sub-filter-group mb-1">
-      <button className="flex items-center justify-between w-full text-left py-2 text-[13px] font-bold text-gray-500 hover:text-gray-900 transition-colors uppercase tracking-wider" onClick={() => setIsOpen(!isOpen)}>
+      <button suppressHydrationWarning className="flex items-center justify-between w-full text-left py-2 text-[13px] font-bold text-gray-500 hover:text-gray-900 transition-colors uppercase tracking-wider" onClick={() => setIsOpen(!isOpen)}>
         <span>{title}</span>
         {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
       </button>
@@ -369,6 +369,7 @@ function PremiumSortDropdown({ value, onChange }: { value: string, onChange: (v:
   return (
     <div className="custom-sort-dropdown">
       <button 
+        suppressHydrationWarning
         className="custom-sort-trigger" 
         onClick={() => setIsOpen(!isOpen)}
         onBlur={() => setTimeout(() => setIsOpen(false), 200)}

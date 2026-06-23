@@ -1,25 +1,51 @@
 import Link from "next/link";
-import { Share2, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import "./footer.css";
 
-const InstagramIcon = ({ size = 24, ...props }: any) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+const ShareIcon = ({ size = 28, ...props }: any) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="url(#shareGradient)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <defs>
+      <linearGradient id="shareGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#00C6FF" />
+        <stop offset="100%" stopColor="#0072FF" />
+      </linearGradient>
+    </defs>
+    <circle cx="18" cy="5" r="3"/>
+    <circle cx="6" cy="12" r="3"/>
+    <circle cx="18" cy="19" r="3"/>
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
   </svg>
 );
 
-const YoutubeIcon = ({ size = 24, ...props }: any) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M2.5 7.1C2.5 5.4 3.9 4 5.6 4h12.8c1.7 0 3.1 1.4 3.1 3.1v9.8c0 1.7-1.4 3.1-3.1 3.1H5.6C3.9 20 2.5 18.6 2.5 16.9V7.1z"/>
-    <path d="m9.5 15.5 6-3.5-6-3.5v7z"/>
+const InstagramIcon = ({ size = 28, ...props }: any) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+    <defs>
+      <linearGradient id="igGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#fdf497" />
+        <stop offset="5%" stopColor="#fdf497" />
+        <stop offset="45%" stopColor="#fd5949" />
+        <stop offset="60%" stopColor="#d6249f" />
+        <stop offset="90%" stopColor="#285AEB" />
+      </linearGradient>
+    </defs>
+    <rect width="20" height="20" x="2" y="2" rx="6" ry="6" fill="url(#igGradient)"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" stroke="white" strokeWidth="2" fill="none"/>
+    <rect x="6" y="6" width="12" height="12" rx="3" stroke="white" strokeWidth="2" fill="none"/>
+    <circle cx="16.5" cy="7.5" r="1.2" fill="white"/>
+  </svg>
+);
+
+const YoutubeIcon = ({ size = 28, ...props }: any) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+    <path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/>
+    <path fill="#FFFFFF" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
   </svg>
 );
 
 const socials = [
-  { icon: Share2, href: "https://api.whatsapp.com/send?text=Check%20out%20Octane%20Powersports:%20https://octaneps.com", label: "Share on WhatsApp" },
-  { icon: InstagramIcon, href: "https://instagram.com/octanepowersports", label: "Instagram" },
+  { icon: ShareIcon, href: "https://api.whatsapp.com/send?text=Check%20out%20Octane%20Powersports:%20https://octaneps.com", label: "Share on WhatsApp" },
+  { icon: InstagramIcon, href: "https://www.instagram.com/octaneps", label: "Instagram" },
   { icon: YoutubeIcon, href: "https://youtube.com/@octanepowersports", label: "YouTube" }
 ];
 
@@ -50,7 +76,7 @@ export function Footer() {
           <div className="footer-socials">
             {socials.map(({ icon: Icon, href, label }) => (
               <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="footer-social-btn" aria-label={label}>
-                <Icon size={14} />
+                <Icon size={28} />
               </a>
             ))}
           </div>
@@ -60,7 +86,7 @@ export function Footer() {
         <div className="footer-col">
           <h3 className="footer-col-title">CONTACT INFORMATION</h3>
           <div className="footer-contact-text">
-            <p>Phone: +91 7420949711</p>
+            <p>Phone: +91 7420949711 / +91 7420919711</p>
             <p>Email: info@octaneps.com</p>
             <p>Shop no 5, 30/8A/1 Ramwadi,<br/>Pune 411014</p>
           </div>

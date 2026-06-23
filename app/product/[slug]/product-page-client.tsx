@@ -46,7 +46,6 @@ export function ProductPageClient({
   const { addToCart } = useCart();
   const router = useRouter();
 
-  const emi = Math.round(product.price / 12);
   const stock = product.stockCount ?? 0;
   let dynamicAvailability = "Out of Stock";
   if (stock > 5) dynamicAvailability = "In Stock";
@@ -183,14 +182,6 @@ export function ProductPageClient({
             <div className="purchase-price-block">
               <strong className="purchase-price">₹{product.price.toLocaleString("en-IN")}</strong>
               <span className="purchase-tax">Incl. of all taxes</span>
-            </div>
-
-            <div className="purchase-emi-card">
-              <Zap size={16} className="emi-icon" />
-              <div>
-                <strong>EMI options from ₹{emi.toLocaleString("en-IN")}/month</strong>
-                <span>Instant approval & 0% interest EMI options on major credit cards</span>
-              </div>
             </div>
 
             <p className="purchase-desc">
