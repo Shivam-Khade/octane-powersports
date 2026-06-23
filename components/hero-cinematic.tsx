@@ -21,6 +21,11 @@ export function HeroCinematic() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0, 0.3], [0, 40]);
   const videoScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.08]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <section className="hero-cinematic">
@@ -30,15 +35,17 @@ export function HeroCinematic() {
         style={{ scale: videoScale }}
       >
         <div suppressHydrationWarning style={{ width: '100%', height: '100%' }}>
-            <video
-              className="hero-cinematic__video"
-              autoPlay
-              muted
-              loop
-              playsInline
-            >
-              <source src="/hero.mp4" type="video/mp4" />
-            </video>
+            {mounted && (
+              <video
+                className="hero-cinematic__video"
+                autoPlay
+                muted
+                loop
+                playsInline
+              >
+                <source src="/hero.mp4" type="video/mp4" />
+              </video>
+            )}
         </div>
       </motion.div>
 

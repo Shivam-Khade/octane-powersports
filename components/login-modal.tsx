@@ -55,6 +55,7 @@ export function LoginModal() {
       if (res?.error) {
         setError("Invalid email or password");
       } else {
+        sessionStorage.setItem("octane_session_active", "true");
         handleClose();
         
         // Check if the user is an admin
@@ -65,8 +66,8 @@ export function LoginModal() {
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
         toast.success(isAdmin ? "Welcome back, Admin" : "Logged in successfully", { 
           position: isMobile ? 'bottom-center' : 'top-right',
-          style: { background: '#16a34a', color: '#fff', fontWeight: '600', padding: '12px 20px', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(22, 163, 74, 0.4)' }, 
-          iconTheme: { primary: '#fff', secondary: '#16a34a' } 
+          style: { background: 'rgba(20, 83, 45, 0.95)', backdropFilter: 'blur(10px)', color: '#4ade80', border: '1px solid rgba(74, 222, 128, 0.2)', fontWeight: '600', padding: '14px 24px', borderRadius: '16px', boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)' }, 
+          iconTheme: { primary: '#4ade80', secondary: 'transparent' } 
         });
         
         if (isAdmin) {
@@ -123,12 +124,13 @@ export function LoginModal() {
           if (loginRes?.error) {
             setError("Registered successfully, but failed to log in automatically");
           } else {
+            sessionStorage.setItem("octane_session_active", "true");
             handleClose();
             const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
             toast.success("Logged in successfully", { 
               position: isMobile ? 'bottom-center' : 'top-right',
-              style: { background: '#16a34a', color: '#fff', fontWeight: '600', padding: '12px 20px', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(22, 163, 74, 0.4)' }, 
-              iconTheme: { primary: '#fff', secondary: '#16a34a' } 
+              style: { background: 'rgba(20, 83, 45, 0.95)', backdropFilter: 'blur(10px)', color: '#4ade80', border: '1px solid rgba(74, 222, 128, 0.2)', fontWeight: '600', padding: '14px 24px', borderRadius: '16px', boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)' }, 
+              iconTheme: { primary: '#4ade80', secondary: 'transparent' } 
             });
             router.push("/");
             router.refresh();
@@ -189,7 +191,7 @@ export function LoginModal() {
   };
 
   const getSubtitle = () => {
-    if (view === 'login') return "Enter your credentials to access your garage.";
+    if (view === 'login') return "";
     if (view === 'signup') return "Create an account to track orders and save preferences.";
     return "Enter your email to receive a password reset code.";
   };
@@ -231,9 +233,11 @@ export function LoginModal() {
                 <h2 className="text-4xl m-0 leading-none" style={{ fontFamily: "var(--font-bebas-neue)" }}>
                   {getTitle()}
                 </h2>
-                <p className="mt-3 text-[15px] text-gray-500">
-                  {getSubtitle()}
-                </p>
+                {getSubtitle() && (
+                  <p className="mt-3 text-[15px] text-gray-500">
+                    {getSubtitle()}
+                  </p>
+                )}
               </div>
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -309,7 +313,7 @@ export function LoginModal() {
                           <button 
                             type="button" 
                             onClick={() => resetState('forgot-password')}
-                            className="text-[12px] font-semibold text-gray-500 hover:text-[#ff6b00] transition-colors mt-2"
+                            className="text-[12px] font-semibold text-gray-500 hover:text-[#ff6b00] transition-colors mt-2 self-end"
                           >
                             Forgot Password?
                           </button>

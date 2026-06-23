@@ -37,11 +37,16 @@ export function Header({ session, categories = [], brands = [] }: { session: any
   const [searchText, setSearchText] = useState("");
   const router = useRouter();
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const { openModal } = useLoginModal();
   const { openModal: openProfileModal } = useProfileModal();
   const { totalItems } = useCart();
 
+  useEffect(() => setIsMounted(true), []);
+
+  const isActiveSession = isMounted && typeof sessionStorage !== 'undefined' && sessionStorage.getItem("octane_session_active") === "true";
+  const effectiveSession = isActiveSession ? session : null;
 
 
   useEffect(() => {
@@ -81,7 +86,7 @@ export function Header({ session, categories = [], brands = [] }: { session: any
       <header className={`site-header${scrolled ? " is-scrolled" : ""}${pathname?.startsWith('/blog') ? " is-journal" : ""}`}>
         <div className="nav-shell">
           <Link href="/" className="logo" aria-label="Octane Powersports home">
-            <img src="/logo.png" alt="Octane Powersports" style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
+            <img src="/logo.png" alt="Octane Powersports" style={{ height: '44px', width: 'auto', objectFit: 'contain', filter: 'invert(1) hue-rotate(180deg) brightness(1.2)' }} />
           </Link>
 
           <nav className="main-nav" aria-label="Primary navigation">
@@ -125,8 +130,8 @@ export function Header({ session, categories = [], brands = [] }: { session: any
             </div>
 
             <Link href="/blog" className={`nav-link ${pathname?.startsWith('/blog') ? '!text-[#ff6b00]' : ''}`}>Blog</Link>
-            
-            {session ? (
+
+            {effectiveSession ? (
               <>
                 <Link href="/service-booking" className={`nav-link ${pathname?.startsWith('/service-booking') ? '!text-[#ff6b00]' : ''}`}>Service Booking</Link>
                 <Link href="/orders" className={`nav-link ${pathname?.startsWith('/orders') ? '!text-[#ff6b00]' : ''}`}>Orders</Link>
@@ -139,9 +144,9 @@ export function Header({ session, categories = [], brands = [] }: { session: any
           <div className="nav-actions">
             {/* Desktop Search */}
             <div ref={searchContainerRef} className={`nav-search-wrapper desktop-search ${searchOpen ? "open" : ""}`}>
-              <button 
-                suppressHydrationWarning 
-                className="search-trigger-btn" 
+              <button
+                suppressHydrationWarning
+                className="search-trigger-btn"
                 aria-label="Search"
                 onClick={(e) => {
                   e.preventDefault();
@@ -155,10 +160,10 @@ export function Header({ session, categories = [], brands = [] }: { session: any
                 <Search size={18} />
               </button>
               <form onSubmit={handleSearch} className="nav-search-form">
-                <input 
+                <input
                   autoFocus={searchOpen}
-                  type="text" 
-                  placeholder="Search products..." 
+                  type="text"
+                  placeholder="Search products..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   className="nav-search-input"
@@ -168,9 +173,9 @@ export function Header({ session, categories = [], brands = [] }: { session: any
             </div>
 
             {/* Mobile Search Trigger */}
-            <button 
-              suppressHydrationWarning 
-              className="search-trigger-btn mobile-search-trigger" 
+            <button
+              suppressHydrationWarning
+              className="search-trigger-btn mobile-search-trigger"
               aria-label="Search"
               onClick={(e) => {
                 e.preventDefault();
@@ -179,11 +184,11 @@ export function Header({ session, categories = [], brands = [] }: { session: any
             >
               <Search size={18} />
             </button>
-            
-            {session ? (
+
+            {effectiveSession ? (
               <>
                 <div className="relative group">
-                  {session.user?.role === 'admin' ? (
+                  {effectiveSession.user?.role === 'admin' ? (
                     <Link className="nav-icon-btn peer" href="/admin" aria-label="Account">
                       <User size={18} className="text-[#ff6b00]" />
                     </Link>
@@ -196,9 +201,9 @@ export function Header({ session, categories = [], brands = [] }: { session: any
                     <div className="bg-[#0a0a0a] border border-gray-800 shadow-2xl rounded-xl overflow-hidden flex flex-col">
                       <div className="px-5 py-4 border-b border-gray-800 bg-[#141414]">
                         <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Signed in as</p>
-                        <p className="text-sm font-semibold text-white truncate">{session.user?.name || session.user?.email}</p>
+                        <p className="text-sm font-semibold text-white truncate">{effectiveSession.user?.name || effectiveSession.user?.email}</p>
                       </div>
-                      {session.user?.role === 'admin' && (
+                      {effectiveSession.user?.role === 'admin' && (
                         <div className="py-2">
                           <Link href="/admin" className="flex items-center gap-3 px-5 py-2.5 text-sm font-medium !text-[#ff6b00] hover:!text-white hover:bg-[#ff6b00] transition-colors">
                             <Shield size={16} /> Admin Dashboard
@@ -208,6 +213,7 @@ export function Header({ session, categories = [], brands = [] }: { session: any
                       <div className="border-t border-gray-800 p-2">
                         <button onClick={() => {
                           localStorage.removeItem("octane_cart");
+                          sessionStorage.removeItem("octane_session_active");
                           signOut({ callbackUrl: '/' });
                         }} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-medium text-red-400 hover:!text-white hover:bg-red-500/80 rounded-lg transition-colors text-left">
                           <LogOut size={16} /> Log Out
@@ -216,6 +222,18 @@ export function Header({ session, categories = [], brands = [] }: { session: any
                     </div>
                   </div>
                 </div>
+                <button
+                  onClick={() => {
+                    localStorage.removeItem("octane_cart");
+                    sessionStorage.removeItem("octane_session_active");
+                    signOut({ callbackUrl: '/' });
+                  }}
+                  className="nav-icon-btn hidden md:flex"
+                  aria-label="Log Out"
+                  title="Log Out"
+                >
+                  <LogOut size={18} className="text-red-500 hover:text-red-600 transition-colors" />
+                </button>
               </>
             ) : (
               <button className="nav-icon-btn" onClick={openModal} aria-label="Login">
@@ -242,10 +260,10 @@ export function Header({ session, categories = [], brands = [] }: { session: any
         <div className={`global-search-container mobile-search-dropdown ${searchOpen ? "open" : ""}`}>
           <form onSubmit={handleSearch} className="global-search-inner">
             <Search size={20} className="global-search-icon" />
-            <input 
+            <input
               autoFocus={searchOpen}
-              type="text" 
-              placeholder="Search for premium parts, brands, or categories..." 
+              type="text"
+              placeholder="Search for premium parts, brands, or categories..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               className="global-search-input"
@@ -277,8 +295,8 @@ export function Header({ session, categories = [], brands = [] }: { session: any
               <Link href="/" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Home</Link>
               <Link href="/shop" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Shop</Link>
               <div className="mobile-accordion">
-                <button 
-                  className="mobile-nav-link w-full text-left flex items-center justify-between" 
+                <button
+                  className="mobile-nav-link w-full text-left flex items-center justify-between"
                   onClick={() => setMobileTypeOpen(!mobileTypeOpen)}
                 >
                   <span>Shop By Category</span>
@@ -288,9 +306,9 @@ export function Header({ session, categories = [], brands = [] }: { session: any
                   <div className="py-3 pl-4 border-l border-white/10 ml-3 mt-1">
                     <div className="grid grid-cols-3 gap-2">
                       {categories.map((cat) => (
-                        <Link 
-                          key={cat} 
-                          href={`/shop?category=${encodeURIComponent(cat)}`} 
+                        <Link
+                          key={cat}
+                          href={`/shop?category=${encodeURIComponent(cat)}`}
                           className="mobile-cat-grid-item"
                           onClick={() => setMobileOpen(false)}
                         >
@@ -303,8 +321,8 @@ export function Header({ session, categories = [], brands = [] }: { session: any
               </div>
 
               <div className="mobile-accordion">
-                <button 
-                  className="mobile-nav-link w-full text-left flex items-center justify-between" 
+                <button
+                  className="mobile-nav-link w-full text-left flex items-center justify-between"
                   onClick={() => setMobileBrandOpen(!mobileBrandOpen)}
                 >
                   <span>Shop By Brand</span>
@@ -314,7 +332,7 @@ export function Header({ session, categories = [], brands = [] }: { session: any
                   <div className="mobile-accordion-content">
                     {getBrandGroups(brands).map(group => (
                       <div key={group.letter} className="mobile-brand-group mb-2">
-                        <button 
+                        <button
                           className="mobile-brand-letter flex items-center justify-between w-full font-bold text-gray-300 py-2"
                           onClick={() => setExpandedBrandLetter(expandedBrandLetter === group.letter ? null : group.letter)}
                         >
@@ -337,6 +355,19 @@ export function Header({ session, categories = [], brands = [] }: { session: any
               </div>
               <Link href="/blog" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Blog</Link>
               <Link href="/service-booking" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Service Booking</Link>
+              {effectiveSession && (
+                <button
+                  onClick={() => {
+                    localStorage.removeItem("octane_cart");
+                    sessionStorage.removeItem("octane_session_active");
+                    signOut({ callbackUrl: '/' });
+                    setMobileOpen(false);
+                  }}
+                  className="mobile-nav-link text-left text-red-500 w-full"
+                >
+                  Log Out
+                </button>
+              )}
             </nav>
           </div>
         </div>

@@ -9,6 +9,7 @@ export default function SignOutButton() {
       onClick={() => {
         if (typeof window !== 'undefined') {
           localStorage.removeItem("octane_cart");
+          sessionStorage.removeItem("octane_session_active");
         }
         signOut({ callbackUrl: '/' });
       }}

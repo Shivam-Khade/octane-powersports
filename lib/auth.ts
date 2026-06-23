@@ -73,6 +73,22 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24 hours server-side max
   },
+
+  // Force session cookie (no maxAge = browser deletes it on quit)
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax" as const,
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        // NO maxAge here — this makes it a session cookie
+      },
+    },
+  },
+
   secret: process.env.NEXTAUTH_SECRET,
 };
