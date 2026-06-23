@@ -30,35 +30,35 @@ export default async function AdminLayout({
       {/* Sidebar */}
       <aside className="w-64 bg-[#0a0a0a] text-white flex flex-col h-full sticky top-0">
         <div className="p-6">
-          <Link href="/" className="text-2xl font-black tracking-tighter uppercase text-white hover:text-[#ff6b00] transition-colors flex flex-col leading-none">
+          <Link href="/admin" className="text-2xl font-black tracking-tighter uppercase text-white hover:text-[#ff6b00] transition-colors flex flex-col leading-none">
             OCTANE
             <span className="text-[#ff6b00] text-sm tracking-[0.2em] -mt-1">ADMIN</span>
           </Link>
         </div>
         
         <nav className="flex-1 px-4 py-4 space-y-2">
-          <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+          <Link href="/admin" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <LayoutDashboard size={18} className="text-[#ff6b00]" /> Dashboard
           </Link>
-          <Link href="/admin/analytics" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+          <Link href="/admin/analytics" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <BarChart3 size={18} className="text-[#ff6b00]" /> Analytics
           </Link>
-          <Link href="/admin/products" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+          <Link href="/admin/products" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <Package size={18} className="text-[#ff6b00]" /> Products
           </Link>
-          <Link href="/admin/categories" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+          <Link href="/admin/categories" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <LayoutDashboard size={18} className="text-[#ff6b00]" /> Categories
           </Link>
-          <Link href="/admin/orders" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+          <Link href="/admin/orders" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <ShoppingCart size={18} className="text-[#ff6b00]" /> Orders
           </Link>
-          <Link href="/admin/bookings" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+          <Link href="/admin/bookings" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <CalendarCheck size={18} className="text-[#ff6b00]" /> Service Bookings
           </Link>
-          <Link href="/admin/blogs" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+          <Link href="/admin/blogs" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <FileText size={18} className="text-[#ff6b00]" /> Blog Posts
           </Link>
-          <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+          <Link href="/admin/settings" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <Settings size={18} className="text-[#ff6b00]" /> Settings
           </Link>
         </nav>

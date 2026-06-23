@@ -7,14 +7,31 @@ export const metadata = {
 };
 
 export default async function AdminPage() {
-  // Fetch high-level stats
-  const [productCountResult] = await pool.query('SELECT COUNT(*) as count FROM products');
-  const [orderCountResult] = await pool.query('SELECT COUNT(*) as count FROM orders');
-  const [blogCountResult] = await pool.query('SELECT COUNT(*) as count FROM blogs');
-  const [bookingCountResult] = await pool.query('SELECT COUNT(*) as count FROM service_bookings');
-  const [userCountResult] = await pool.query('SELECT COUNT(*) as count FROM users');
-  const [categoryCountResult] = await pool.query('SELECT COUNT(*) as count FROM categories');
-  const [revenueResult] = await pool.query("SELECT SUM(total_amount) as total FROM orders WHERE status != 'Cancelled'");
+  // Fetch all stats in parallel instead of sequentially
+  const [
+    [productCountResult],
+    [orderCountResult],
+    [blogCountResult],
+    [bookingCountResult],
+    [userCountResult],
+    [categoryCountResult],
+    [revenueResult],
+    [recentOrdersResult],
+  ] = await Promise.all([
+    pool.query('SELECT COUNT(*) as count FROM products'),
+    pool.query('SELECT COUNT(*) as count FROM orders'),
+    pool.query('SELECT COUNT(*) as count FROM blogs'),
+    pool.query('SELECT COUNT(*) as count FROM service_bookings'),
+    pool.query('SELECT COUNT(*) as count FROM users'),
+    pool.query('SELECT COUNT(*) as count FROM categories'),
+    pool.query("SELECT SUM(total_amount) as total FROM orders WHERE status != 'Cancelled'"),
+    pool.query(`
+      SELECT o.id, o.total_amount, o.status, o.created_at, u.name as customer_name 
+      FROM orders o 
+      LEFT JOIN users u ON o.user_id = u.id 
+      ORDER BY o.id DESC LIMIT 5
+    `),
+  ]);
 
   const productsCount = (productCountResult as any)[0].count;
   const ordersCount = (orderCountResult as any)[0].count;
@@ -23,14 +40,6 @@ export default async function AdminPage() {
   const usersCount = (userCountResult as any)[0].count;
   const categoriesCount = (categoryCountResult as any)[0].count;
   const totalRevenue = (revenueResult as any)[0].total || 0;
-
-  // Fetch recent orders
-  const [recentOrdersResult] = await pool.query(`
-    SELECT o.id, o.total_amount, o.status, o.created_at, u.name as customer_name 
-    FROM orders o 
-    LEFT JOIN users u ON o.user_id = u.id 
-    ORDER BY o.id DESC LIMIT 5
-  `);
   const recentOrders = recentOrdersResult as any[];
 
   return (
@@ -105,7 +114,7 @@ export default async function AdminPage() {
         <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <h2 className="text-lg font-black uppercase tracking-tight text-[#0a0a0a]">Recent Orders</h2>
-            <Link href="/admin/orders" className="text-sm font-bold text-[#ff6b00] flex items-center gap-1 hover:gap-2 transition-all">
+            <Link href="/admin/orders" prefetch={false} className="text-sm font-bold text-[#ff6b00] flex items-center gap-1 hover:gap-2 transition-all">
               View All <ArrowRight size={16} />
             </Link>
           </div>
@@ -149,15 +158,15 @@ export default async function AdminPage() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff6b00] rounded-full blur-[60px] opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none"></div>
           <h2 className="text-lg font-black uppercase tracking-tight text-[#0a0a0a] mb-6 relative z-10">Quick Actions</h2>
           <div className="flex flex-col gap-3 relative z-10">
-            <Link href="/admin/products" className="bg-white text-[#0a0a0a] border-2 border-gray-200 px-5 py-4 rounded-xl font-bold uppercase tracking-wide hover:border-[#ff6b00] hover:text-[#ff6b00] transition-colors text-sm flex items-center justify-between">
+            <Link href="/admin/products" prefetch={false} className="bg-white text-[#0a0a0a] border-2 border-gray-200 px-5 py-4 rounded-xl font-bold uppercase tracking-wide hover:border-[#ff6b00] hover:text-[#ff6b00] transition-colors text-sm flex items-center justify-between">
               <span>Manage Products</span>
               <Package size={16} />
             </Link>
-            <Link href="/admin/categories" className="bg-white text-[#0a0a0a] border-2 border-gray-200 px-5 py-4 rounded-xl font-bold uppercase tracking-wide hover:border-[#ff6b00] hover:text-[#ff6b00] transition-colors text-sm flex items-center justify-between">
+            <Link href="/admin/categories" prefetch={false} className="bg-white text-[#0a0a0a] border-2 border-gray-200 px-5 py-4 rounded-xl font-bold uppercase tracking-wide hover:border-[#ff6b00] hover:text-[#ff6b00] transition-colors text-sm flex items-center justify-between">
               <span>Edit Categories</span>
               <LayoutDashboard size={16} />
             </Link>
-            <Link href="/admin/bookings" className="bg-white text-[#0a0a0a] border-2 border-gray-200 px-5 py-4 rounded-xl font-bold uppercase tracking-wide hover:border-[#ff6b00] hover:text-[#ff6b00] transition-colors text-sm flex items-center justify-between">
+            <Link href="/admin/bookings" prefetch={false} className="bg-white text-[#0a0a0a] border-2 border-gray-200 px-5 py-4 rounded-xl font-bold uppercase tracking-wide hover:border-[#ff6b00] hover:text-[#ff6b00] transition-colors text-sm flex items-center justify-between">
               <span>Review Bookings</span>
               <CalendarCheck size={16} />
             </Link>

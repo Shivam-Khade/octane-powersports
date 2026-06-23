@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { User, MapPin, Save, Loader2, X, Plus, Search } from "lucide-react";
 import { useProfileModal } from "./profile-context";
+import { usePathname } from "next/navigation";
 import toast from "react-hot-toast";
 
 type Address = {
@@ -24,7 +25,10 @@ export function ProfileModal() {
 function ProfileModalContent() {
   const { isOpen, closeModal } = useProfileModal();
   const { data: session } = useSession();
+  const pathname = usePathname();
   
+
+
   // Address State
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loadingAddresses, setLoadingAddresses] = useState(true);
@@ -97,6 +101,10 @@ function ProfileModalContent() {
       setSavingAddress(false);
     }
   };
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   if (!isOpen) return null;
 

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useCart } from "./cart-context";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { X } from "lucide-react";
@@ -8,6 +10,9 @@ import "./cart-drawer.css";
 
 export function CartDrawer() {
   const [products, setProducts] = useState<any[]>([]);
+  const pathname = usePathname();
+
+
 
   useEffect(() => {
     fetch('/api/products')
@@ -17,6 +22,10 @@ export function CartDrawer() {
   }, []);
 
   const item = products.length > 0 ? products[0] : null;
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <aside className="cart-drawer" aria-label="Slide cart preview">

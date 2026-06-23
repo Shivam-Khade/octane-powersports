@@ -1,31 +1,33 @@
 "use client";
 
 import { SessionProvider, signOut, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 function SessionGuard({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
-  const [validated, setValidated] = useState(false);
+  const { status } = useSession();
+  const pathname = usePathname();
+  const guardRan = useRef(false);
+  const listenerSetUp = useRef(false);
 
+  // Run the session guard exactly once when status first resolves
   useEffect(() => {
-    if (status === "loading") return;
+    if (status === "loading" || guardRan.current) return;
+    guardRan.current = true;
 
-    // No session = nothing to guard, render normally
-    if (status === "unauthenticated") {
-      setValidated(true);
+    // Skip guard on admin routes — admin layout has its own server-side auth
+    if (pathname?.startsWith("/admin")) {
+      sessionStorage.setItem("octane_session_active", "true");
       return;
     }
+
+    if (status === "unauthenticated") return;
 
     // User has a session cookie. Check if this browser session is still active.
-    // sessionStorage is ALWAYS cleared when browser quits — even Chrome with "Continue where you left off".
     const isActive = sessionStorage.getItem("octane_session_active");
-    if (isActive) {
-      setValidated(true);
-      return;
-    }
+    if (isActive) return;
 
-    // No sessionStorage flag. Could be browser restart OR a new tab.
-    // Ask other open tabs if they have an active session.
+    // No sessionStorage flag → ask other tabs or sign out
     const channel = new BroadcastChannel("octane_session_check");
     let responded = false;
 
@@ -33,7 +35,6 @@ function SessionGuard({ children }: { children: React.ReactNode }) {
       if (event.data === "ACTIVE") {
         responded = true;
         sessionStorage.setItem("octane_session_active", "true");
-        setValidated(true);
         channel.close();
       }
     };
@@ -43,7 +44,6 @@ function SessionGuard({ children }: { children: React.ReactNode }) {
     const timer = setTimeout(() => {
       channel.close();
       if (!responded) {
-        // No other tabs are active → browser was restarted → force logout silently
         signOut({ redirect: false });
       }
     }, 500);
@@ -52,11 +52,12 @@ function SessionGuard({ children }: { children: React.ReactNode }) {
       clearTimeout(timer);
       try { channel.close(); } catch {}
     };
-  }, [status]);
+  }, [status, pathname]);
 
-  // Once validated, listen for CHECK requests from new tabs
+  // Listen for CHECK requests from other tabs (set up once)
   useEffect(() => {
-    if (!validated || status !== "authenticated") return;
+    if (status !== "authenticated" || listenerSetUp.current) return;
+    listenerSetUp.current = true;
 
     const channel = new BroadcastChannel("octane_session_check");
     channel.onmessage = (event) => {
@@ -64,13 +65,14 @@ function SessionGuard({ children }: { children: React.ReactNode }) {
         channel.postMessage("ACTIVE");
       }
     };
-    return () => channel.close();
-  }, [validated, status]);
+    return () => {
+      channel.close();
+      listenerSetUp.current = false;
+    };
+  }, [status]);
 
-  if (!validated) {
-    return null;
-  }
-
+  // Never return null — that unmounts the entire tree and causes
+  // Next.js to re-execute all server components (the infinite loop)
   return <>{children}</>;
 }
 

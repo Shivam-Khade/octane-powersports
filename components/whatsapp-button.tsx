@@ -1,6 +1,11 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+
 export function WhatsappButton() {
+  const pathname = usePathname();
+  if (pathname?.startsWith('/admin')) return null;
+
   return (
     <a
       href="https://wa.me/917420949711"

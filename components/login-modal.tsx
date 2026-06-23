@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Mail, Lock, ArrowRight, Loader2, X, Phone, Eye, EyeOff } from "lucide-react";
 import { useLoginModal } from "./login-context";
@@ -12,6 +12,8 @@ type ViewState = 'login' | 'signup' | 'forgot-password';
 
 export function LoginModal() {
   const { isOpen, closeModal } = useLoginModal();
+  const { data: session } = useSession();
+  const pathname = usePathname();
   const [view, setView] = useState<ViewState>('login');
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -23,6 +25,12 @@ export function LoginModal() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
+  if (!isOpen) return null;
 
   const resetState = (newView: ViewState) => {
     setView(newView);
@@ -54,28 +62,29 @@ export function LoginModal() {
 
       if (res?.error) {
         setError("Invalid email or password");
+        setLoading(false);
       } else {
         sessionStorage.setItem("octane_session_active", "true");
-        handleClose();
         
-        // Check if the user is an admin
+        // Check if the user is an admin while keeping the modal open and loading
         const sessionRes = await fetch('/api/auth/session');
         const sessionData = await sessionRes.json();
         const isAdmin = sessionData?.user?.role === 'admin';
 
-        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        toast.success(isAdmin ? "Welcome back, Admin" : "Logged in successfully", { 
-          position: isMobile ? 'bottom-center' : 'top-right',
-          style: { background: 'rgba(20, 83, 45, 0.95)', backdropFilter: 'blur(10px)', color: '#4ade80', border: '1px solid rgba(74, 222, 128, 0.2)', fontWeight: '600', padding: '14px 24px', borderRadius: '16px', boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)' }, 
-          iconTheme: { primary: '#4ade80', secondary: 'transparent' } 
-        });
-        
         if (isAdmin) {
-          router.push("/admin");
+          // Redirect directly to admin dashboard
+          window.location.href = "/admin";
         } else {
+          handleClose();
+          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+          toast.success("Logged in successfully", { 
+            position: isMobile ? 'bottom-center' : 'top-right',
+            style: { background: 'rgba(20, 83, 45, 0.95)', backdropFilter: 'blur(10px)', color: '#4ade80', border: '1px solid rgba(74, 222, 128, 0.2)', fontWeight: '600', padding: '14px 24px', borderRadius: '16px', boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)' }, 
+            iconTheme: { primary: '#4ade80', secondary: 'transparent' } 
+          });
           router.push("/");
+          router.refresh();
         }
-        router.refresh();
       }
     } else if (view === 'signup') {
       if (!name) {
