@@ -296,6 +296,13 @@
     height: 100dvh;
     box-sizing: border-box;
   }
+
+  .hero-cinematic__video {
+    object-fit: contain;
+    object-position: center top;
+    transform: none;
+    margin-top: 80px;
+  }
   
   .hero-cinematic__content {
     padding-top: 0;

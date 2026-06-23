@@ -71,6 +71,13 @@ export const metadata: Metadata = {
   }
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const schema = {
     "@context": "https://schema.org",
@@ -156,17 +163,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <CartProvider session={session}>
             <LoginModalProvider>
               <ProfileModalProvider>
-                <Toaster position="top-right" toastOptions={{ duration: 3000, style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333' } }} />
-                <CursorGlow />
-                <Header session={session} categories={categories} brands={brands} gridSettings={gridSettings} />
-                {children}
-                <FooterWrapper>
-                  <Footer />
-                </FooterWrapper>
-                <WhatsappButton />
-                <CartDrawer />
-                <LoginModal />
-                <ProfileModal />
+                <div id="root-wrapper" style={{ overflowX: 'hidden', width: '100%', position: 'relative' }}>
+                  <Toaster position="top-right" toastOptions={{ duration: 3000, style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333' } }} />
+                  <CursorGlow />
+                  <Header session={session} categories={categories} brands={brands} gridSettings={gridSettings} />
+                  {children}
+                  <FooterWrapper>
+                    <Footer />
+                  </FooterWrapper>
+                  <WhatsappButton />
+                  <CartDrawer />
+                  <LoginModal />
+                  <ProfileModal />
+                </div>
               </ProfileModalProvider>
             </LoginModalProvider>
           </CartProvider>

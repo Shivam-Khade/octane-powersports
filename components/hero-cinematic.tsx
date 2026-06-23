@@ -13,6 +13,21 @@ const stats = [
   { icon: MapPin, value: "Pan India", label: "Delivery" }
 ];
 
+const videoHtml = {
+  __html: `
+    <video
+      class="hero-cinematic__video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+    >
+      <source src="/hero.mp4" type="video/mp4" />
+    </video>
+  `
+};
+
 export function HeroCinematic() {
   const { scrollYProgress } = useScroll({
     offset: ["start start", "end start"]
@@ -32,20 +47,7 @@ export function HeroCinematic() {
         <div 
           suppressHydrationWarning 
           style={{ width: '100%', height: '100%' }}
-          dangerouslySetInnerHTML={{
-            __html: `
-              <video
-                class="hero-cinematic__video"
-                autoplay
-                muted
-                loop
-                playsinline
-                preload="auto"
-              >
-                <source src="/hero.mp4" type="video/mp4" />
-              </video>
-            `
-          }}
+          dangerouslySetInnerHTML={videoHtml}
         />
       </motion.div>
 
