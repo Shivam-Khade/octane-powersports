@@ -296,3 +296,14 @@ textarea:focus-visible {
 @media (max-width: 620px) {
   .section { padding: 60px 0; }
 }
+
+/* Mobile Toaster Override */
+@media (max-width: 768px) {
+  .custom-toaster {
+    top: auto !important;
+    bottom: 24px !important;
+    inset: auto 0 24px 0 !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+}

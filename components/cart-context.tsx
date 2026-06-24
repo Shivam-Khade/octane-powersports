@@ -63,7 +63,7 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
       let newItems;
       if (existing) {
         newItems = prevItems.map((item) =>
-          item.id === product.slug ? { ...item, quantity: item.quantity + quantity } : item
+          item.id === product.slug ? { ...item, quantity: Math.min(10, item.quantity + quantity) } : item
         );
       } else {
         newItems = [
@@ -131,7 +131,7 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
     setCartItems((prev) => {
       const newItems = prev.map((item) => {
         if (item.id === id) {
-          const newQty = Math.max(1, item.quantity + delta);
+          const newQty = Math.max(1, Math.min(10, item.quantity + delta));
           return { ...item, quantity: newQty };
         }
         return item;

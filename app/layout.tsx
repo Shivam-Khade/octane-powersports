@@ -164,7 +164,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <LoginModalProvider>
               <ProfileModalProvider>
                 <div id="root-wrapper" style={{ overflowX: 'hidden', width: '100%', position: 'relative' }}>
-                  <Toaster position="top-right" toastOptions={{ duration: 3000, style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333' } }} />
+                  <Toaster containerClassName="custom-toaster" position="top-right" toastOptions={{ duration: 3000, style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333' } }} />
                   <CursorGlow />
                   <Header session={session} categories={categories} brands={brands} gridSettings={gridSettings} />
                   {children}

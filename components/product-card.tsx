@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, Star, Zap } from "lucide-react";
 import { useCart } from "./cart-context";
+import { useSession } from "next-auth/react";
+import { useLoginModal } from "@/components/login-context";
 import "./product-card.css";
 
 export type Product = {
@@ -33,6 +35,8 @@ export function ProductCard({ product }: { product: Product }) {
   const isLimited = dynamicAvailability === "More than 1 available" || dynamicAvailability === "Low Stock";
   const lowStock = stock > 0 && stock < 5;
   const { addToCart } = useCart();
+  const { data: session } = useSession();
+  const { openModal: openLoginModal } = useLoginModal();
 
   return (
     <article className="product-card">
@@ -84,6 +88,10 @@ export function ProductCard({ product }: { product: Product }) {
             aria-label={`Add ${product.name} to cart`}
             onClick={(e) => {
               e.preventDefault(); // prevent triggering the Link
+              if (!session?.user) {
+                openLoginModal();
+                return;
+              }
               addToCart(product);
             }}
           >

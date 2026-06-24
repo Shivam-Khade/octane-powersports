@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { CheckCircle2, Loader2, Minus, Plus, MapPin, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -227,8 +228,8 @@ function CheckoutContent() {
                 ) : (
                   cartItems.map(item => (
                     <div key={item.id} className="cart-item">
-                      <div className="item-img-placeholder">
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-md opacity-80" />
+                      <div className="item-img-placeholder relative">
+                        <Image src={item.image} alt={item.name} fill sizes="100px" className="object-cover rounded-md opacity-80" />
                       </div>
                       <div className="item-content">
                         <div className="item-details">

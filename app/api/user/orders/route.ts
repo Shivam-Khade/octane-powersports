@@ -19,16 +19,28 @@ export async function GET() {
       [session.user.id]
     );
 
-    // Fetch items for each order
-    for (const order of orders) {
-      const [items] = await pool.query<RowDataPacket[]>(
+    if (orders.length > 0) {
+      const orderIds = orders.map(order => order.id);
+      
+      // Fetch all items for these orders in a SINGLE query (resolves N+1 issue)
+      const [allItems] = await pool.query<RowDataPacket[]>(
         `SELECT oi.*, p.image 
          FROM order_items oi 
          LEFT JOIN products p ON oi.product_name = p.name 
-         WHERE oi.order_id = ?`,
-        [order.id]
+         WHERE oi.order_id IN (?)`,
+        [orderIds]
       );
-      order.items = items;
+      
+      // Map items back to their respective orders
+      const itemsByOrderId = (allItems as any[]).reduce((acc, item) => {
+        if (!acc[item.order_id]) acc[item.order_id] = [];
+        acc[item.order_id].push(item);
+        return acc;
+      }, {} as Record<string, any[]>);
+
+      for (const order of orders) {
+        order.items = itemsByOrderId[order.id] || [];
+      }
     }
 
     return NextResponse.json(orders);
@@ -75,6 +87,22 @@ export async function POST(req: Request) {
     );
     
     const orderId = (orderResult as any).insertId;
+
+    // Verify stock availability (Race Condition Guard)
+    for (const item of items) {
+      const [stockRows] = await pool.query<RowDataPacket[]>(
+        "SELECT stockCount FROM products WHERE name = ?",
+        [item.product_name]
+      );
+      if (stockRows.length === 0 || stockRows[0].stockCount < item.quantity) {
+        // Reverse order creation if stock fails
+        await pool.query("DELETE FROM orders WHERE id = ?", [orderId]);
+        return NextResponse.json(
+          { error: `Sorry, ${item.product_name} is out of stock or does not have enough quantity available.` }, 
+          { status: 400 }
+        );
+      }
+    }
 
     // Insert items and deduct stock
     for (const item of items) {

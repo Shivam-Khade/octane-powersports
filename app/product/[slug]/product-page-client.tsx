@@ -11,6 +11,8 @@ import {
 import { motion } from "framer-motion";
 import { ProductCard } from "@/components/product-card";
 import { useCart } from "@/components/cart-context";
+import { useSession } from "next-auth/react";
+import { useLoginModal } from "@/components/login-context";
 import "./product.css";
 
 type Product = {
@@ -44,6 +46,8 @@ export function ProductPageClient({
   const [zoomStyle, setZoomStyle] = useState<{ transformOrigin: string; transform: string } | null>(null);
   
   const { addToCart } = useCart();
+  const { data: session } = useSession();
+  const { openModal: openLoginModal } = useLoginModal();
   const router = useRouter();
 
   const stock = product.stockCount ?? 0;
@@ -244,7 +248,13 @@ export function ProductPageClient({
               <button 
                 suppressHydrationWarning 
                 className="purchase-add-cart"
-                onClick={() => addToCart(product, qty)}
+                onClick={() => {
+                  if (!session?.user) {
+                    openLoginModal();
+                    return;
+                  }
+                  addToCart(product, qty);
+                }}
                 style={{ width: "100%" }} // Make Add to Cart full width since Buy Now is removed
               >
                 <ShoppingBag size={18} />

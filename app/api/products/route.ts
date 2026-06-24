@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
+export const revalidate = 60; // Cache API response for 60 seconds (ISR)
+
 export async function GET() {
   try {
     const [rows] = await pool.query('SELECT * FROM products WHERE stockCount > 0');
