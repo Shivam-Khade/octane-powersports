@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
+import { useSession } from "next-auth/react";
 import { useLoginModal } from "@/components/login-context";
 import "./service.css";
 
@@ -35,6 +36,8 @@ export function ServiceClient({
   initialData?: InitialData; 
 }) {
   const { openModal } = useLoginModal();
+  const { data: session, status } = useSession();
+  const isUserAuthenticated = isAuthenticated || status === "authenticated";
   const [mobileTab, setMobileTab] = useState<"book" | "visit">("book");
 
   const [formData, setFormData] = useState({
@@ -112,28 +115,38 @@ export function ServiceClient({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!isAuthenticated) {
-      openModal();
-      return;
+  useEffect(() => {
+    if (isUserAuthenticated && status !== "loading") {
+      const pendingBookingStr = sessionStorage.getItem("pendingServiceBooking");
+      if (pendingBookingStr) {
+        try {
+          const pendingBookingData = JSON.parse(pendingBookingStr);
+          // Only auto-submit if we have the minimum required fields
+          if (pendingBookingData.date && pendingBookingData.timeSlot) {
+            // Auto submit
+            sessionStorage.removeItem("pendingServiceBooking");
+            
+            // To ensure we don't submit stale data if the user has changed something,
+            // we use the pending booking data explicitly.
+            submitBooking(pendingBookingData);
+          }
+        } catch (e) {
+          console.error("Failed to parse pending booking data", e);
+          sessionStorage.removeItem("pendingServiceBooking");
+        }
+      }
     }
+  }, [isUserAuthenticated, status]);
 
+  const submitBooking = async (dataToSubmit: any) => {
     setSubmitting(true);
     setError("");
-
-    if (!formData.timeSlot) {
-      toast.error("Please select an available time slot", { position: "top-right" });
-      setSubmitting(false);
-      return;
-    }
 
     try {
       const res = await fetch("/api/service-bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(dataToSubmit)
       });
 
       if (res.ok) {
@@ -150,6 +163,23 @@ export function ServiceClient({
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.timeSlot) {
+      toast.error("Please select an available time slot", { position: "top-right" });
+      return;
+    }
+
+    if (!isUserAuthenticated) {
+      sessionStorage.setItem("pendingServiceBooking", JSON.stringify(formData));
+      openModal();
+      return;
+    }
+
+    await submitBooking(formData);
   };
 
   return (

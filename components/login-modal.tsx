@@ -82,7 +82,6 @@ export function LoginModal() {
             style: { background: 'rgba(20, 83, 45, 0.95)', backdropFilter: 'blur(10px)', color: '#4ade80', border: '1px solid rgba(74, 222, 128, 0.2)', fontWeight: '600', padding: '14px 24px', borderRadius: '16px', boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)' }, 
             iconTheme: { primary: '#4ade80', secondary: 'transparent' } 
           });
-          router.push("/");
           router.refresh();
         }
       }
@@ -141,7 +140,6 @@ export function LoginModal() {
               style: { background: 'rgba(20, 83, 45, 0.95)', backdropFilter: 'blur(10px)', color: '#4ade80', border: '1px solid rgba(74, 222, 128, 0.2)', fontWeight: '600', padding: '14px 24px', borderRadius: '16px', boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)' }, 
               iconTheme: { primary: '#4ade80', secondary: 'transparent' } 
             });
-            router.push("/");
             router.refresh();
           }
         }
