@@ -92,7 +92,7 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
           background: "#111111",
           color: "#ffffff",
           border: "1px solid #2a2a2a",
-          borderLeft: "4px solid #ff6b00",
+          borderLeft: "4px solid #22c55e",
           borderRadius: "8px",
           padding: "16px 20px",
           boxShadow: "0 10px 30px rgba(0,0,0,0.8)",
@@ -100,6 +100,7 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
           display: "flex",
           alignItems: "center",
           gap: "12px",
+          maxWidth: "calc(100vw - 32px)",
           transition: "all 0.2s ease",
           opacity: t.visible ? 1 : 0,
           transform: t.visible ? "translateY(0) scale(1)" : "translateY(-10px) scale(0.95)",
@@ -108,12 +109,12 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
         onMouseEnter={(e) => e.currentTarget.style.background = "#1a1a1a"}
         onMouseLeave={(e) => e.currentTarget.style.background = "#111111"}
       >
-        <div style={{ background: '#ff6b00', borderRadius: '50%', minWidth: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ background: '#22c55e', borderRadius: '50%', minWidth: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontWeight: 700, fontSize: "14px", letterSpacing: "0.02em" }}>{product.name} added!</span>
-          <span style={{ fontSize: '11px', color: '#ff6b00', marginTop: '4px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>View Cart & Checkout &rarr;</span>
+        <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <span style={{ fontWeight: 700, fontSize: "14px", letterSpacing: "0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{product.name} added!</span>
+          <span style={{ fontSize: '11px', color: '#22c55e', marginTop: '4px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>View Cart & Checkout &rarr;</span>
         </div>
       </div>
     ), { duration: 4000 });

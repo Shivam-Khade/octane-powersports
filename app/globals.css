@@ -300,9 +300,12 @@ textarea:focus-visible {
 /* Mobile Toaster Override */
 @media (max-width: 768px) {
   .custom-toaster {
-    top: auto !important;
-    bottom: 24px !important;
-    inset: auto 0 24px 0 !important;
+    inset: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    padding: 16px !important;
     justify-content: flex-end !important;
     align-items: center !important;
   }
