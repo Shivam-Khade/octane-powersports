@@ -2,12 +2,12 @@ import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 import "./footer.css";
 
-const ShareIcon = ({ size = 28, ...props }: any) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="url(#shareGradient)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+const WhatsAppShareIcon = ({ size = 28, ...props }: any) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="url(#waShareGradient)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
     <defs>
-      <linearGradient id="shareGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#00C6FF" />
-        <stop offset="100%" stopColor="#0072FF" />
+      <linearGradient id="waShareGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#25D366" />
+        <stop offset="100%" stopColor="#128C7E" />
       </linearGradient>
     </defs>
     <circle cx="18" cy="5" r="3"/>
@@ -44,7 +44,7 @@ const YoutubeIcon = ({ size = 28, ...props }: any) => (
 );
 
 const socials = [
-  { icon: ShareIcon, href: "https://api.whatsapp.com/send?text=Check%20out%20Octane%20Powersports:%20https://octaneps.com", label: "Share on WhatsApp" },
+  { icon: WhatsAppShareIcon, href: "https://api.whatsapp.com/send?text=Check%20out%20Octane%20Powersports:%20https://octaneps.com", label: "Share on WhatsApp" },
   { icon: InstagramIcon, href: "https://www.instagram.com/octaneps", label: "Instagram" },
   { icon: YoutubeIcon, href: "https://youtube.com/@octanepowersports", label: "YouTube" }
 ];

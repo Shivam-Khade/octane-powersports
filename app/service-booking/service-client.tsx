@@ -226,8 +226,8 @@ export function ServiceClient({
             </div>
 
             <motion.div variants={itemVariants} className="input-group">
-              <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} placeholder=" " />
-              <label htmlFor="email">Email Address</label>
+              <input type="email" name="email" id="email" required value={formData.email} onChange={handleChange} placeholder=" " />
+              <label htmlFor="email">Email Address <span className="text-red-500">*</span></label>
             </motion.div>
 
             <div className="form-row">

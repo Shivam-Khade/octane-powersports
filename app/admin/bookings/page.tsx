@@ -14,6 +14,16 @@ export async function deleteBooking(id: number) {
   revalidatePath('/admin/bookings');
 }
 
+export async function bulkDeleteBookings(ids: number[]) {
+  "use server";
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== "admin") throw new Error("Unauthorized");
+  if (ids.length === 0) return;
+  const placeholders = ids.map(() => '?').join(',');
+  await pool.query(`DELETE FROM service_bookings WHERE id IN (${placeholders})`, ids);
+  revalidatePath('/admin/bookings');
+}
+
 export default async function AdminBookingsPage() {
   const session = await getServerSession(authOptions);
 
@@ -33,7 +43,7 @@ export default async function AdminBookingsPage() {
         </div>
       </div>
 
-      <BookingsClient initialBookings={bookings} deleteAction={deleteBooking} />
+      <BookingsClient initialBookings={bookings} deleteAction={deleteBooking} bulkDeleteAction={bulkDeleteBookings} />
     </div>
   );
 }

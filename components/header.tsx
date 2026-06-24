@@ -115,7 +115,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
                 <Link href="/orders" className={`nav-link ${pathname?.startsWith('/orders') ? '!text-[#ff6b00]' : ''}`}>Orders</Link>
               </>
             ) : (
-              <Link href="/service-booking" className={`nav-link ${pathname?.startsWith('/service-booking') ? '!text-[#ff6b00]' : ''}`}>Service</Link>
+              <Link href="/service-booking" className={`nav-link ${pathname?.startsWith('/service-booking') ? '!text-[#ff6b00]' : ''}`}>Service Booking</Link>
             )}
           </nav>
 
