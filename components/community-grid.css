@@ -169,6 +169,7 @@
   .yt-side-card {
     grid-template-columns: 120px minmax(0, 1fr);
     gap: 12px;
+    align-items: start;
   }
   .yt-side-videos {
     padding-right: 0;
@@ -176,12 +177,18 @@
   }
   .yt-side-info h4 {
     font-size: 0.85rem;
-    margin-bottom: 8px;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+    margin-bottom: 6px;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    line-height: 1.3;
+  }
+  .yt-side-info {
+    height: auto;
+    justify-content: flex-start;
   }
   .yt-watch-link {
     font-size: 0.8rem;
+    margin-top: 4px;
   }
 }
 

@@ -16,7 +16,7 @@ const stats = [
 const videoHtml = {
   __html: `
     <video
-      class="hero-cinematic__video"
+      class="hero-cinematic__video hero-cinematic__video--desktop"
       autoplay
       muted
       loop
@@ -24,6 +24,16 @@ const videoHtml = {
       preload="auto"
     >
       <source src="/hero.mp4" type="video/mp4" />
+    </video>
+    <video
+      class="hero-cinematic__video hero-cinematic__video--mobile"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+    >
+      <source src="/hero-mob.mp4" type="video/mp4" />
     </video>
   `
 };

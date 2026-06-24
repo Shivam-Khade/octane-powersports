@@ -19,6 +19,10 @@
   transform: scale(1.01);
 }
 
+.hero-cinematic__video--mobile {
+  display: none;
+}
+
 .hero-cinematic__overlay,
 .hero-cinematic__veil {
   position: absolute;
@@ -289,19 +293,32 @@
 }
 
 @media (max-width: 640px) {
-  .hero-cinematic,
+  .hero-cinematic {
+    min-height: auto;
+    height: calc(100vw * 16 / 9 + 80px);
+    box-sizing: border-box;
+  }
   .hero-cinematic__container,
   .hero-cinematic__content {
     min-height: auto;
-    height: 100dvh;
+    height: 100%;
     box-sizing: border-box;
   }
 
+  .hero-cinematic__video--desktop {
+    display: none;
+  }
+
+  .hero-cinematic__video--mobile {
+    display: block;
+  }
+
   .hero-cinematic__video {
-    object-fit: contain;
+    object-fit: cover;
     object-position: center top;
     transform: none;
     margin-top: 80px;
+    height: calc(100% - 80px);
   }
   
   .hero-cinematic__content {
