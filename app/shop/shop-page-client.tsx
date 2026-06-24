@@ -128,7 +128,16 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
       if (sortBy === "Price Low-High") return a.price - b.price;
       if (sortBy === "Price High-Low") return b.price - a.price;
       if (sortBy === "Top Rated") return b.rating - a.rating;
-      return 0; // "Best Sellers" default
+      if (sortBy === "Latest") {
+        return initialProducts.findIndex(p => p.slug === b.slug) - initialProducts.findIndex(p => p.slug === a.slug);
+      }
+      if (sortBy === "Best Sellers") {
+        // Determine a pseudo-popularity score since we don't have strict sales data
+        const popA = a.rating * 10 + (a.name.length % 10) - (a.stockCount || 5);
+        const popB = b.rating * 10 + (b.name.length % 10) - (b.stockCount || 5);
+        return popB - popA;
+      }
+      return 0;
     });
   }, [initialProducts, activeCategories, activeBrands, activeModel, searchQuery, sortBy]);
 
@@ -193,31 +202,27 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
           )}
 
           <CollapsibleFilter title="Categories" defaultOpen={true}>
-            {groupedCategories.map(group => (
-              <SubCollapsibleFilter key={group.letter} title={group.letter} defaultOpen={false}>
-                {group.items.map(c => (
-                  <label key={c} className="custom-checkbox">
-                    <input type="checkbox" checked={activeCategories.includes(c)} onChange={() => toggleCategory(c)} />
-                    <span className="checkmark"></span>
-                    {c}
-                  </label>
-                ))}
-              </SubCollapsibleFilter>
-            ))}
+            <div className="filter-checkbox-list">
+              {categories.map(c => (
+                <label key={c} className="custom-checkbox premium-checkbox">
+                  <input type="checkbox" checked={activeCategories.includes(c)} onChange={() => toggleCategory(c)} />
+                  <span className="checkmark"></span>
+                  <span className="checkbox-text">{c}</span>
+                </label>
+              ))}
+            </div>
           </CollapsibleFilter>
 
           <CollapsibleFilter title="Brands" defaultOpen={true}>
-            {groupedBrands.map(group => (
-              <SubCollapsibleFilter key={group.letter} title={group.letter} defaultOpen={false}>
-                {group.items.map(b => (
-                  <label key={b.value} className="custom-checkbox">
-                    <input type="checkbox" checked={activeBrands.includes(b.value)} onChange={() => toggleBrand(b.value)} />
-                    <span className="checkmark"></span>
-                    {b.label}
-                  </label>
-                ))}
-              </SubCollapsibleFilter>
-            ))}
+            <div className="filter-checkbox-list">
+              {filterBrands.map(b => (
+                <label key={b.value} className="custom-checkbox premium-checkbox">
+                  <input type="checkbox" checked={activeBrands.includes(b.value)} onChange={() => toggleBrand(b.value)} />
+                  <span className="checkmark"></span>
+                  <span className="checkbox-text">{b.label}</span>
+                </label>
+              ))}
+            </div>
           </CollapsibleFilter>
         </div>
 
@@ -225,6 +230,13 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
           <div className="shop-toolbar sticky-toolbar">
             <span className="result-count">Showing 1-{Math.min(displayedProducts.length, filteredProducts.length)} of {filteredProducts.length}</span>
             <div className="toolbar-actions">
+              <button 
+                className="mobile-filter-btn" 
+                onClick={() => setIsMobileFiltersOpen(true)}
+              >
+                <SlidersHorizontal size={16} /> Filters
+                {activeFiltersCount > 0 && <span className="mobile-filter-badge">{activeFiltersCount}</span>}
+              </button>
 
               <PremiumSortDropdown value={sortBy} onChange={setSortBy} />
               <div className="view-toggles">
@@ -308,6 +320,63 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
           </a>
         </div>
       </section>
+      {/* Mobile Filter Modal */}
+      <AnimatePresence>
+        {isMobileFiltersOpen && (
+          <div className="mobile-filter-overlay">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="mobile-filter-backdrop" 
+              onClick={() => setIsMobileFiltersOpen(false)} 
+            />
+            <motion.div 
+              initial={{ y: "100%" }} 
+              animate={{ y: 0 }} 
+              exit={{ y: "100%" }} 
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="mobile-filter-sheet"
+            >
+              <div className="sheet-header">
+                <h3>Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}</h3>
+                <button className="close-sheet" onClick={() => setIsMobileFiltersOpen(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="sheet-body">
+                <CollapsibleFilter title="Categories" defaultOpen={true}>
+                  <div className="filter-checkbox-list">
+                    {categories.map(c => (
+                      <label key={c} className="premium-checkbox">
+                        <input type="checkbox" checked={activeCategories.includes(c)} onChange={() => toggleCategory(c)} />
+                        <span className="checkmark"></span>
+                        <span className="checkbox-text">{c}</span>
+                      </label>
+                    ))}
+                  </div>
+                </CollapsibleFilter>
+
+                <CollapsibleFilter title="Brands" defaultOpen={true}>
+                  <div className="filter-checkbox-list">
+                    {filterBrands.map(b => (
+                      <label key={b.value} className="premium-checkbox">
+                        <input type="checkbox" checked={activeBrands.includes(b.value)} onChange={() => toggleBrand(b.value)} />
+                        <span className="checkmark"></span>
+                        <span className="checkbox-text">{b.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </CollapsibleFilter>
+              </div>
+              <div className="sheet-footer">
+                <button className="button outline-dark w-full" onClick={() => { clearAllFilters(); setIsMobileFiltersOpen(false); }}>Clear All</button>
+                <button className="button primary w-full" onClick={() => setIsMobileFiltersOpen(false)}>View Results</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

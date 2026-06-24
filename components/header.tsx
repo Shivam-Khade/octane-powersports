@@ -165,7 +165,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
 
             {effectiveSession ? (
               <>
-                <div className="relative group">
+                <div className="relative group hide-on-mobile">
                   {effectiveSession.user?.role === 'admin' ? (
                     <Link className="nav-icon-btn peer" href="/admin" aria-label="Account">
                       <User size={18} className="text-[#ff6b00]" />
@@ -206,7 +206,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
                     sessionStorage.removeItem("octane_session_active");
                     signOut({ callbackUrl: '/' });
                   }}
-                  className="nav-icon-btn hidden md:flex"
+                  className="nav-icon-btn"
                   aria-label="Log Out"
                   title="Log Out"
                 >
@@ -325,17 +325,34 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
               </div>
               <Link href="/blog" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Blog</Link>
               <Link href="/service-booking" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Service Booking</Link>
-              {effectiveSession && (
+              {effectiveSession ? (
+                <>
+                  {effectiveSession.user?.role === 'admin' && (
+                    <Link href="/admin" className="mobile-nav-link !text-[#ff6b00]" onClick={() => setMobileOpen(false)}>Admin Dashboard</Link>
+                  )}
+                  <Link href="/orders" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Orders</Link>
+                  <button onClick={() => { openProfileModal(); setMobileOpen(false); }} className="mobile-nav-link text-left w-full">Profile</button>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem("octane_cart");
+                      sessionStorage.removeItem("octane_session_active");
+                      signOut({ callbackUrl: '/' });
+                      setMobileOpen(false);
+                    }}
+                    className="mobile-nav-link text-left text-red-500 w-full"
+                  >
+                    Log Out
+                  </button>
+                </>
+              ) : (
                 <button
                   onClick={() => {
-                    localStorage.removeItem("octane_cart");
-                    sessionStorage.removeItem("octane_session_active");
-                    signOut({ callbackUrl: '/' });
+                    openModal();
                     setMobileOpen(false);
                   }}
-                  className="mobile-nav-link text-left text-red-500 w-full"
+                  className="mobile-nav-link text-left w-full text-[#ff6b00]"
                 >
-                  Log Out
+                  Log In / Sign Up
                 </button>
               )}
             </nav>

@@ -56,7 +56,8 @@ function CheckoutContent() {
 
   // Calculations
   const totalPrice = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const deliveryCharge = (totalPrice < 5000 && cartItems.length > 0) ? 300 : 0;
+  // const deliveryCharge = (totalPrice < 5000 && cartItems.length > 0) ? 300 : 0;
+  const deliveryCharge = 0; // Temporarily disabled
   const finalTotal = totalPrice + deliveryCharge;
 
   const handleSubmit = async () => {

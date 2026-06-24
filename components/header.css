@@ -7,7 +7,7 @@
   z-index: 1000;
   transition: padding 300ms ease, background 300ms ease, backdrop-filter 300ms ease, box-shadow 300ms ease, border-color 300ms ease;
   padding: 0;
-  background: rgba(10, 10, 10, 0.5);
+  background: rgba(10, 10, 10, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
@@ -24,7 +24,7 @@
 }
 
 .site-header.is-scrolled {
-  background: rgba(10, 10, 10, 0.9);
+  background: rgba(10, 10, 10, 0.98);
   backdrop-filter: blur(24px) saturate(1.8);
   -webkit-backdrop-filter: blur(24px) saturate(1.8);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 40px rgba(0, 0, 0, 0.5);
@@ -787,10 +787,37 @@
   .mobile-menu-btn {
     display: flex;
   }
+
+  .hide-on-mobile {
+    display: none !important;
+  }
 }
 
 @media (max-width: 640px) {
   .site-header .nav-shell {
     width: min(100% - 24px, 1440px);
+    gap: 8px;
+  }
+
+  .logo {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+
+  .logo img {
+    max-width: 100%;
+    height: auto !important;
+    max-height: 44px;
+  }
+
+  .nav-actions {
+    gap: 4px;
+  }
+
+  .nav-icon-btn, 
+  .search-trigger-btn, 
+  .mobile-menu-btn {
+    width: 36px;
+    height: 36px;
   }
 }

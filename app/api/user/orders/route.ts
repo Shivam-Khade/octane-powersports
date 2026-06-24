@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import pool from "@/lib/db";
 import { RowDataPacket } from "mysql2";
 import { sendOrderConfirmationEmail, sendAdminOrderNotification, OrderDetails } from "@/lib/email";
+import crypto from "node:crypto";
 
 export const dynamic = "force-dynamic";
 export async function GET() {
@@ -48,6 +49,23 @@ export async function POST(req: Request) {
 
     if (!total_amount || !items || items.length === 0) {
       return NextResponse.json({ error: "Invalid order data" }, { status: 400 });
+    }
+
+    // Verify Razorpay Signature for secure payments
+    if (razorpay_payment_id && razorpay_order_id && razorpay_signature) {
+      const secret = process.env.RAZORPAY_KEY_SECRET;
+      if (!secret) {
+        throw new Error("RAZORPAY_KEY_SECRET is not configured");
+      }
+      
+      const generated_signature = crypto
+        .createHmac("sha256", secret)
+        .update(razorpay_order_id + "|" + razorpay_payment_id)
+        .digest("hex");
+
+      if (generated_signature !== razorpay_signature) {
+        return NextResponse.json({ error: "Payment verification failed: Invalid Signature" }, { status: 400 });
+      }
     }
 
     // Insert order
