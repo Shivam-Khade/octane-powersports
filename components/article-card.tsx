@@ -1,7 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import type { Article } from "./featured-article";
+export type Article = {
+  id: number;
+  title: string;
+  description: string;
+  slug: string;
+  image: string;
+  category: string;
+  author: string;
+  publishDate: string;
+  readTime: number;
+  featured: boolean;
+  content: string;
+};
 
 export function ArticleCard({ article }: { article: Article }) {
   return (
