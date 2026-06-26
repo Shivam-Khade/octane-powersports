@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,9 +29,9 @@ export function BikePartsSearch({ variant = "vertical" }: { variant?: "vertical"
       });
   }, []);
 
-  const makes = Object.keys(bikeData);
-  const seriesList = make && bikeData[make] ? Object.keys(bikeData[make]) : [];
-  const modelList = make && series && bikeData[make][series] ? Object.keys(bikeData[make][series]) : [];
+  const makes = useMemo(() => Object.keys(bikeData), [bikeData]);
+  const seriesList = useMemo(() => (make && bikeData[make] ? Object.keys(bikeData[make]) : []), [bikeData, make]);
+  const modelList = useMemo(() => (make && series && bikeData[make][series] ? Object.keys(bikeData[make][series]) : []), [bikeData, make, series]);
 
   const handleSearch = () => {
     if (!make || !series || !model) return;

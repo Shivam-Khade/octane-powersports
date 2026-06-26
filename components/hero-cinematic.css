@@ -1,13 +1,14 @@
 .hero-cinematic {
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
   background: #000;
+  z-index: 10;
 }
 
 .hero-cinematic__videoWrap {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   transition: opacity 700ms ease, filter 700ms ease, transform 700ms ease;
   will-change: opacity, filter, transform;
 }
