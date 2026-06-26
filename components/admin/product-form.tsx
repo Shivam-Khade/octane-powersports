@@ -277,7 +277,7 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
               const allBrandModels = brandObj.series.flatMap((s: any) => s.models);
               const isBrandSelected = allBrandModels.length > 0 && allBrandModels.every((m: string) => formData.compatibility.includes(m));
               return (
-              <details key={brandObj.brand} className="group" open>
+              <details key={brandObj.brand} className="group">
                 <summary className="font-black text-gray-800 cursor-pointer select-none list-none flex items-center justify-between pb-2 mb-2 border-b border-gray-200">
                   <div className="flex items-center gap-2">
                     <span className="text-[#ff6b00] group-open:rotate-90 transition-transform">▶</span>
@@ -311,7 +311,7 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
                   {brandObj.series.map((seriesObj: any) => {
                     const isSeriesSelected = seriesObj.models.length > 0 && seriesObj.models.every((m: string) => formData.compatibility.includes(m));
                     return (
-                    <details key={seriesObj.name} className="group/series" open>
+                    <details key={seriesObj.name} className="group/series">
                       <summary className="font-bold text-gray-700 text-sm cursor-pointer select-none list-none flex items-center justify-between mb-1 pr-2">
                         <div className="flex items-center gap-2">
                           <span className="text-gray-400 group-open/series:rotate-90 transition-transform text-xs">▶</span>

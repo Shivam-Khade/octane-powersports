@@ -53,12 +53,8 @@ export function ProductPageClient({
   const router = useRouter();
 
   const stock = product.stockCount ?? 0;
-  let dynamicAvailability = "Out of Stock";
-  if (stock > 5) dynamicAvailability = "In Stock";
-  else if (stock > 3) dynamicAvailability = "More than 1 available";
-  else if (stock > 0) dynamicAvailability = "Low Stock";
-
-  const isLimited = dynamicAvailability === "More than 1 available" || dynamicAvailability === "Low Stock";
+  let dynamicAvailability = stock > 0 ? "In Stock" : "Out of Stock";
+  const isLimited = false;
   // Hover zoom handler
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -121,9 +117,7 @@ export function ProductPageClient({
                   </div>
                 )}
               </div>
-              <div className="gallery-badge">
-                <span className="product-badge-lg">{product.badge}</span>
-              </div>
+
             </div>
             {allImages.length > 1 && (
               <div className="gallery-thumbs">
@@ -160,11 +154,6 @@ export function ProductPageClient({
                   <span className="stock-dot" />
                   {dynamicAvailability}
                 </span>
-                {product.stockCount !== undefined && product.stockCount <= 3 && (
-                  <span className="product-badge product-badge--stock" style={{fontSize: '10px', padding: '4px 8px', margin: 0, textTransform: 'uppercase', fontWeight: 800}}>
-                    More than 1 available
-                  </span>
-                )}
               </div>
             </div>
 
@@ -222,7 +211,7 @@ export function ProductPageClient({
             </div>
 
             {/* Quantity */}
-            <div className="purchase-qty-row">
+            <div className="purchase-qty-row" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <span className="purchase-qty-label">Quantity</span>
               <div className="purchase-qty">
                 <button
@@ -243,6 +232,9 @@ export function ProductPageClient({
                   <Plus size={16} />
                 </button>
               </div>
+              {product.stockCount !== 0 && (
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#6b7280' }}>1+ available</span>
+              )}
             </div>
 
             {/* CTAs */}
@@ -265,19 +257,7 @@ export function ProductPageClient({
             </div>
 
 
-            {/* Trust Strip */}
-            <div className="purchase-trust">
-              {[
-                { icon: Truck, text: product.shipping || "Free Insured Delivery" },
-                { icon: Shield, text: product.warranty || "Official Warranty" },
-                { icon: RotateCcw, text: "15-Day Easy Exchange" }
-              ].map(({ icon: Icon, text }) => (
-                <div key={text} className="trust-item">
-                  <Icon size={18} />
-                  <span>{text}</span>
-                </div>
-              ))}
-            </div>
+
           </motion.aside>
         </div>
       </section>
@@ -301,7 +281,6 @@ export function ProductPageClient({
               ...(product.sku ? [["SKU", product.sku]] : []),
               ["Warranty Details", product.warranty || "Official warranty"],
               ["Shipping Info", product.shipping || "Pan India — 2-4 Days"],
-              ["Returns & Exchange", "15-day return option"],
               ["Fitment Type", product.compatibility && product.compatibility[0] === "All Motorcycles (Universal Fit)" ? "Universal Fit" : "Model-Specific Fit"]
             ].map(([label, value]) => (
               <div key={label} className="spec-row">

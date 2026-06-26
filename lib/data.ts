@@ -1,20 +1,3 @@
-export const brands = [
-  "Eazi grip",
-  "K&N",
-  "Brembo",
-  "R&G",
-  "Pirelli",
-  "Engine ice"
-];
-
-export const categories = [
-  "Exhausts Systems", "Air Filters", "Protection Parts", "Tank Pads", 
-  "Traction Pads", "Brake Pads", "Fork Seals", "Windscreen", 
-  "Chain Sprockets", "Handle Grips", "Dash Protectors", "Aux Lights", 
-  "Luggage", "Electronics", "Tyres", "Phone Mount", 
-  "GPS", "Hand Guards", "Led Bulbs", "Indicators"
-];
-
 
 export const testimonials = [
   {
@@ -59,13 +42,6 @@ export const testimonials = [
   }
 ];
 
-export const communityImages = [
-  "https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1547549082-6bc09f2049ae?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80"
-];
+
 
 

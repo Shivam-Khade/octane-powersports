@@ -21,16 +21,7 @@ export default async function AdminProductsPage() {
   const categories = categoryRows as any[];
 
   const [brandRows] = await pool.query('SELECT DISTINCT brand FROM products WHERE brand IS NOT NULL AND brand != "" ORDER BY brand ASC');
-  const dbBrands = (brandRows as any[]).map(r => r.brand);
-  
-  const popularBrands = [
-    "Aprilia", "Benelli", "BMW Motorrad", "Ducati", "Harley-Davidson", 
-    "Honda", "Indian Motorcycle", "Kawasaki", "KTM", "MV Agusta", 
-    "Royal Enfield", "Suzuki", "Triumph", "Yamaha"
-  ];
-
-  const allBrands = Array.from(new Set([...popularBrands, ...dbBrands])).sort();
-  const brands = allBrands.map(b => ({ brand: b }));
+  const brands = (brandRows as any[]).map(r => ({ brand: r.brand }));
 
   return (
     <div className="p-8">

@@ -47,11 +47,7 @@ export function ProductCard({ product }: { product: Product }) {
           <div className="main-img bg-gray-100 absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-400 uppercase tracking-widest">No Image</div>
         )}
 
-        <div className="product-badge-row">
-          <span className="product-badge product-badge--category">{product.category}</span>
-          {product.badge && <span className={`product-badge product-badge--status ${isLimited ? 'limited' : ''}`}>{product.badge}</span>}
-          {lowStock && <span className="product-badge product-badge--stock">More than 1 available</span>}
-        </div>
+
 
       </Link>
 
@@ -82,9 +78,9 @@ export function ProductCard({ product }: { product: Product }) {
           <div className="product-price-block">
             <strong className="product-price">₹{product.price.toLocaleString("en-IN")}</strong>
           </div>
-          <button 
-            suppressHydrationWarning 
-            className="product-cart-btn" 
+          <button
+            suppressHydrationWarning
+            className="product-cart-btn"
             aria-label={`Add ${product.name} to cart`}
             onClick={(e) => {
               e.preventDefault(); // prevent triggering the Link

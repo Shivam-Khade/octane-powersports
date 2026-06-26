@@ -58,7 +58,7 @@
   height: 267px;
   border-radius: 24px;
   overflow: hidden;
-  background: var(--surface);
+  background: #ffffff;
   cursor: zoom-in;
 }
 
@@ -70,7 +70,7 @@
 }
 
 .gallery-main-img {
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 150ms ease-out;
 }
 
@@ -113,14 +113,14 @@
   overflow: hidden;
   border: 2px solid var(--border);
   cursor: pointer;
-  background: none;
+  background: #ffffff;
   padding: 0;
   transition: border-color 200ms ease, transform 200ms ease;
   flex-shrink: 0;
 }
 
 .gallery-thumb img {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .gallery-thumb:hover {

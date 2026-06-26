@@ -30,9 +30,8 @@ export default async function EditProductPage({ params }: { params: { id: string
   const dbBrands = (brandRows as any[]).map(r => r.brand);
   
   const popularBrands = [
-    "Aprilia", "Benelli", "BMW Motorrad", "Ducati", "Harley-Davidson", 
-    "Honda", "Indian Motorcycle", "Kawasaki", "KTM", "MV Agusta", 
-    "Royal Enfield", "Suzuki", "Triumph", "Yamaha", "Akrapovic"
+    "Akrapovic", "Brembo", "Eazi grip", "EBC", "Engine ice", 
+    "K&N", "Pirelli", "Puig", "R&G", "SW-Motech"
   ];
 
   const allBrands = Array.from(new Set([...popularBrands, ...dbBrands])).sort();
