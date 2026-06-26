@@ -42,7 +42,7 @@
 .product-image-wrap {
   position: relative;
   display: block;
-  aspect-ratio: 1.1;
+  aspect-ratio: 600 / 267;
   overflow: hidden;
   background: var(--surface);
   width: 100%;
@@ -400,7 +400,7 @@
     display: none;
   }
   .product-image-wrap {
-    aspect-ratio: 4/3;
+    aspect-ratio: 600 / 267;
   }
   .product-body {
     padding: 12px;

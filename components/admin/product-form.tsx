@@ -30,6 +30,7 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
     category: parseArray(initialData?.category),
     brand: parseArray(initialData?.brand),
     price: initialData?.price || 0,
+    sku: initialData?.sku || "",
     rating: initialData?.rating || 5.0,
     availability: initialData?.availability || "In Stock",
     badge: initialData?.badge || "",
@@ -187,6 +188,10 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Price (₹)</label>
               <input suppressHydrationWarning required type="number" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]" />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">SKU</label>
+              <input suppressHydrationWarning type="text" value={formData.sku} onChange={e => setFormData({...formData, sku: e.target.value})} placeholder="e.g. OCT-12345" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]" />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Stock Quantity</label>

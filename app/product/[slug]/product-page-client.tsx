@@ -6,9 +6,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Star, Check, ShoppingBag, Heart, Zap, Shield,
-  Truck, RotateCcw, ChevronRight, Minus, Plus
+  Truck, RotateCcw, ChevronRight, Minus, Plus, X
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard } from "@/components/product-card";
 import { useCart } from "@/components/cart-context";
 import { useSession } from "next-auth/react";
@@ -31,6 +31,7 @@ type Product = {
   warranty?: string;
   shipping?: string;
   stockCount?: number;
+  sku?: string;
 };
 
 export function ProductPageClient({
@@ -44,6 +45,7 @@ export function ProductPageClient({
   const [activeImg, setActiveImg] = useState(0);
   const [qty, setQty] = useState(1);
   const [zoomStyle, setZoomStyle] = useState<{ transformOrigin: string; transform: string } | null>(null);
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
   
   const { addToCart } = useCart();
   const { data: session } = useSession();
@@ -102,7 +104,7 @@ export function ProductPageClient({
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
             >
-              <div className="gallery-main-img-wrap">
+              <div className="gallery-main-img-wrap" onClick={() => setLightboxImg(allImages[activeImg])}>
                 {allImages[activeImg] ? (
                   <Image
                     src={allImages[activeImg]}
@@ -129,7 +131,7 @@ export function ProductPageClient({
                   <button
                     key={i}
                     className={`gallery-thumb${i === activeImg ? " active" : ""}`}
-                    onClick={() => setActiveImg(i)}
+                    onClick={() => { setActiveImg(i); setLightboxImg(src); }}
                     aria-label={`View image ${i + 1}`}
                     suppressHydrationWarning
                   >
@@ -296,6 +298,7 @@ export function ProductPageClient({
               ["Category", product.category],
               ["Brand", product.brand],
               ["Availability", product.availability],
+              ...(product.sku ? [["SKU", product.sku]] : []),
               ["Warranty Details", product.warranty || "Official warranty"],
               ["Shipping Info", product.shipping || "Pan India — 2-4 Days"],
               ["Returns & Exchange", "15-day return option"],
@@ -327,6 +330,33 @@ export function ProductPageClient({
           </div>
         </div>
       </section>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxImg && (
+          <motion.div
+            className="lightbox-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setLightboxImg(null)}
+          >
+            <button className="lightbox-close" onClick={() => setLightboxImg(null)}>
+              <X size={24} />
+            </button>
+            <motion.div
+              className="lightbox-content"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image src={lightboxImg} alt="Original size" fill style={{ objectFit: "contain" }} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
