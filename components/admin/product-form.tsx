@@ -36,10 +36,12 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
     image: initialData?.image || "",
     description: initialData?.description || "",
     stockCount: initialData?.stockCount ?? 10,
-    compatibility: parseArray(initialData?.compatibility)
+    compatibility: parseArray(initialData?.compatibility),
+    relatedThumbs: parseArray(initialData?.relatedThumbs)
   });
 
   const [newModel, setNewModel] = useState("");
+  const [pasteTarget, setPasteTarget] = useState<'main' | 'sub'>('main');
 
   useEffect(() => {
     const handleGlobalPaste = async (e: ClipboardEvent) => {
@@ -62,7 +64,13 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
               });
               const data = await res.json();
               if (data.url) {
-                setFormData(prev => ({ ...prev, image: data.url }));
+                setFormData(prev => {
+                  if (pasteTarget === 'main') {
+                    return { ...prev, image: data.url };
+                  } else {
+                    return { ...prev, relatedThumbs: [...prev.relatedThumbs, data.url] };
+                  }
+                });
               } else {
                 alert("Upload failed: " + data.error);
               }
@@ -79,9 +87,9 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
 
     window.addEventListener('paste', handleGlobalPaste);
     return () => window.removeEventListener('paste', handleGlobalPaste);
-  }, []);
+  }, [pasteTarget]);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'sub' = 'main') => {
     if (!e.target.files?.[0]) return;
     setUploadingImage(true);
     
@@ -95,7 +103,11 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
       });
       const data = await res.json();
       if (data.url) {
-        setFormData({ ...formData, image: data.url });
+        if (type === 'main') {
+          setFormData(prev => ({ ...prev, image: data.url }));
+        } else {
+          setFormData(prev => ({ ...prev, relatedThumbs: [...prev.relatedThumbs, data.url] }));
+        }
       } else {
         alert("Upload failed: " + data.error);
       }
@@ -141,7 +153,8 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
         ...formData,
         category: formData.category.join(", "),
         brand: formData.brand.join(", "),
-        compatibility: formData.compatibility // Will be JSON stringified in saveAction if not already
+        compatibility: formData.compatibility, // Will be JSON stringified in saveAction if not already
+        relatedThumbs: formData.relatedThumbs
       };
       
       await saveAction(dataToSave);
@@ -349,18 +362,55 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
 
         {/* Image & Description */}
         <div className="space-y-6">
-          <h3 className="text-xl font-black uppercase tracking-tight text-[#0a0a0a] border-b pb-2">Media & Details</h3>
+          <div className="flex items-center justify-between border-b pb-2">
+            <h3 className="text-xl font-black uppercase tracking-tight text-[#0a0a0a]">Media & Details</h3>
+            <div className="flex gap-4 items-center bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
+              <span className="text-sm font-bold text-gray-700">Paste Target (Ctrl+V):</span>
+              <label className="flex items-center gap-2 text-sm cursor-pointer font-medium hover:text-[#ff6b00]">
+                <input type="radio" name="pasteTarget" checked={pasteTarget === 'main'} onChange={() => setPasteTarget('main')} className="text-[#ff6b00] focus:ring-[#ff6b00] w-4 h-4" />
+                Main Image
+              </label>
+              <label className="flex items-center gap-2 text-sm cursor-pointer font-medium hover:text-[#ff6b00]">
+                <input type="radio" name="pasteTarget" checked={pasteTarget === 'sub'} onChange={() => setPasteTarget('sub')} className="text-[#ff6b00] focus:ring-[#ff6b00] w-4 h-4" />
+                Sub Images
+              </label>
+            </div>
+          </div>
+          
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Product Image</label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Product Image (Main)</label>
             <div className="flex gap-4 items-end">
               {formData.image && (
                 <img src={formData.image} alt="Preview" className="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-sm" />
               )}
               <div className="flex-1">
-                <label className={`flex flex-col items-center justify-center gap-2 w-full p-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${uploadingImage ? 'opacity-50' : ''}`}>
+                <label className={`flex flex-col items-center justify-center gap-2 w-full p-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${uploadingImage && pasteTarget === 'main' ? 'opacity-50' : ''}`}>
                   <Upload size={24} className="text-gray-400" />
-                  <span className="text-gray-600 font-medium">{uploadingImage ? 'Uploading image...' : 'Click or paste image (Ctrl+V) to upload'}</span>
-                  <input suppressHydrationWarning type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadingImage} />
+                  <span className="text-gray-600 font-medium">{uploadingImage && pasteTarget === 'main' ? 'Uploading...' : 'Click to upload Main Image'}</span>
+                  <input suppressHydrationWarning type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'main')} disabled={uploadingImage} />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Sub Images (Gallery)</label>
+            <div className="flex flex-wrap gap-4 items-end">
+              {formData.relatedThumbs.map((img: string, i: number) => (
+                <div key={i} className="relative group">
+                  <img src={img} alt={`Sub ${i+1}`} className="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-sm" />
+                  <button type="button" onClick={() => {
+                    setFormData(prev => ({ ...prev, relatedThumbs: prev.relatedThumbs.filter((_: string, index: number) => index !== i) }));
+                  }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-md">
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+              <div className="flex-1 min-w-[200px]">
+                <label className={`flex flex-col items-center justify-center gap-2 w-full p-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${uploadingImage && pasteTarget === 'sub' ? 'opacity-50' : ''}`}>
+                  <Upload size={24} className="text-gray-400" />
+                  <span className="text-gray-600 font-medium text-center">{uploadingImage && pasteTarget === 'sub' ? 'Uploading...' : 'Click to upload Sub Images'}</span>
+                  <input suppressHydrationWarning type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'sub')} disabled={uploadingImage} />
                 </label>
               </div>
             </div>

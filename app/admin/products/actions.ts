@@ -17,20 +17,20 @@ export async function saveProduct(data: any) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") throw new Error("Unauthorized");
 
-  const { id, name, slug, category, brand, price, rating, availability, badge, image, description, stockCount, compatibility } = data;
+  const { id, name, slug, category, brand, price, rating, availability, badge, image, description, stockCount, compatibility, relatedThumbs } = data;
   
   if (id) {
     await pool.query(`
       UPDATE products SET 
-        name=?, slug=?, category=?, brand=?, price=?, rating=?, availability=?, badge=?, image=?, description=?, stockCount=?, compatibility=?
+        name=?, slug=?, category=?, brand=?, price=?, rating=?, availability=?, badge=?, image=?, description=?, stockCount=?, compatibility=?, relatedThumbs=?
       WHERE id=?
-    `, [name, slug, category, brand, price, rating, availability, badge, image, description, stockCount ?? 10, JSON.stringify(compatibility || []), id]);
+    `, [name, slug, category, brand, price, rating, availability, badge, image, description, stockCount ?? 10, JSON.stringify(compatibility || []), JSON.stringify(relatedThumbs || []), id]);
   } else {
     await pool.query(`
       INSERT INTO products 
       (name, slug, category, brand, price, rating, availability, badge, image, description, stockCount, compatibility, specs, options, relatedThumbs)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '[]', '[]', '[]')
-    `, [name, slug, category, brand, price, rating || 5.0, availability || 'In Stock', badge || '', image, description || '', stockCount ?? 10, JSON.stringify(compatibility || [])]);
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '[]', '[]', ?)
+    `, [name, slug, category, brand, price, rating || 5.0, availability || 'In Stock', badge || '', image, description || '', stockCount ?? 10, JSON.stringify(compatibility || []), JSON.stringify(relatedThumbs || [])]);
   }
   
   revalidatePath('/', 'layout');
