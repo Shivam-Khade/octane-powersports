@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Upload, X, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -40,6 +40,46 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
   });
 
   const [newModel, setNewModel] = useState("");
+
+  useEffect(() => {
+    const handleGlobalPaste = async (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+          e.preventDefault(); // Stop default paste behavior
+          const file = items[i].getAsFile();
+          if (file) {
+            setUploadingImage(true);
+            const fileData = new FormData();
+            fileData.append("file", file);
+
+            try {
+              const res = await fetch("/api/admin/upload", {
+                method: "POST",
+                body: fileData
+              });
+              const data = await res.json();
+              if (data.url) {
+                setFormData(prev => ({ ...prev, image: data.url }));
+              } else {
+                alert("Upload failed: " + data.error);
+              }
+            } catch (err) {
+              alert("Upload failed");
+            } finally {
+              setUploadingImage(false);
+            }
+          }
+          break; // Handle only the first image
+        }
+      }
+    };
+
+    window.addEventListener('paste', handleGlobalPaste);
+    return () => window.removeEventListener('paste', handleGlobalPaste);
+  }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
@@ -319,7 +359,7 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
               <div className="flex-1">
                 <label className={`flex flex-col items-center justify-center gap-2 w-full p-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${uploadingImage ? 'opacity-50' : ''}`}>
                   <Upload size={24} className="text-gray-400" />
-                  <span className="text-gray-600 font-medium">{uploadingImage ? 'Uploading image...' : 'Click to upload image'}</span>
+                  <span className="text-gray-600 font-medium">{uploadingImage ? 'Uploading image...' : 'Click or paste image (Ctrl+V) to upload'}</span>
                   <input suppressHydrationWarning type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadingImage} />
                 </label>
               </div>
