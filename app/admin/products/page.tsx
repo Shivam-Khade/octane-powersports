@@ -20,8 +20,8 @@ export default async function AdminProductsPage() {
   const [categoryRows] = await pool.query('SELECT * FROM categories ORDER BY name ASC');
   const categories = categoryRows as any[];
 
-  const [brandRows] = await pool.query('SELECT DISTINCT brand FROM products WHERE brand IS NOT NULL AND brand != "" ORDER BY brand ASC');
-  const brands = (brandRows as any[]).map(r => ({ brand: r.brand }));
+  const [brandRows] = await pool.query('SELECT name FROM brands ORDER BY name ASC');
+  const brands = (brandRows as any[]).map(r => ({ brand: r.name }));
 
   return (
     <div className="p-8">

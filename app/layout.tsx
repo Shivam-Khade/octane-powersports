@@ -124,14 +124,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     const productCategories = products.map(p => normalizeName(p.category)).filter(Boolean);
     categories = Array.from(new Set([...dbCategories, ...productCategories])).sort();
     
-    const rawBrands = products.map(p => p.brand).filter(Boolean);
-    const dbBrands = new Set<string>();
-    rawBrands.forEach(b => {
-      if (typeof b === 'string') {
-        b.split(',').forEach(part => dbBrands.add(normalizeName(part.trim())));
-      }
-    });
-    brands = Array.from(dbBrands).sort();
+    const [brandRows] = await pool.query('SELECT name FROM brands ORDER BY name ASC');
+    brands = (brandRows as any[]).map(b => b.name);
 
     const [settingsRows] = await pool.query('SELECT value_data FROM settings WHERE key_name = ?', ['navigation_grid']);
     if ((settingsRows as any[])[0]?.value_data) {

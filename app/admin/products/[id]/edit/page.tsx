@@ -26,16 +26,8 @@ export default async function EditProductPage({ params }: { params: { id: string
   const [categoryRows] = await pool.query('SELECT * FROM categories ORDER BY name ASC');
   const categories = categoryRows as any[];
 
-  const [brandRows] = await pool.query('SELECT DISTINCT brand FROM products WHERE brand IS NOT NULL AND brand != "" ORDER BY brand ASC');
-  const dbBrands = (brandRows as any[]).map(r => r.brand);
-  
-  const popularBrands = [
-    "Akrapovic", "Brembo", "Eazi grip", "EBC", "Engine ice", 
-    "K&N", "Pirelli", "Puig", "R&G", "SW-Motech"
-  ];
-
-  const allBrands = Array.from(new Set([...popularBrands, ...dbBrands])).sort();
-  const brands = allBrands.map(b => ({ brand: b }));
+  const [brandRows] = await pool.query('SELECT name FROM brands ORDER BY name ASC');
+  const brands = (brandRows as any[]).map(r => ({ brand: r.name }));
 
   const [bikeModelRows] = await pool.query(`
     SELECT * FROM bike_models 

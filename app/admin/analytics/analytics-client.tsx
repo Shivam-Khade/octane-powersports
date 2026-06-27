@@ -164,7 +164,7 @@ export function AnalyticsClient({
                 currentData.map((item, idx) => {
                   const globalRank = (currentPage - 1) * ITEMS_PER_PAGE + idx + 1;
                   return (
-                    <tr key={item.name} className="hover:bg-gray-50/50 transition-colors">
+                    <tr key={`${item.name}-${idx}`} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs ${
                           globalRank === 1 ? 'bg-yellow-100 text-yellow-700' : 

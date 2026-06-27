@@ -95,10 +95,8 @@
 
 .gallery-thumbs {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
   padding-bottom: 4px;
 }
 .gallery-thumbs::-webkit-scrollbar {

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Truck, CreditCard, Headphones, RotateCcw } from "lucide-react";
+import { ArrowRight, ShieldCheck, Truck, CreditCard, Headphones, RotateCcw, MonitorPlay, Smartphone } from "lucide-react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import dynamic from "next/dynamic";
 import { ProductCard } from "@/components/product-card";
@@ -12,6 +12,7 @@ const BrandMarquee = dynamic(() => import("@/components/brand-marquee").then(mod
 const LifestyleSection = dynamic(() => import("@/components/lifestyle-section").then(mod => ({ default: mod.LifestyleSection })), { ssr: true });
 const TestimonialCarousel = dynamic(() => import("@/components/testimonial-carousel").then(mod => ({ default: mod.TestimonialCarousel })), { ssr: true });
 const CommunityGrid = dynamic(() => import("@/components/community-grid").then(mod => ({ default: mod.CommunityGrid })), { ssr: true });
+const InstaGrid = dynamic(() => import("@/components/insta-grid").then(mod => ({ default: mod.InstaGrid })), { ssr: true });
 import { useEffect, useState } from "react";
 import "./home.css";
 
@@ -31,6 +32,7 @@ export default function HomePage() {
   const [products, setProducts] = useState<any[]>([]);
   const [categoryCards, setCategoryCards] = useState<any[]>([]);
   const [currentCatIndex, setCurrentCatIndex] = useState(0);
+  const [activeMediaTab, setActiveMediaTab] = useState<'youtube' | 'instagram'>('youtube');
 
   useEffect(() => {
     if (categoryCards.length === 0) return;
@@ -241,11 +243,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== COMMUNITY ===== */}
+      {/* ===== COMMUNITY MEDIA TABS ===== */}
       <section className="section">
         <div className="container">
           <motion.div
             className="section-head"
+            style={{ marginBottom: "24px" }}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-80px" }}
@@ -255,18 +258,46 @@ export default function HomePage() {
               <motion.p className="eyebrow" variants={fadeUp}>Octane Garage</motion.p>
               <motion.h2 variants={fadeUp} style={{ textTransform: "uppercase" }}>LATEST PERFORMANCE BUILDS</motion.h2>
             </div>
-            <motion.a
-              href="https://www.youtube.com/@OctanePowersports"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="button outline-dark"
-              variants={fadeUp}
-              style={{ position: "relative", top: "6px" }}
-            >
-              @OctanePowersports <ArrowRight size={16} />
-            </motion.a>
+            
+            <motion.div variants={fadeUp} className="flex gap-3 bg-gray-100 p-1.5 rounded-xl self-end">
+              <button 
+                onClick={() => setActiveMediaTab('youtube')}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-bold text-sm transition-all ${activeMediaTab === 'youtube' ? 'bg-white shadow-sm text-red-600' : 'text-gray-500 hover:text-gray-900'}`}
+              >
+                <MonitorPlay size={18} /> YouTube
+              </button>
+              <button 
+                onClick={() => setActiveMediaTab('instagram')}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-bold text-sm transition-all ${activeMediaTab === 'instagram' ? 'bg-white shadow-sm text-pink-600' : 'text-gray-500 hover:text-gray-900'}`}
+              >
+                <Smartphone size={18} /> Instagram
+              </button>
+            </motion.div>
           </motion.div>
-          <CommunityGrid />
+
+          <div style={{ paddingBottom: "24px", display: "flex", justifyContent: "flex-end" }}>
+            {activeMediaTab === 'youtube' ? (
+              <a href="https://www.youtube.com/@OctanePowersports" target="_blank" rel="noopener noreferrer" className="text-sm font-bold flex items-center gap-1 text-gray-500 hover:text-red-600 transition-colors">
+                @OctanePowersports <ArrowRight size={14} />
+              </a>
+            ) : (
+              <a href="https://www.instagram.com/octaneps/" target="_blank" rel="noopener noreferrer" className="text-sm font-bold flex items-center gap-1 text-gray-500 hover:text-pink-600 transition-colors">
+                @octaneps <ArrowRight size={14} />
+              </a>
+            )}
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeMediaTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              {activeMediaTab === 'youtube' ? <CommunityGrid /> : <InstaGrid />}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </section>
 
