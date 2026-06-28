@@ -19,23 +19,18 @@
 
 .insta-card {
   width: 100%;
-  aspect-ratio: 9 / 16; /* Reel aspect ratio */
-  background: #f8f8f8;
+  min-height: 480px;
+  background: #ffffff;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .insta-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-.insta-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: white;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  border-color: rgba(255, 107, 0, 0.3);
 }

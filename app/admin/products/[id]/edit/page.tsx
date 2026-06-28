@@ -5,6 +5,9 @@ import pool from "@/lib/db";
 import { saveProduct } from "../../actions";
 import ProductForm from "@/components/admin/product-form";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function EditProductPage({ params }: { params: { id: string } | Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
 
@@ -15,7 +18,7 @@ export default async function EditProductPage({ params }: { params: { id: string
   const resolvedParams = await params;
 
   const [productRows] = await pool.query('SELECT * FROM products WHERE id = ?', [resolvedParams.id]);
-  const products = productRows as any[];
+  const products = (productRows as any[]).map(r => ({ ...r }));
 
   if (!products || products.length === 0) {
     redirect("/admin/products");
@@ -24,7 +27,7 @@ export default async function EditProductPage({ params }: { params: { id: string
   const product = products[0];
 
   const [categoryRows] = await pool.query('SELECT * FROM categories ORDER BY name ASC');
-  const categories = categoryRows as any[];
+  const categories = (categoryRows as any[]).map(r => ({ ...r }));
 
   const [brandRows] = await pool.query('SELECT name FROM brands ORDER BY name ASC');
   const brands = (brandRows as any[]).map(r => ({ brand: r.name }));
@@ -33,7 +36,7 @@ export default async function EditProductPage({ params }: { params: { id: string
     SELECT * FROM bike_models 
     ORDER BY CASE WHEN brand = 'Universal' THEN 1 ELSE 0 END, brand ASC, series ASC, model ASC
   `);
-  const bikeModelsData = bikeModelRows as any[];
+  const bikeModelsData = (bikeModelRows as any[]).map(r => ({ ...r }));
 
   const structuredBikeModels: any[] = [];
   const brandMap = new Map();

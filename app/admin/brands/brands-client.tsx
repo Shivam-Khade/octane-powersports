@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, X, Search } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 export default function BrandsClient({ initialBrands, saveAction, deleteAction }: any) {
   const [brands, setBrands] = useState(initialBrands);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    setBrands(initialBrands);
+  }, [initialBrands]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBrand, setEditingBrand] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -45,10 +49,21 @@ export default function BrandsClient({ initialBrands, saveAction, deleteAction }
     e.preventDefault();
     setIsSaving(true);
     try {
-      await saveAction(formData);
-      window.location.reload(); 
+      const res = await saveAction(formData);
+      if (res?.error) {
+        toast.error(res.error, {
+          style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333', borderRadius: '12px' }
+        });
+        return;
+      }
+      toast.success("Brand saved successfully", {
+        style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333', borderRadius: '12px' }
+      });
+      closeModal(); 
     } catch (err) {
-      alert("Failed to save brand.");
+      toast.error("Failed to save brand.", {
+        style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333', borderRadius: '12px' }
+      });
     } finally {
       setIsSaving(false);
     }
@@ -129,7 +144,7 @@ export default function BrandsClient({ initialBrands, saveAction, deleteAction }
               {filteredBrands.length > 0 ? (
                 filteredBrands.map((brand: any) => (
                 <tr key={brand.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 font-black text-[#111111] tracking-wide uppercase">{brand.name}</td>
+                  <td className="px-6 py-4 font-black text-[#111111] tracking-wide">{brand.name}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
                       <button onClick={() => openModal(brand)} className="p-2 text-gray-400 hover:text-[#ff6b00] transition-colors bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow">

@@ -97,12 +97,12 @@ export default function HomePage() {
                 >
                   <Link href={`/shop?category=${encodeURIComponent(categoryCards[currentCatIndex].name)}`} className="relative w-full h-full block">
                     {categoryCards[currentCatIndex].image ? (
-                      <Image 
-                        src={categoryCards[currentCatIndex].image} 
-                        alt={categoryCards[currentCatIndex].name} 
-                        fill 
-                        sizes="100vw" 
-                        className="object-cover" 
+                      <Image
+                        src={categoryCards[currentCatIndex].image}
+                        alt={categoryCards[currentCatIndex].name}
+                        fill
+                        sizes="100vw"
+                        className="object-cover"
                         priority
                         unoptimized
                       />
@@ -110,10 +110,10 @@ export default function HomePage() {
                       <div className="absolute inset-0 bg-[#1a1a1a]" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
-                    
+
                     <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16 z-20 text-white flex flex-col md:flex-row md:items-end justify-between gap-6">
                       <div className="max-w-3xl">
-                        <motion.h3 
+                        <motion.h3
                           initial={{ y: 20, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.2, duration: 0.5 }}
@@ -121,7 +121,7 @@ export default function HomePage() {
                         >
                           {categoryCards[currentCatIndex].name}
                         </motion.h3>
-                        <motion.p 
+                        <motion.p
                           initial={{ y: 20, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.3, duration: 0.5 }}
@@ -130,7 +130,7 @@ export default function HomePage() {
                           {categoryCards[currentCatIndex].description}
                         </motion.p>
                       </div>
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4, duration: 0.5 }}
@@ -143,13 +143,13 @@ export default function HomePage() {
                 </motion.div>
               )}
             </AnimatePresence>
-            
+
             {/* Progress Indicators */}
             <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
               {categoryCards.map((_, i) => (
-                <button 
-                  key={i} 
-                  onClick={() => setCurrentCatIndex(i)} 
+                <button
+                  key={i}
+                  onClick={() => setCurrentCatIndex(i)}
                   className={`w-12 h-1.5 rounded-full transition-all duration-300 ${i === currentCatIndex ? 'bg-[#ff6b00] shadow-[0_0_10px_#ff6b00]' : 'bg-white/30 hover:bg-white/60'}`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
@@ -247,28 +247,32 @@ export default function HomePage() {
       <section className="section">
         <div className="container">
           <motion.div
-            className="section-head"
-            style={{ marginBottom: "24px" }}
+            className="section-head flex-col md:flex-row gap-6"
+            style={{ marginBottom: "32px", alignItems: "flex-end" }}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-80px" }}
             variants={{ show: { transition: { staggerChildren: 0.1 } } }}
           >
             <div>
-              <motion.p className="eyebrow" variants={fadeUp}>Octane Garage</motion.p>
-              <motion.h2 variants={fadeUp} style={{ textTransform: "uppercase" }}>LATEST PERFORMANCE BUILDS</motion.h2>
+              <motion.p className="eyebrow text-[#ff6b00] font-bold tracking-[0.2em] uppercase mb-3 flex items-center gap-2" variants={fadeUp}>
+                <span className="w-8 h-[2px] bg-[#ff6b00]"></span> Octane Garage
+              </motion.p>
+              <motion.h2 variants={fadeUp} className="font-montserrat text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] text-gray-900 m-0">
+                Latest Performance Builds
+              </motion.h2>
             </div>
-            
-            <motion.div variants={fadeUp} className="flex gap-3 bg-gray-100 p-1.5 rounded-xl self-end">
-              <button 
+
+            <motion.div variants={fadeUp} className="flex gap-2 bg-[#f4f4f5] p-1.5 rounded-2xl border border-gray-200/60 shadow-inner w-full md:w-auto">
+              <button
                 onClick={() => setActiveMediaTab('youtube')}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-bold text-sm transition-all ${activeMediaTab === 'youtube' ? 'bg-white shadow-sm text-red-600' : 'text-gray-500 hover:text-gray-900'}`}
+                className={`flex-1 md:flex-none flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${activeMediaTab === 'youtube' ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.06)] text-[#ff0000] scale-100 ring-1 ring-gray-900/5' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200/50 scale-[0.98]'}`}
               >
                 <MonitorPlay size={18} /> YouTube
               </button>
-              <button 
+              <button
                 onClick={() => setActiveMediaTab('instagram')}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-bold text-sm transition-all ${activeMediaTab === 'instagram' ? 'bg-white shadow-sm text-pink-600' : 'text-gray-500 hover:text-gray-900'}`}
+                className={`flex-1 md:flex-none flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${activeMediaTab === 'instagram' ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.06)] text-[#e1306c] scale-100 ring-1 ring-gray-900/5' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200/50 scale-[0.98]'}`}
               >
                 <Smartphone size={18} /> Instagram
               </button>
@@ -287,17 +291,14 @@ export default function HomePage() {
             )}
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeMediaTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              {activeMediaTab === 'youtube' ? <CommunityGrid /> : <InstaGrid />}
-            </motion.div>
-          </AnimatePresence>
+          <div className="relative w-full">
+            <div className={`${activeMediaTab === 'youtube' ? 'opacity-100 relative z-10' : 'opacity-0 absolute top-0 left-0 w-full z-0 pointer-events-none'}`}>
+              <CommunityGrid />
+            </div>
+            <div className={`transition-all duration-300 ${activeMediaTab === 'instagram' ? 'opacity-100 relative z-10 translate-y-0' : 'opacity-0 absolute top-0 left-0 w-full z-0 pointer-events-none translate-y-2'}`}>
+              <InstaGrid />
+            </div>
+          </div>
         </div>
       </section>
 

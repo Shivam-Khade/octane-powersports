@@ -81,7 +81,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
               <button suppressHydrationWarning className="nav-link nav-btn">
                 Shop By Category <ChevronDown size={13} className="nav-chevron" />
               </button>
-              <div className="mega-menu types-menu">
+              <div className="mega-menu types-menu max-h-[70vh] overflow-y-auto custom-scrollbar">
                 <div className="mega-type-grid" style={{ gridTemplateColumns: `repeat(${gridSettings.categoryDesktopCols}, 1fr)` }}>
                   {categories.map((cat) => (
                     <Link key={cat} href={`/shop?category=${encodeURIComponent(cat)}`} className="type-item">
@@ -96,7 +96,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
               <button suppressHydrationWarning className="nav-link nav-btn">
                 Shop By Brand <ChevronDown size={13} className="nav-chevron" />
               </button>
-              <div className="mega-menu brands-menu">
+              <div className="mega-menu brands-menu max-h-[70vh] overflow-y-auto custom-scrollbar">
                 <div className="mega-brand-grid" style={{ gridTemplateColumns: `repeat(${gridSettings.brandDesktopCols}, 1fr)` }}>
                   {brands.map(brand => (
                     <Link key={brand} href={`/shop?brand=${encodeURIComponent(brand)}`} className="type-item">
@@ -281,7 +281,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
                   <ChevronDown size={18} className={`transition-transform shrink-0 ${mobileTypeOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {mobileTypeOpen && (
-                  <div className="py-3 pl-4 border-l border-white/10 ml-3 mt-1">
+                  <div className="py-3 pl-4 border-l border-white/10 ml-3 mt-1 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
                     <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${gridSettings.categoryMobileCols}, 1fr)` }}>
                       {categories.map((cat) => (
                         <Link
@@ -307,7 +307,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
                   <ChevronDown size={18} className={`transition-transform shrink-0 ${mobileBrandOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {mobileBrandOpen && (
-                  <div className="py-3 pl-4 border-l border-white/10 ml-3 mt-1">
+                  <div className="py-3 pl-4 border-l border-white/10 ml-3 mt-1 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
                     <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${gridSettings.brandMobileCols}, 1fr)` }}>
                       {brands.map((brand) => (
                         <Link

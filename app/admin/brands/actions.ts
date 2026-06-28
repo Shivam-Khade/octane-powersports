@@ -20,10 +20,18 @@ export async function saveBrand(data: any) {
   const { id, name } = data;
   
   if (id) {
+    const [existing] = await pool.query('SELECT id FROM brands WHERE name = ? AND id != ?', [name, id]);
+    if ((existing as any[]).length > 0) {
+      return { error: 'Brand already exists' };
+    }
     await pool.query(`
       UPDATE brands SET name=? WHERE id=?
     `, [name, id]);
   } else {
+    const [existing] = await pool.query('SELECT id FROM brands WHERE name = ?', [name]);
+    if ((existing as any[]).length > 0) {
+      return { error: 'Brand already exists' };
+    }
     await pool.query(`
       INSERT INTO brands (name) VALUES (?)
     `, [name]);
@@ -31,4 +39,6 @@ export async function saveBrand(data: any) {
   
   revalidatePath('/admin/brands');
   revalidatePath('/', 'layout');
+  
+  return { success: true };
 }

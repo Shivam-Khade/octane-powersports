@@ -5,6 +5,9 @@ import pool from "@/lib/db";
 import BrandsClient from "./brands-client";
 import { saveBrand, deleteBrand } from "./actions";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function AdminBrandsPage() {
   const session = await getServerSession(authOptions);
 
@@ -13,7 +16,7 @@ export default async function AdminBrandsPage() {
   }
 
   const [rows] = await pool.query('SELECT * FROM brands ORDER BY name ASC');
-  const brands = rows as any[];
+  const brands = (rows as any[]).map(r => ({ ...r }));
 
   return (
     <div className="p-8">

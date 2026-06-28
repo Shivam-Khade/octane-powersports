@@ -29,14 +29,14 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
     // Store categories and brands as arrays for the checkboxes
     category: parseArray(initialData?.category),
     brand: parseArray(initialData?.brand),
-    price: initialData?.price || 0,
+    price: initialData?.price || "",
     sku: initialData?.sku || "",
     rating: initialData?.rating || 5.0,
     availability: initialData?.availability || "In Stock",
     badge: initialData?.badge || "",
     image: initialData?.image || "",
     description: initialData?.description || "",
-    stockCount: initialData?.stockCount ?? 10,
+    stockCount: initialData?.stockCount ?? "",
     compatibility: parseArray(initialData?.compatibility),
     relatedThumbs: parseArray(initialData?.relatedThumbs)
   });
@@ -187,7 +187,7 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Price (₹)</label>
-              <input suppressHydrationWarning required type="number" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]" />
+              <input suppressHydrationWarning required type="number" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value === '' ? '' : Number(e.target.value)})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]" />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">SKU</label>
@@ -195,7 +195,7 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Stock Quantity</label>
-              <input suppressHydrationWarning required type="number" min="0" value={formData.stockCount} onChange={e => setFormData({...formData, stockCount: Number(e.target.value)})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]" />
+              <input suppressHydrationWarning required type="number" min="0" value={formData.stockCount} onChange={e => setFormData({...formData, stockCount: e.target.value === '' ? '' : Number(e.target.value)})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b00]" />
             </div>
           </div>
         </div>

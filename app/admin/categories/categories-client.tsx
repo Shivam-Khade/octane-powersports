@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, X, Upload } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 export default function CategoriesClient({ initialCategories, saveAction, deleteAction }: any) {
   const [categories, setCategories] = useState(initialCategories);
+
+  useEffect(() => {
+    setCategories(initialCategories);
+  }, [initialCategories]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -73,7 +77,10 @@ export default function CategoriesClient({ initialCategories, saveAction, delete
     setIsSaving(true);
     try {
       await saveAction(formData);
-      window.location.reload(); 
+      toast.success("Category saved successfully", {
+        style: { background: '#0a0a0a', color: '#fff', border: '1px solid #333', borderRadius: '12px' }
+      });
+      closeModal();
     } catch (err) {
       alert("Failed to save category.");
     } finally {

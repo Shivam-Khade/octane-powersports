@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Play, Share2, Clock } from "lucide-react";
 import "./community-grid.css";
 
@@ -31,8 +30,8 @@ export function CommunityGrid() {
   return (
     <div className="youtube-feed">
       {/* Left Large Video */}
-      <div className="yt-main-video group">
-        <div className="yt-thumbnail">
+      <div className="yt-main-video group relative">
+        <div className="yt-thumbnail relative z-10">
           <iframe 
             src="https://www.youtube.com/embed/WLpi1vSPPdY?rel=0" 
             title="Octane Powersports YouTube Video" 
@@ -47,11 +46,12 @@ export function CommunityGrid() {
       {/* Right Column Videos */}
       <div className="yt-side-videos">
         {sideVideos.map((video) => (
-          <a key={video.id} href={video.url} target="_blank" rel="noreferrer" className="yt-side-card group">
-            <div className="yt-side-thumbnail">
+          <a key={video.id} href={video.url} target="_blank" rel="noreferrer" className="yt-side-card group relative">
+            <div className="yt-side-thumbnail relative">
               <img 
                 src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`} 
                 alt={video.title} 
+                className="relative z-10"
                 style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }}
               />
             </div>

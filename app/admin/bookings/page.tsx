@@ -32,7 +32,7 @@ export default async function AdminBookingsPage() {
   }
 
   const [rows] = await pool.query('SELECT * FROM service_bookings ORDER BY booking_date ASC');
-  const bookings = rows as any[];
+  const bookings = (rows as any[]).map(r => ({ ...r }));
 
   return (
     <div className="p-8">

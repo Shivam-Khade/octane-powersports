@@ -5,6 +5,9 @@ import pool from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import CategoriesClient from "./categories-client";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // --- SERVER ACTIONS ---
 export async function deleteCategory(id: number) {
   "use server";
@@ -49,7 +52,7 @@ export default async function AdminCategoriesPage() {
   }
 
   const [rows] = await pool.query('SELECT * FROM categories ORDER BY featured DESC, id DESC');
-  const categories = rows as any[];
+  const categories = (rows as any[]).map(r => ({ ...r }));
 
   return (
     <div className="p-8">

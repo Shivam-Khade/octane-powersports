@@ -7,6 +7,9 @@ import ProductsClient from "./products-client";
 
 import { deleteProduct, saveProduct } from "./actions";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function AdminProductsPage() {
   const session = await getServerSession(authOptions);
 
@@ -15,10 +18,10 @@ export default async function AdminProductsPage() {
   }
 
   const [rows] = await pool.query('SELECT * FROM products ORDER BY id DESC');
-  const products = rows as any[];
+  const products = (rows as any[]).map(r => ({ ...r }));
 
   const [categoryRows] = await pool.query('SELECT * FROM categories ORDER BY name ASC');
-  const categories = categoryRows as any[];
+  const categories = (categoryRows as any[]).map(r => ({ ...r }));
 
   const [brandRows] = await pool.query('SELECT name FROM brands ORDER BY name ASC');
   const brands = (brandRows as any[]).map(r => ({ brand: r.name }));
