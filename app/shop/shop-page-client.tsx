@@ -16,7 +16,7 @@ const curatedCollections = [
   { name: "Essential Protection", filter: { category: "Protection parts" } }
 ];
 
-export function ShopPageClient({ initialProducts, categories }: { initialProducts: Product[], categories: string[] }) {
+export function ShopPageClient({ initialProducts, categories, allBrands = [] }: { initialProducts: Product[], categories: string[], allBrands?: string[] }) {
   const searchParams = useSearchParams();
   const initialBrands = searchParams.getAll("brand");
   const initialCategory = searchParams.get("category");
@@ -52,9 +52,11 @@ export function ShopPageClient({ initialProducts, categories }: { initialProduct
   const itemsPerPage = 12;
 
   const filterBrands = useMemo(() => {
-    const uniqueBrands = Array.from(new Set(initialProducts.map(p => p.brand).filter(Boolean)));
+    const uniqueBrands = allBrands.length > 0 
+      ? allBrands 
+      : Array.from(new Set(initialProducts.map(p => p.brand).filter(Boolean)));
     return uniqueBrands.sort().map(b => ({ value: b, label: b }));
-  }, [initialProducts]);
+  }, [initialProducts, allBrands]);
 
   const getBucket = (str: string) => {
     const char = str.charAt(0).toUpperCase();

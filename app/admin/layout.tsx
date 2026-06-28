@@ -11,7 +11,8 @@ import {
   ShoppingCart,
   LogOut,
   Settings,
-  BarChart3
+  BarChart3,
+  Users
 } from "lucide-react";
 
 export default async function AdminLayout({
@@ -60,6 +61,9 @@ export default async function AdminLayout({
           </Link>
           <Link href="/admin/blogs" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <FileText size={18} className="text-[#ff6b00]" /> Blog Posts
+          </Link>
+          <Link href="/admin/users" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+            <Users size={18} className="text-[#ff6b00]" /> Users
           </Link>
           <Link href="/admin/settings" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <Settings size={18} className="text-[#ff6b00]" /> Settings

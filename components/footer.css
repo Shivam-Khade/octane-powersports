@@ -166,6 +166,7 @@
 .footer-legal {
   display: flex;
   gap: 16px;
+  padding-right: 70px; /* Prevent overlap with WhatsApp button */
 }
 
 .footer-legal a {

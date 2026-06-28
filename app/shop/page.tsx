@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import pool from "@/lib/db";
 import { ShopPageClient } from "./shop-page-client";
 
-export const revalidate = 60; // Cache page for 60 seconds (ISR)
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Shop Premium Superbike Parts"
@@ -54,9 +54,14 @@ export default async function ShopPage() {
   const productCategories = products.map(p => p.category).filter(Boolean);
   const categories = Array.from(new Set([...dbCategories, ...productCategories])).sort();
 
+  const [brandRows] = await pool.query('SELECT name FROM brands ORDER BY name ASC');
+  const dbBrands = (brandRows as any[]).map(b => normalizeName(b.name));
+  const productBrands = products.flatMap(p => typeof p.brand === 'string' ? p.brand.split(',').map((b: string) => b.trim()).filter(Boolean) : []);
+  const allBrands = Array.from(new Set([...dbBrands, ...productBrands])).sort();
+
   return (
     <Suspense fallback={<div style={{height: "100vh"}}></div>}>
-      <ShopPageClient initialProducts={products} categories={categories} />
+      <ShopPageClient initialProducts={products} categories={categories} allBrands={allBrands} />
     </Suspense>
   );
 }

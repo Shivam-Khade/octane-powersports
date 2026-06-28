@@ -291,7 +291,7 @@ export default function HomePage() {
             )}
           </div>
 
-          <div className="relative w-full">
+          <div className="relative w-full overflow-hidden">
             <div className={`${activeMediaTab === 'youtube' ? 'opacity-100 relative z-10' : 'opacity-0 absolute top-0 left-0 w-full z-0 pointer-events-none'}`}>
               <CommunityGrid />
             </div>

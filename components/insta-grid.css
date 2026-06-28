@@ -19,7 +19,9 @@
 
 .insta-card {
   width: 100%;
-  min-height: 480px;
+  max-width: 340px;
+  margin: 0 auto;
+  min-height: 440px;
   background: #ffffff;
   border-radius: 16px;
   overflow: hidden;

@@ -1,5 +1,5 @@
 import pool from "@/lib/db";
-import { Package, ShoppingCart, CalendarCheck, FileText, Users, DollarSign, LayoutDashboard, ArrowRight, Settings } from "lucide-react";
+import { Package, ShoppingCart, CalendarCheck, FileText, Users, DollarSign, LayoutDashboard, ArrowRight, Settings, Tag } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
@@ -15,6 +15,7 @@ export default async function AdminPage() {
     [bookingCountResult],
     [userCountResult],
     [categoryCountResult],
+    [brandCountResult],
     [revenueResult],
     [recentOrdersResult],
   ] = await Promise.all([
@@ -24,6 +25,7 @@ export default async function AdminPage() {
     pool.query('SELECT COUNT(*) as count FROM service_bookings'),
     pool.query('SELECT COUNT(*) as count FROM users'),
     pool.query('SELECT COUNT(*) as count FROM categories'),
+    pool.query('SELECT COUNT(*) as count FROM brands'),
     pool.query("SELECT SUM(total_amount) as total FROM orders WHERE status != 'Cancelled'"),
     pool.query(`
       SELECT o.id, o.total_amount, o.status, o.created_at, u.name as customer_name 
@@ -39,6 +41,7 @@ export default async function AdminPage() {
   const bookingsCount = (bookingCountResult as any)[0].count;
   const usersCount = (userCountResult as any)[0].count;
   const categoriesCount = (categoryCountResult as any)[0].count;
+  const brandsCount = (brandCountResult as any)[0].count;
   const totalRevenue = (revenueResult as any)[0].total || 0;
   const recentOrders = recentOrdersResult as any[];
 
@@ -90,7 +93,7 @@ export default async function AdminPage() {
       </div>
 
       {/* Second Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12">
         <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
           <div className="w-10 h-10 bg-gray-50 text-gray-600 rounded-lg flex items-center justify-center"><Package size={20} /></div>
           <div><p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Products</p><p className="text-2xl font-black text-[#0a0a0a] leading-none">{productsCount}</p></div>
@@ -98,6 +101,10 @@ export default async function AdminPage() {
         <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
           <div className="w-10 h-10 bg-gray-50 text-gray-600 rounded-lg flex items-center justify-center"><LayoutDashboard size={20} /></div>
           <div><p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Categories</p><p className="text-2xl font-black text-[#0a0a0a] leading-none">{categoriesCount}</p></div>
+        </div>
+        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+          <div className="w-10 h-10 bg-gray-50 text-gray-600 rounded-lg flex items-center justify-center"><Tag size={20} /></div>
+          <div><p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Brands</p><p className="text-2xl font-black text-[#0a0a0a] leading-none">{brandsCount}</p></div>
         </div>
         <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
           <div className="w-10 h-10 bg-gray-50 text-gray-600 rounded-lg flex items-center justify-center"><FileText size={20} /></div>
