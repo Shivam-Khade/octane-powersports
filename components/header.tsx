@@ -24,6 +24,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
   const { openModal } = useLoginModal();
   const { openModal: openProfileModal } = useProfileModal();
   const { totalItems } = useCart();
@@ -36,7 +37,11 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+      const isOutsideDesktop = searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node);
+      const isOutsideMobile = mobileSearchRef.current && !mobileSearchRef.current.contains(event.target as Node);
+      
+      // Close only if click is outside both desktop AND mobile search containers
+      if (isOutsideDesktop && isOutsideMobile) {
         setSearchOpen(false);
       }
     }
@@ -235,7 +240,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
         </div>
 
         {/* Global Search Dropdown Row (Mobile Only) */}
-        <div className={`global-search-container mobile-search-dropdown ${searchOpen ? "open" : ""}`}>
+        <div ref={mobileSearchRef} className={`global-search-container mobile-search-dropdown ${searchOpen ? "open" : ""}`}>
           <form onSubmit={handleSearch} className="global-search-inner">
             <Search size={20} className="global-search-icon" />
             <input

@@ -27,7 +27,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [rows] = await pool.query('SELECT * FROM products WHERE slug = ? AND stockCount > 0', [slug]);
+  const decodedSlug = decodeURIComponent(slug);
+  const [rows] = await pool.query('SELECT * FROM products WHERE slug = ? AND stockCount > 0', [decodedSlug]);
   const products = rows as any[];
   const product = products.length > 0 ? products[0] : null;
   
@@ -62,7 +63,8 @@ import { ViewTracker } from "@/components/view-tracker";
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [rows] = await pool.query('SELECT * FROM products WHERE slug = ? AND stockCount > 0', [slug]);
+  const decodedSlug = decodeURIComponent(slug);
+  const [rows] = await pool.query('SELECT * FROM products WHERE slug = ? AND stockCount > 0', [decodedSlug]);
   const matched = rows as any[];
   if (matched.length === 0) notFound();
   

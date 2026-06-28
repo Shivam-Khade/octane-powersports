@@ -20,13 +20,6 @@ export function ProductCardSkeleton() {
           <div style={{ width: '44px', height: '44px', background: '#d4d4d4', borderRadius: '8px', animation: 'pulse 1.5s infinite ease-in-out' }} />
         </div>
       </div>
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes pulse {
-          0% { opacity: 0.6; }
-          50% { opacity: 1; }
-          100% { opacity: 0.6; }
-        }
-      `}} />
     </article>
   );
 }

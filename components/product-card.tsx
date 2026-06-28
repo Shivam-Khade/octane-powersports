@@ -40,7 +40,7 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <article className="product-card">
-      <Link href={`/product/${product.slug}`} className="product-image-wrap">
+      <Link href={`/product/${encodeURIComponent(product.slug)}`} className="product-image-wrap">
         {product.image ? (
           <Image src={product.image} alt={product.name} fill sizes="(max-width: 800px) 50vw, 25vw" className="main-img" unoptimized />
         ) : (
@@ -60,7 +60,7 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         </div>
 
-        <Link href={`/product/${product.slug}`} className="product-name-link">
+        <Link href={`/product/${encodeURIComponent(product.slug)}`} className="product-name-link">
           <h3 className="product-name">{product.name}</h3>
         </Link>
 

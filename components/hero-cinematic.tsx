@@ -43,6 +43,37 @@ export function HeroCinematic() {
     offset: ["start start", "end start"]
   });
 
+  useEffect(() => {
+    // Force play videos to fix iOS/Safari getting stuck on autoplay
+    const videos = document.querySelectorAll('.hero-cinematic__video');
+    const playVideos = () => {
+      videos.forEach(v => {
+        const video = v as HTMLVideoElement;
+        // Ensure muted is explicitly set (required for mobile autoplay)
+        video.muted = true;
+        if (video.paused) {
+          video.play().catch(e => {
+            console.warn("Hero video autoplay prevented by browser:", e);
+          });
+        }
+      });
+    };
+
+    // Attempt immediately
+    playVideos();
+
+    // Attempt on first user interaction (fixes Low Power Mode pausing on iOS)
+    document.addEventListener('touchstart', playVideos, { once: true });
+    document.addEventListener('click', playVideos, { once: true });
+    document.addEventListener('scroll', playVideos, { once: true });
+
+    return () => {
+      document.removeEventListener('touchstart', playVideos);
+      document.removeEventListener('click', playVideos);
+      document.removeEventListener('scroll', playVideos);
+    };
+  }, []);
+
   const contentOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0, 0.3], [0, 40]);
   const videoScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.08]);
