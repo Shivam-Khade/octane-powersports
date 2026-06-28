@@ -48,13 +48,20 @@ export function BikePartsSearch({ variant = "vertical" }: { variant?: "vertical"
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
     >
+      <div className="bps-glow-orb"></div>
+      <div className="bps-grid-pattern"></div>
+      
       <div className="bps-header">
         {variant === "horizontal" ? (
           <p className="bps-horizontal-title">Select bike-specific parts</p>
         ) : (
           <>
-            <p>Bike-Specific Parts</p>
-            <h2>Find Parts for Your Ride</h2>
+            <div className="bps-badge">
+              <span className="bps-pulse"></span>
+              Garage Match
+            </div>
+            <h2>Configure Your Ride</h2>
+            <p>Select your machine to find exact fitment parts.</p>
           </>
         )}
       </div>
@@ -103,14 +110,19 @@ export function BikePartsSearch({ variant = "vertical" }: { variant?: "vertical"
             <Search size={20} strokeWidth={1.5} />
           </button>
         ) : (
-          <button 
-            className="bps-submit button primary" 
+          <motion.button 
+            className="bps-submit-btn-premium" 
             onClick={handleSearch}
             disabled={!make || !series || !model}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <Search size={18} />
-            Search Parts
-          </button>
+            <div className="bps-btn-background"></div>
+            <span className="bps-btn-text">
+              <Search size={18} />
+              Find Parts
+            </span>
+          </motion.button>
         )}
       </div>
     </motion.div>
@@ -147,14 +159,17 @@ function CustomDropdown({
           {isOpen && !disabled && (
             <motion.div 
               className="bps-dropdown-menu"
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              transition={{ duration: 0.15 }}
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
             >
-              {options.map(opt => (
-                <div 
+              {options.map((opt, i) => (
+                <motion.div 
                   key={opt}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.03, duration: 0.2 }}
                   className={`bps-dropdown-option ${value === opt ? 'selected' : ''}`}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -163,7 +178,10 @@ function CustomDropdown({
                   }}
                 >
                   {opt}
-                </div>
+                  {value === opt && (
+                    <motion.div layoutId="active-indicator" className="bps-active-dot" />
+                  )}
+                </motion.div>
               ))}
             </motion.div>
           )}

@@ -1,5 +1,5 @@
 import pool from "@/lib/db";
-import { Package, ShoppingCart, CalendarCheck, FileText, Users, DollarSign, LayoutDashboard, ArrowRight } from "lucide-react";
+import { Package, ShoppingCart, CalendarCheck, FileText, Users, DollarSign, LayoutDashboard, ArrowRight, Settings } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
@@ -53,8 +53,8 @@ export default async function AdminPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         
         {/* Revenue Card (Special) */}
-        <div className="col-span-1 md:col-span-2 lg:col-span-2 bg-[#0a0a0a] p-8 rounded-2xl shadow-xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#ff6b00] rounded-full blur-[80px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
+        <Link href="/admin/analytics" prefetch={false} className="col-span-1 md:col-span-2 lg:col-span-2 bg-[#0a0a0a] p-8 rounded-2xl shadow-xl relative overflow-hidden group block hover:shadow-2xl transition-all cursor-pointer">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#ff6b00] rounded-full blur-[80px] opacity-20 group-hover:opacity-40 transition-opacity"></div>
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center text-[#ff6b00]">
@@ -64,7 +64,7 @@ export default async function AdminPage() {
             </div>
             <p className="text-5xl font-black text-white tracking-tight">₹{Number(totalRevenue).toLocaleString('en-IN')}</p>
           </div>
-        </div>
+        </Link>
 
         {/* Regular Stats */}
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center hover:shadow-md transition-shadow">
@@ -166,9 +166,21 @@ export default async function AdminPage() {
               <span>Edit Categories</span>
               <LayoutDashboard size={16} />
             </Link>
+            <Link href="/admin/orders" prefetch={false} className="bg-white text-[#0a0a0a] border-2 border-gray-200 px-5 py-4 rounded-xl font-bold uppercase tracking-wide hover:border-[#ff6b00] hover:text-[#ff6b00] transition-colors text-sm flex items-center justify-between">
+              <span>Manage Orders</span>
+              <ShoppingCart size={16} />
+            </Link>
             <Link href="/admin/bookings" prefetch={false} className="bg-white text-[#0a0a0a] border-2 border-gray-200 px-5 py-4 rounded-xl font-bold uppercase tracking-wide hover:border-[#ff6b00] hover:text-[#ff6b00] transition-colors text-sm flex items-center justify-between">
               <span>Review Bookings</span>
               <CalendarCheck size={16} />
+            </Link>
+            <Link href="/admin/blogs" prefetch={false} className="bg-white text-[#0a0a0a] border-2 border-gray-200 px-5 py-4 rounded-xl font-bold uppercase tracking-wide hover:border-[#ff6b00] hover:text-[#ff6b00] transition-colors text-sm flex items-center justify-between">
+              <span>Manage Articles</span>
+              <FileText size={16} />
+            </Link>
+            <Link href="/admin/settings" prefetch={false} className="bg-white text-[#0a0a0a] border-2 border-gray-200 px-5 py-4 rounded-xl font-bold uppercase tracking-wide hover:border-[#ff6b00] hover:text-[#ff6b00] transition-colors text-sm flex items-center justify-between">
+              <span>Store Settings</span>
+              <Settings size={16} />
             </Link>
           </div>
         </div>

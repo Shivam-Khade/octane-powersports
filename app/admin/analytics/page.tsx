@@ -21,12 +21,6 @@ export default async function AnalyticsPage() {
     views: Number(row.views) || 0
   }));
 
-  // Fetch Service Booking Breakdown
-  const [bookingStatsRows] = await pool.query('SELECT status as name, COUNT(*) as value FROM service_bookings GROUP BY status ORDER BY value DESC');
-  const bookingStats = (bookingStatsRows as any[]).map(row => ({
-    name: row.name || 'Other',
-    value: Number(row.value) || 0
-  }));
 
   // Render client component with data
   return (
@@ -39,7 +33,6 @@ export default async function AnalyticsPage() {
       <AnalyticsClient 
         products={products}
         articles={articles}
-        bookingStats={bookingStats}
       />
     </div>
   );

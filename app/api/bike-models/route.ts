@@ -19,11 +19,14 @@ export async function GET() {
       if (!bikeData[row.brand]) {
         bikeData[row.brand] = {};
       }
-      if (!bikeData[row.brand][row.series]) {
-        bikeData[row.brand][row.series] = {};
+      
+      const cleanSeries = row.series.replace(/\sSeries$/i, "");
+      
+      if (!bikeData[row.brand][cleanSeries]) {
+        bikeData[row.brand][cleanSeries] = {};
       }
-      if (!bikeData[row.brand][row.series][row.model]) {
-        bikeData[row.brand][row.series][row.model] = [];
+      if (!bikeData[row.brand][cleanSeries][row.model]) {
+        bikeData[row.brand][cleanSeries][row.model] = [];
       }
     }
 
