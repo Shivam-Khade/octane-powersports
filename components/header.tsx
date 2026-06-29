@@ -10,7 +10,44 @@ import { useProfileModal } from "./profile-context";
 import { useCart } from "./cart-context";
 import "./header.css";
 
-
+const CATEGORY_GROUPS: Record<string, string[]> = {
+  "ENGINE & EXHAUST": [
+    "Air Filters", 
+    "Air Filters, Air Filter Maintainance, General Maintenance", 
+    "Engine Oil", 
+    "Engine Oil, General Maintenance", 
+    "Coolant", 
+    "Exhausts Systems"
+  ],
+  "BRAKES & SUSPENSION": [
+    "Brake Pads", 
+    "Fork Seals", 
+    "Suspension Maintainance, General Maintenance"
+  ],
+  "DRIVETRAIN": [
+    "Chain Sprockets", 
+    "Chain Maintainance, General Maintenance"
+  ],
+  "ELECTRONICS & LIGHTING": [
+    "Electronics", 
+    "Aux Lights", 
+    "LED Bulbs", 
+    "Indicators", 
+    "Gps"
+  ],
+  "ACCESSORIES & LUGGAGE": [
+    "Luggage", 
+    "Phone Mount", 
+    "Tank Grip", 
+    "Dash Protectors", 
+    "Hand Guards", 
+    "Handle Grips", 
+    "Protection Parts"
+  ],
+  "MAINTENANCE": [
+    "General Maintenance"
+  ]
+};
 
 export function Header({ session, categories = [], brands = [], gridSettings = { categoryDesktopCols: 4, categoryMobileCols: 3, brandDesktopCols: 4, brandMobileCols: 3 } }: { session: any, categories?: string[], brands?: string[], gridSettings?: any }) {
   const [scrolled, setScrolled] = useState(false);
@@ -86,12 +123,21 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
               <button suppressHydrationWarning className="nav-link nav-btn">
                 Shop By Category <ChevronDown size={13} className="nav-chevron" />
               </button>
-              <div className="mega-menu types-menu max-h-[70vh] overflow-y-auto custom-scrollbar">
-                <div className="mega-type-grid" style={{ gridTemplateColumns: `repeat(${gridSettings.categoryDesktopCols}, 1fr)` }}>
-                  {categories.map((cat) => (
-                    <Link key={cat} href={`/shop?category=${encodeURIComponent(cat)}`} className="type-item">
-                      {cat}
-                    </Link>
+              <div className="mega-menu types-menu grouped-mega-menu-container">
+                <div className="grouped-mega-menu">
+                  {Object.entries(CATEGORY_GROUPS).map(([groupTitle, subCats]) => (
+                    <div key={groupTitle} className="mega-group-col">
+                      <h4 className="mega-group-title">{groupTitle}</h4>
+                      <ul className="mega-group-list">
+                        {subCats.map(sub => (
+                          <li key={sub}>
+                            <Link href={`/shop?category=${encodeURIComponent(sub)}`}>
+                              {sub}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
                 </div>
               </div>

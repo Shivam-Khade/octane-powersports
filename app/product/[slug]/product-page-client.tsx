@@ -46,6 +46,7 @@ export function ProductPageClient({
   const [qty, setQty] = useState(1);
   const [zoomStyle, setZoomStyle] = useState<{ transformOrigin: string; transform: string } | null>(null);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
+  const [showAllFitment, setShowAllFitment] = useState(false);
   
   const { addToCart } = useCart();
   const { data: session } = useSession();
@@ -188,11 +189,27 @@ export function ProductPageClient({
               <div className="purchase-compatibility">
                 <span className="compatibility-title">Verified Fitment:</span>
                 <div className="compatibility-list">
-                  {product.compatibility.map((bike) => (
+                  {(showAllFitment ? product.compatibility : product.compatibility.slice(0, 6)).map((bike) => (
                     <span key={bike} className="compatibility-badge">
                       {bike}
                     </span>
                   ))}
+                  {product.compatibility.length > 6 && !showAllFitment && (
+                    <button 
+                      onClick={() => setShowAllFitment(true)}
+                      className="compatibility-badge font-bold text-[#ff6b00] hover:bg-[#ff6b00] hover:text-white transition-colors cursor-pointer"
+                    >
+                      +{product.compatibility.length - 6} more
+                    </button>
+                  )}
+                  {product.compatibility.length > 6 && showAllFitment && (
+                    <button 
+                      onClick={() => setShowAllFitment(false)}
+                      className="compatibility-badge font-bold text-[#ff6b00] hover:bg-[#ff6b00] hover:text-white transition-colors cursor-pointer"
+                    >
+                      Show less
+                    </button>
+                  )}
                 </div>
               </div>
             )}

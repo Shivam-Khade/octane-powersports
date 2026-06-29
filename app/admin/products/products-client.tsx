@@ -10,13 +10,19 @@ export default function ProductsClient({ initialProducts, categories, brands, sa
   const [products, setProducts] = useState(initialProducts);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const statusDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
+      }
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target as Node)) {
+        setIsStatusDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -26,7 +32,19 @@ export default function ProductsClient({ initialProducts, categories, brands, sa
   const filteredProducts = products.filter((p: any) => {
     const matchesSearch = p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || p.sku?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesBrand = selectedBrand === "All" || p.brand?.includes(selectedBrand);
-    return matchesSearch && matchesBrand;
+    
+    let matchesStatus = true;
+    if (selectedStatus !== "All") {
+      const stock = p.stockCount ?? 0;
+      let status = 'Out of Stock';
+      if (stock > 5) status = 'In Stock';
+      else if (stock > 3) status = 'Limited';
+      else if (stock > 0) status = 'Low Stock';
+      
+      matchesStatus = status === selectedStatus;
+    }
+
+    return matchesSearch && matchesBrand && matchesStatus;
   });
 
   // Modal and form code moved to ProductForm component
@@ -135,6 +153,42 @@ export default function ProductsClient({ initialProducts, categories, brands, sa
               )}
             </AnimatePresence>
           </div>
+          <div className="relative w-full md:w-48 group" ref={statusDropdownRef}>
+            <button 
+              onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+              className="w-full flex items-center justify-between pl-11 pr-4 py-3 bg-white border-2 border-gray-100 rounded-xl focus:outline-none focus:border-[#ff6b00] focus:ring-4 focus:ring-[#ff6b00]/10 transition-all text-sm font-bold text-[#0a0a0a] shadow-sm"
+            >
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#ff6b00] transition-colors">
+                <Filter size={16} />
+              </div>
+              <span className="truncate tracking-wide">{selectedStatus === 'All' ? 'All Statuses' : selectedStatus}</span>
+              <ChevronDown size={14} className={`text-gray-400 transition-transform duration-300 ${isStatusDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            <AnimatePresence>
+              {isStatusDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute z-50 w-full mt-2 bg-[#0a0a0a] border border-gray-800 rounded-xl shadow-2xl shadow-black/50 overflow-hidden"
+                >
+                  <div className="p-2">
+                    {["All", "In Stock", "Limited", "Low Stock", "Out of Stock"].map((status, index) => (
+                      <button
+                        key={status}
+                        onClick={() => { setSelectedStatus(status); setIsStatusDropdownOpen(false); }}
+                        className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold tracking-wider transition-all flex items-center gap-2 ${index > 0 ? 'mt-1' : ''} ${selectedStatus === status ? 'bg-[#ff6b00] text-white shadow-lg shadow-[#ff6b00]/20' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
+                      >
+                        {status === "All" ? "All Statuses" : status}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
@@ -167,7 +221,7 @@ export default function ProductsClient({ initialProducts, categories, brands, sa
                   <td className="p-4 font-bold">₹{Number(product.price).toLocaleString('en-IN')}</td>
                   <td className="p-4 font-bold text-gray-700">{product.stockCount ?? 'N/A'}</td>
                   <td className="p-4">
-                    <span className={`text-xs px-2 py-1 rounded-full font-bold ${
+                    <span className={`text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap ${
                       (product.stockCount ?? 0) > 5 ? 'bg-green-100 text-green-800' : 
                       (product.stockCount ?? 0) > 3 ? 'bg-yellow-100 text-yellow-800' : 
                       (product.stockCount ?? 0) > 0 ? 'bg-orange-100 text-orange-800' : 

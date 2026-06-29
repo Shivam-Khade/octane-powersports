@@ -270,6 +270,7 @@
   line-height: 1.75;
   color: var(--muted);
   margin: 0 0 24px;
+  white-space: pre-wrap;
 }
 
 /* ===== Compatibility fitment ===== */
