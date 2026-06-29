@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Upload, X, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function ProductForm({ initialData, categories, brands, bikeModels, saveAction }: any) {
   const router = useRouter();
@@ -158,12 +159,19 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
         relatedThumbs: formData.relatedThumbs
       };
       
-      await saveAction(dataToSave);
+      const result = await saveAction(dataToSave);
+      
+      if (result && !result.success) {
+        toast.error(result.error || "Failed to save product.");
+        return;
+      }
+      
+      toast.success("Product saved successfully!");
       router.push("/admin/products");
       router.refresh();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to save product.");
+      toast.error(err.message || "Failed to save product.");
     } finally {
       setIsSaving(false);
     }
