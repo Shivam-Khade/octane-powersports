@@ -147,7 +147,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       className={`${bebasNeue.variable} ${montserrat.variable} ${inter.variable}`}
       style={{ scrollBehavior: "smooth" }}
       data-scroll-behavior="smooth"
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (sessionStorage.getItem("splash_shown") || window.location.pathname !== '/') {
+                  document.documentElement.classList.add("skip-splash");
+                }
+              } catch(e) {}
+            `,
+          }}
+        />
+      </head>
       <body suppressHydrationWarning>
         <script
           type="application/ld+json"
