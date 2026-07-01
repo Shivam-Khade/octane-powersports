@@ -91,9 +91,17 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     }
   };
 
-  const [allRows] = await pool.query('SELECT * FROM products WHERE stockCount > 0 LIMIT 5');
-  const allProducts = (allRows as any[]).map(parseProduct);
-  const related = allProducts.filter((item) => item.slug !== product.slug).slice(0, 4);
+  const [allRows] = await pool.query(`
+    SELECT * FROM products 
+    WHERE slug != ? AND stockCount > 0 
+    ORDER BY 
+      CASE WHEN category = ? THEN 1 ELSE 0 END DESC,
+      CASE WHEN brand = ? THEN 1 ELSE 0 END DESC,
+      (COALESCE(cart_adds, 0) * 10 + COALESCE(views, 0)) DESC
+    LIMIT 4
+  `, [product.slug, product.category, product.brand]);
+  
+  const related = (allRows as any[]).map(parseProduct);
 
   // Fetch Packages containing this product
   const [packageRows] = await pool.query<any[]>(`

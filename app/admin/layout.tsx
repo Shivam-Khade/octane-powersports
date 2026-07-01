@@ -50,6 +50,9 @@ export default async function AdminLayout({
           <Link href="/admin/packages" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <Package size={18} className="text-[#ff6b00]" /> Package Deals
           </Link>
+          <Link href="/admin/menu-groups" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+            <LayoutDashboard size={18} className="text-[#ff6b00]" /> Menu Groups
+          </Link>
           <Link href="/admin/categories" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <LayoutDashboard size={18} className="text-[#ff6b00]" /> Categories
           </Link>

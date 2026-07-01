@@ -316,7 +316,7 @@ export function ProductPageClient({
       {packages && packages.length > 0 && (
         <section className="section bg-[#f8f8f8]">
           <div className="container">
-            <div className="section-head text-center mx-auto mb-12">
+            <div className="flex flex-col items-center text-center mx-auto mb-12">
               <p className="eyebrow text-[#ff6b00]">Special Offers</p>
               <h2>Available in Package Deals</h2>
               <p className="text-gray-500 mt-2 max-w-2xl mx-auto">Get this product at a discounted price by buying it as part of our premium curated packages.</p>
@@ -338,7 +338,7 @@ export function ProductPageClient({
           <div className="section-head">
             <div>
               <p className="eyebrow">Related Collection</p>
-              <h2>Complete Your Riding Setup</h2>
+              <h2>Similar Products You May Like</h2>
             </div>
             <Link href="/shop" className="button outline-dark">View All Products</Link>
           </div>

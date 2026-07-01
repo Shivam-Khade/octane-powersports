@@ -99,7 +99,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   const session = await getServerSession(authOptions);
 
-  let categories: string[] = [];
+  let categories: any[] = [];
   let brands: string[] = [];
   let gridSettings = { 
     categoryDesktopCols: 4, 
@@ -115,14 +115,36 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       return name;
     };
 
-    const [catRows] = await pool.query('SELECT name FROM categories ORDER BY name ASC');
-    const dbCategories = (catRows as any[]).map(c => normalizeName(c.name));
+    const [catRows] = await pool.query(`
+      SELECT c.name as name, m.name as parent_group, m.sort_order 
+      FROM categories c 
+      LEFT JOIN menu_groups m ON c.menu_group_id = m.id 
+      ORDER BY m.sort_order IS NULL, m.sort_order ASC, m.name ASC, c.name ASC
+    `);
+    
+    const dbCategories = (catRows as any[]).map(c => ({
+      name: normalizeName(c.name),
+      parent_group: c.parent_group || 'OTHER'
+    }));
     
     const [prodRows] = await pool.query('SELECT brand, category FROM products');
     const products = prodRows as any[];
     
-    const productCategories = products.map(p => normalizeName(p.category)).filter(Boolean);
-    categories = Array.from(new Set([...dbCategories, ...productCategories])).sort();
+    const productCategoriesSet = new Set<string>();
+    products.forEach(p => {
+      if (p.category) {
+        p.category.split(',').forEach((c: string) => productCategoriesSet.add(normalizeName(c.trim())));
+      }
+    });
+
+    const categoriesList = [...dbCategories];
+    productCategoriesSet.forEach(catName => {
+      if (catName && !categoriesList.some(c => c.name === catName)) {
+        categoriesList.push({ name: catName, parent_group: 'OTHER' });
+      }
+    });
+    
+    categories = categoriesList;
     
     const [brandRows] = await pool.query('SELECT name FROM brands ORDER BY name ASC');
     brands = (brandRows as any[]).map(b => b.name);
@@ -145,8 +167,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html 
       lang="en" 
       className={`${bebasNeue.variable} ${montserrat.variable} ${inter.variable}`}
-      style={{ scrollBehavior: "smooth" }}
-      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>

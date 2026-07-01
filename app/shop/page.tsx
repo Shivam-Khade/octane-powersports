@@ -37,7 +37,8 @@ export default async function ShopPage() {
       p.brand = uniqueBrands.join(', ');
     }
     if (typeof p.category === 'string') {
-      p.category = normalizeName(p.category);
+      const uniqueCats = Array.from(new Set(p.category.split(',').map((c: string) => normalizeName(c.trim()))));
+      p.category = uniqueCats.join(', ');
     }
     return p;
   });
@@ -51,7 +52,7 @@ export default async function ShopPage() {
 
   const [catRows] = await pool.query('SELECT name FROM categories ORDER BY name ASC');
   const dbCategories = (catRows as any[]).map(c => normalizeName(c.name));
-  const productCategories = products.map(p => p.category).filter(Boolean);
+  const productCategories = products.flatMap(p => typeof p.category === 'string' ? p.category.split(',').map((c: string) => c.trim()).filter(Boolean) : []);
   const categories = Array.from(new Set([...dbCategories, ...productCategories])).sort();
 
   const [brandRows] = await pool.query('SELECT name FROM brands ORDER BY name ASC');

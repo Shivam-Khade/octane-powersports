@@ -10,46 +10,9 @@ import { useProfileModal } from "./profile-context";
 import { useCart } from "./cart-context";
 import "./header.css";
 
-const CATEGORY_GROUPS: Record<string, string[]> = {
-  "ENGINE & EXHAUST": [
-    "Air Filters", 
-    "Air Filters, Air Filter Maintainance, General Maintenance", 
-    "Engine Oil", 
-    "Engine Oil, General Maintenance", 
-    "Coolant", 
-    "Exhausts Systems"
-  ],
-  "BRAKES & SUSPENSION": [
-    "Brake Pads", 
-    "Fork Seals", 
-    "Suspension Maintainance, General Maintenance"
-  ],
-  "DRIVETRAIN": [
-    "Chain Sprockets", 
-    "Chain Maintainance, General Maintenance"
-  ],
-  "ELECTRONICS & LIGHTING": [
-    "Electronics", 
-    "Aux Lights", 
-    "LED Bulbs", 
-    "Indicators", 
-    "Gps"
-  ],
-  "ACCESSORIES & LUGGAGE": [
-    "Luggage", 
-    "Phone Mount", 
-    "Tank Grip", 
-    "Dash Protectors", 
-    "Hand Guards", 
-    "Handle Grips", 
-    "Protection Parts"
-  ],
-  "MAINTENANCE": [
-    "General Maintenance"
-  ]
-};
 
-export function Header({ session, categories = [], brands = [], gridSettings = { categoryDesktopCols: 4, categoryMobileCols: 3, brandDesktopCols: 4, brandMobileCols: 3 } }: { session: any, categories?: string[], brands?: string[], gridSettings?: any }) {
+
+export function Header({ session, categories = [], brands = [], gridSettings = { categoryDesktopCols: 4, categoryMobileCols: 3, brandDesktopCols: 4, brandMobileCols: 3 } }: { session: any, categories?: any[], brands?: string[], gridSettings?: any }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileTypeOpen, setMobileTypeOpen] = useState(false);
@@ -108,6 +71,13 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
     return null;
   }
 
+  const dynamicCategoryGroups = categories.reduce((acc: Record<string, string[]>, cat: any) => {
+    const group = cat.parent_group || "OTHER";
+    if (!acc[group]) acc[group] = [];
+    acc[group].push(cat.name);
+    return acc;
+  }, {});
+
   return (
     <>
       <header className={`site-header${scrolled ? " is-scrolled" : ""}${pathname?.startsWith('/blog') ? " is-journal" : ""}`}>
@@ -124,12 +94,12 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
                 Shop By Category <ChevronDown size={13} className="nav-chevron" />
               </button>
               <div className="mega-menu types-menu grouped-mega-menu-container">
-                <div className="grouped-mega-menu">
-                  {Object.entries(CATEGORY_GROUPS).map(([groupTitle, subCats]) => (
+                <div className="grouped-mega-menu" style={{ gridTemplateColumns: `repeat(${gridSettings.categoryDesktopCols}, 1fr)` }}>
+                  {Object.entries(dynamicCategoryGroups).map(([groupTitle, subCats]: any) => (
                     <div key={groupTitle} className="mega-group-col">
                       <h4 className="mega-group-title">{groupTitle}</h4>
                       <ul className="mega-group-list">
-                        {subCats.map(sub => (
+                        {subCats.map((sub: string) => (
                           <li key={sub}>
                             <Link href={`/shop?category=${encodeURIComponent(sub)}`}>
                               {sub}
@@ -334,14 +304,14 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
                 {mobileTypeOpen && (
                   <div className="py-3 pl-4 border-l border-white/10 ml-3 mt-1 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
                     <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${gridSettings.categoryMobileCols}, 1fr)` }}>
-                      {categories.map((cat) => (
+                      {categories.map((cat: any) => (
                         <Link
-                          key={cat}
-                          href={`/shop?category=${encodeURIComponent(cat)}`}
+                          key={cat.name}
+                          href={`/shop?category=${encodeURIComponent(cat.name)}`}
                           className="mobile-cat-grid-item"
                           onClick={() => setMobileOpen(false)}
                         >
-                          {cat}
+                          {cat.name}
                         </Link>
                       ))}
                     </div>
