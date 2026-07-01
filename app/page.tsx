@@ -7,6 +7,7 @@ import { motion, AnimatePresence, type Variants } from "framer-motion";
 import dynamic from "next/dynamic";
 import { ProductCard } from "@/components/product-card";
 import { HeroCinematic } from "@/components/hero-cinematic";
+import { SplashScreen } from "@/components/splash-screen";
 
 const BrandMarquee = dynamic(() => import("@/components/brand-marquee").then(mod => ({ default: mod.BrandMarquee })), { ssr: true });
 const LifestyleSection = dynamic(() => import("@/components/lifestyle-section").then(mod => ({ default: mod.LifestyleSection })), { ssr: true });
@@ -62,6 +63,7 @@ export default function HomePage() {
 
   return (
     <main>
+      <SplashScreen />
       {/* ===== HERO ===== */}
       <HeroCinematic />
 
