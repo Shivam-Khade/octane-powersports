@@ -95,6 +95,40 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const allProducts = (allRows as any[]).map(parseProduct);
   const related = allProducts.filter((item) => item.slug !== product.slug).slice(0, 4);
 
+  // Fetch Packages containing this product
+  const [packageRows] = await pool.query<any[]>(`
+    SELECT p.* 
+    FROM packages p
+    JOIN package_products pp ON p.id = pp.package_id
+    WHERE pp.product_id = ? AND p.is_active = 1
+    AND (p.start_date IS NULL OR p.start_date <= NOW())
+    AND (p.end_date IS NULL OR p.end_date >= NOW())
+    ORDER BY p.priority DESC
+  `, [product.id]);
+
+  const packages = packageRows;
+
+  if (packages.length > 0) {
+    const packageIds = packages.map(p => p.id);
+    const [productsRows] = await pool.query<any[]>(`
+      SELECT pp.package_id, p.id, p.name, p.slug, p.price, p.image, p.stockCount, p.availability
+      FROM package_products pp
+      JOIN products p ON pp.product_id = p.id
+      WHERE pp.package_id IN (?)
+      ORDER BY pp.sort_order ASC
+    `, [packageIds]);
+
+    const productsByPackageId = productsRows.reduce((acc, row) => {
+      if (!acc[row.package_id]) acc[row.package_id] = [];
+      acc[row.package_id].push(row);
+      return acc;
+    }, {});
+
+    for (const pkg of packages) {
+      pkg.products = productsByPackageId[pkg.id] || [];
+    }
+  }
+
   return (
     <>
       <script
@@ -102,7 +136,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <ViewTracker type="product" id={product.id} />
-      <ProductPageClient product={product} related={related} />
+      <ProductPageClient product={product} related={related} packages={packages} />
     </>
   );
 }

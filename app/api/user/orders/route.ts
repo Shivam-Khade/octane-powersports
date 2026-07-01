@@ -107,13 +107,29 @@ export async function POST(req: Request) {
     // Insert items and deduct stock
     for (const item of items) {
       await pool.query(
-        "INSERT INTO order_items (order_id, product_name, price, quantity) VALUES (?, ?, ?, ?)",
-        [orderId, item.product_name, item.price, item.quantity]
+        "INSERT INTO order_items (order_id, product_name, price, quantity, package_id, package_name) VALUES (?, ?, ?, ?, ?, ?)",
+        [orderId, item.product_name, item.price, item.quantity, item.package_id || null, item.package_name || null]
       );
       await pool.query(
         "UPDATE products SET stockCount = GREATEST(0, stockCount - ?) WHERE name = ?",
         [item.quantity, item.product_name]
       );
+    }
+
+    // Update package analytics
+    try {
+      const packageIds = new Set(items.map((i: any) => i.package_id).filter(Boolean));
+      for (const pid of packageIds) {
+        const packageItems = items.filter((i: any) => i.package_id === pid);
+        const revenue = packageItems.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
+        
+        await pool.query(
+          "UPDATE package_analytics SET purchases = purchases + 1, revenue = revenue + ? WHERE package_id = ?",
+          [revenue, pid]
+        );
+      }
+    } catch (e) {
+      console.error("Error updating package analytics:", e);
     }
 
     // Fetch user address for email

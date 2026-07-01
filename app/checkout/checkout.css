@@ -257,12 +257,15 @@
 }
 
 /* Right Column (Price Details) */
+.checkout-right {
+  position: sticky;
+  top: 100px;
+}
+
 .price-details {
   background: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
-  position: sticky;
-  top: 100px;
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1);
 }
 

@@ -95,8 +95,8 @@ export default function ProductsClient({ initialProducts, categories, brands, sa
   return (
     <>
       <div className="mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
-        <Link href="/admin/products/new" className="bg-[#ff6b00] text-white px-6 py-3 rounded-xl font-bold uppercase tracking-wide hover:bg-[#e66000] hover:shadow-lg hover:shadow-[#ff6b00]/20 transition-all inline-flex items-center gap-2 text-sm shrink-0">
-          <Plus size={18} /> Add New Product
+        <Link href="/admin/products/new" className="bg-[#ff6b00] !text-white select-none px-6 py-3 rounded-xl font-bold uppercase tracking-wide hover:bg-[#e66000] hover:shadow-lg hover:shadow-[#ff6b00]/20 transition-all inline-flex items-center gap-2 text-sm shrink-0">
+          <Plus size={18} /> Add Product
         </Link>
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
           <div className="relative w-full md:w-64 group">

@@ -47,6 +47,9 @@ export default async function AdminLayout({
           <Link href="/admin/products" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <Package size={18} className="text-[#ff6b00]" /> Products
           </Link>
+          <Link href="/admin/packages" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+            <Package size={18} className="text-[#ff6b00]" /> Package Deals
+          </Link>
           <Link href="/admin/categories" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <LayoutDashboard size={18} className="text-[#ff6b00]" /> Categories
           </Link>
@@ -69,25 +72,30 @@ export default async function AdminLayout({
             <Settings size={18} className="text-[#ff6b00]" /> Settings
           </Link>
         </nav>
-        
-        <div className="p-4 border-t border-white/10">
-          <div className="flex items-center gap-3 mb-4 px-2">
-            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-bold text-[#ff6b00]">
-              {session.user?.name?.charAt(0) || "A"}
-            </div>
-            <div className="overflow-hidden">
-              <p className="text-sm font-bold truncate">{session.user?.name}</p>
-              <p className="text-xs text-gray-400 truncate">{session.user?.email}</p>
-            </div>
-          </div>
-          <SignOutButton />
-        </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {children}
-      </main>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        {/* Top Header */}
+        <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-end px-8 shrink-0 shadow-sm z-10">
+          <div className="flex items-center gap-4">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-bold text-[#0a0a0a] leading-tight">{session.user?.name}</p>
+              <p className="text-xs text-gray-500">{session.user?.email}</p>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center font-bold text-[#ff6b00] border border-gray-200">
+              {session.user?.name?.charAt(0) || "A"}
+            </div>
+            <div className="h-6 w-px bg-gray-200 mx-2"></div>
+            <SignOutButton />
+          </div>
+        </header>
+
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { CheckCircle2, Loader2, Minus, Plus, MapPin, AlertCircle } from "lucide-react";
+import { CheckCircle2, Loader2, Minus, Plus, MapPin, AlertCircle, Package } from "lucide-react";
+import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useProfileModal } from "@/components/profile-context";
@@ -56,7 +57,9 @@ function CheckoutContent() {
   };
 
   // Calculations
-  const totalPrice = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const totalPrice = cartItems.reduce((acc, item) => {
+    return acc + ((item.price - (item.packageDiscount || 0)) * item.quantity);
+  }, 0);
   // const deliveryCharge = (totalPrice < 5000 && cartItems.length > 0) ? 300 : 0;
   const deliveryCharge = 0; // Temporarily disabled
   const finalTotal = totalPrice + deliveryCharge;
@@ -113,7 +116,9 @@ function CheckoutContent() {
               items: cartItems.map(i => ({
                 product_name: i.name,
                 price: i.price,
-                quantity: i.quantity
+                quantity: i.quantity,
+                package_id: i.packageId || null,
+                package_name: i.packageName || null
               }))
             };
 
@@ -226,32 +231,137 @@ function CheckoutContent() {
                     <p>Looks like you haven't added any premium parts yet.</p>
                   </div>
                 ) : (
-                  cartItems.map(item => (
-                    <div key={item.id} className="cart-item">
-                      <div className="item-img-placeholder relative">
-                        <Image src={item.image} alt={item.name} fill sizes="100px" className="object-cover rounded-md opacity-80" />
-                      </div>
-                      <div className="item-content">
-                        <div className="item-details">
-                          <h3>{item.name}</h3>
-                          <p className="item-seller">Seller: {item.seller}</p>
-                          <p className="item-price">₹{item.price.toLocaleString('en-IN')}</p>
-                        </div>
-                        <div className="item-actions">
-                          <div className="qty-control">
-                            <button className="qty-btn" onClick={() => updateQty(item.id, -1)} disabled={item.quantity <= 1}>
-                              <Minus size={14} />
-                            </button>
-                            <span className="qty-display">{item.quantity}</span>
-                            <button className="qty-btn" onClick={() => updateQty(item.id, 1)}>
-                              <Plus size={14} />
-                            </button>
+                  (() => {
+                    const packagesMap = new Map();
+                    const individualItems: any[] = [];
+                    
+                    cartItems.forEach(item => {
+                      if (item.packageId) {
+                        if (!packagesMap.has(item.packageId)) {
+                          packagesMap.set(item.packageId, {
+                            id: item.packageId,
+                            name: item.packageName,
+                            items: [],
+                            discount: 0
+                          });
+                        }
+                        const pkg = packagesMap.get(item.packageId);
+                        pkg.items.push(item);
+                        pkg.discount += (item.packageDiscount || 0);
+                      } else {
+                        individualItems.push(item);
+                      }
+                    });
+
+                    return (
+                      <>
+                        {Array.from(packagesMap.values()).map(pkg => (
+                          <div key={`pkg-${pkg.id}`} className="mb-6 border border-[#ff6b00]/30 rounded-lg overflow-hidden">
+                            <div className="bg-[#ff6b00]/5 px-6 py-5 border-b border-[#ff6b00]/20 flex justify-between items-center">
+                              <h3 className="font-bold text-[#ff6b00] text-sm md:text-base uppercase tracking-wider flex items-center gap-3">
+                                <Package size={18} /> {pkg.name}
+                              </h3>
+                              <span className="text-[10px] md:text-xs font-bold bg-[#ff6b00] text-white px-3 py-1.5 rounded uppercase tracking-wider shadow-sm">Package Discount Applied</span>
+                            </div>
+                            <div className="bg-white px-4 md:px-6 py-2">
+                              {pkg.items.map((item: any) => (
+                                <div key={item.id} className="cart-item border-b border-gray-100 last:border-0 relative">
+                                  <div className="item-img-placeholder relative">
+                                    <Image src={item.image} alt={item.name} fill sizes="100px" className="object-cover rounded-md opacity-80" />
+                                  </div>
+                                  <div className="item-content">
+                                    <div className="item-details">
+                                      <h3>{item.name}</h3>
+                                      <p className="item-seller">Seller: {item.seller}</p>
+                                      <p className="item-price">
+                                        ₹{(item.price - (item.packageDiscount || 0)).toLocaleString('en-IN')}
+                                        <span className="ml-2 text-xs line-through text-gray-400">₹{item.price.toLocaleString('en-IN')}</span>
+                                      </p>
+                                    </div>
+                                    <div className="item-actions">
+                                      <div className="qty-control">
+                                        <button className="qty-btn" onClick={() => updateQty(item.id, -1)} disabled={item.quantity <= 1}>
+                                          <Minus size={14} />
+                                        </button>
+                                        <span className="qty-display">{item.quantity}</span>
+                                        <button className="qty-btn" onClick={() => updateQty(item.id, 1)}>
+                                          <Plus size={14} />
+                                        </button>
+                                      </div>
+                                      <button className="remove-btn text-red-500" onClick={() => {
+                                        toast.custom((t) => (
+                                          <div className={`
+                                            bg-[#0a0a0a] border border-[#ff6b00]/20 rounded-2xl p-5 shadow-2xl shadow-[#ff6b00]/10 max-w-sm w-full
+                                            transition-all duration-300 ${t.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}
+                                          `}>
+                                            <div className="flex items-start gap-4">
+                                              <div className="bg-[#ff6b00]/10 p-2 rounded-full flex-shrink-0 mt-0.5">
+                                                <AlertCircle size={20} className="text-[#ff6b00]" />
+                                              </div>
+                                              <div>
+                                                <h4 className="text-white font-black uppercase tracking-wider text-sm mb-1">Break Package Deal?</h4>
+                                                <p className="text-gray-400 text-xs leading-relaxed mb-4">
+                                                  Removing this item will destroy the bundle. The remaining items will return to their full standard price.
+                                                </p>
+                                                <div className="flex gap-3 justify-end">
+                                                  <button 
+                                                    className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors"
+                                                    onClick={() => toast.dismiss(t.id)}
+                                                  >
+                                                    Cancel
+                                                  </button>
+                                                  <button 
+                                                    className="px-4 py-2 bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-colors shadow-lg shadow-[#ff6b00]/20"
+                                                    onClick={() => {
+                                                      removeFromCart(item.id, true);
+                                                      toast.dismiss(t.id);
+                                                    }}
+                                                  >
+                                                    Remove Item
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ), { duration: Infinity });
+                                      }}>Remove</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                          <button className="remove-btn" onClick={() => removeFromCart(item.id)}>Remove</button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
+                        ))}
+                        
+                        {individualItems.map(item => (
+                          <div key={item.id} className="cart-item">
+                            <div className="item-img-placeholder relative">
+                              <Image src={item.image} alt={item.name} fill sizes="100px" className="object-cover rounded-md opacity-80" />
+                            </div>
+                            <div className="item-content">
+                              <div className="item-details">
+                                <h3>{item.name}</h3>
+                                <p className="item-seller">Seller: {item.seller}</p>
+                                <p className="item-price">₹{item.price.toLocaleString('en-IN')}</p>
+                              </div>
+                              <div className="item-actions">
+                                <div className="qty-control">
+                                  <button className="qty-btn" onClick={() => updateQty(item.id, -1)} disabled={item.quantity <= 1}>
+                                    <Minus size={14} />
+                                  </button>
+                                  <span className="qty-display">{item.quantity}</span>
+                                  <button className="qty-btn" onClick={() => updateQty(item.id, 1)}>
+                                    <Plus size={14} />
+                                  </button>
+                                </div>
+                                <button className="remove-btn" onClick={() => removeFromCart(item.id)}>Remove</button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    );
+                  })()
                 )}
               </div>
               
@@ -316,7 +426,7 @@ function CheckoutContent() {
             <div className="mt-6 flex items-start gap-3 text-[#878787] text-sm p-4 bg-[#ffffff] rounded-md border border-[#e0e0e0] shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
               <CheckCircle2 size={24} className="text-[#388e3c] shrink-0" />
               <p className="m-0 leading-relaxed font-medium">
-                Safe and Secure Payments. Easy returns. 100% Authentic products.
+                Safe and Secure Payments. 100% Authentic products.
               </p>
             </div>
           </div>

@@ -10,12 +10,16 @@ export type CartItem = {
   price: number;
   quantity: number;
   image: string;
+  packageId?: number;
+  packageName?: string;
+  packageDiscount?: number;
 };
 
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (product: any, quantity?: number) => void;
-  removeFromCart: (id: string) => void;
+  addPackageToCart: (pkg: any) => void;
+  removeFromCart: (id: string, warnPackage?: boolean) => void;
   updateQty: (id: string, delta: number) => void;
   clearCart: () => void;
   totalItems: number;
@@ -120,12 +124,80 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
     ), { duration: 4000 });
   };
 
-  const removeFromCart = (id: string) => {
-    setCartItems((prev) => {
-      const newItems = prev.filter((item) => item.id !== id);
+  const addPackageToCart = (pkg: any) => {
+    fetch('/api/packages/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ packageId: pkg.id, action: 'adds_to_cart' })
+    }).catch(() => {});
+
+    setCartItems((prevItems) => {
+      let newItems = [...prevItems];
+      
+      const discountPerItem = pkg.discount_type === 'percentage'
+        ? pkg.discount_value // It's a percentage, applied per item or overall total. To keep it simple, we just store it.
+        : pkg.discount_value / pkg.products.length; // Fixed amount divided equally, or we just store the total package discount.
+
+      pkg.products.forEach((product: any) => {
+        // If product already in cart, update it to be part of the package or add separately if it's cleaner. 
+        // For simplicity, we just add it and overwrite if it was individual.
+        const existingIndex = newItems.findIndex((item) => item.id === product.slug);
+        const itemToAdd = {
+          id: product.slug,
+          name: product.name,
+          seller: product.brand || "Octane Powersports",
+          price: product.price,
+          quantity: 1, // packages are typically bought as 1 unit of bundle
+          image: product.image,
+          packageId: pkg.id,
+          packageName: pkg.name,
+          packageDiscount: pkg.discount_type === 'percentage' ? (product.price * pkg.discount_value / 100) : (pkg.discount_value / pkg.products.length)
+        };
+
+        if (existingIndex >= 0) {
+          newItems[existingIndex] = itemToAdd;
+        } else {
+          newItems.push(itemToAdd);
+        }
+      });
+
       localStorage.setItem(cartKey, JSON.stringify(newItems));
       return newItems;
     });
+
+    toast.success(`${pkg.name} added to cart!`);
+    router.push('/checkout');
+  };
+
+  const removeFromCart = (id: string, warnPackage: boolean = false) => {
+    let triggeredWarning = false;
+
+    setCartItems((prev) => {
+      const itemToRemove = prev.find(i => i.id === id);
+      let newItems = prev.filter((item) => item.id !== id);
+
+      if (itemToRemove?.packageId) {
+        // If it was part of a package, remove the package association from remaining items of this package
+        newItems = newItems.map(item => {
+          if (item.packageId === itemToRemove.packageId) {
+            const { packageId, packageName, packageDiscount, ...rest } = item;
+            return rest;
+          }
+          return item;
+        });
+        
+        if (warnPackage) {
+          triggeredWarning = true;
+        }
+      }
+
+      localStorage.setItem(cartKey, JSON.stringify(newItems));
+      return newItems;
+    });
+
+    if (triggeredWarning) {
+      toast('Package discount removed because an item was removed.', { icon: '⚠️' });
+    }
   };
 
   const updateQty = (id: string, delta: number) => {
@@ -151,14 +223,14 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
 
   if (!mounted) {
     return (
-      <CartContext.Provider value={{ cartItems: [], addToCart, removeFromCart, updateQty, clearCart, totalItems: 0 }}>
+      <CartContext.Provider value={{ cartItems: [], addToCart, addPackageToCart, removeFromCart, updateQty, clearCart, totalItems: 0 }}>
         {children}
       </CartContext.Provider>
     );
   }
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQty, clearCart, totalItems }}>
+    <CartContext.Provider value={{ cartItems, addToCart, addPackageToCart, removeFromCart, updateQty, clearCart, totalItems }}>
       {children}
     </CartContext.Provider>
   );
