@@ -12,7 +12,8 @@ import {
   LogOut,
   Settings,
   BarChart3,
-  Users
+  Users,
+  Banknote
 } from "lucide-react";
 
 export default async function AdminLayout({
@@ -47,6 +48,12 @@ export default async function AdminLayout({
           <Link href="/admin/products" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <Package size={18} className="text-[#ff6b00]" /> Products
           </Link>
+          <Link href="/admin/packages" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+            <Package size={18} className="text-[#ff6b00]" /> Package Deals
+          </Link>
+          <Link href="/admin/menu-groups" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+            <LayoutDashboard size={18} className="text-[#ff6b00]" /> Menu Groups
+          </Link>
           <Link href="/admin/categories" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <LayoutDashboard size={18} className="text-[#ff6b00]" /> Categories
           </Link>
@@ -58,6 +65,9 @@ export default async function AdminLayout({
           </Link>
           <Link href="/admin/orders" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <ShoppingCart size={18} className="text-[#ff6b00]" /> Orders
+          </Link>
+          <Link href="/admin/bank-deposits" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+            <Banknote size={18} className="text-[#ff6b00]" /> Bank Deposits
           </Link>
           <Link href="/admin/bookings" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <CalendarCheck size={18} className="text-[#ff6b00]" /> Service Bookings
@@ -78,19 +88,19 @@ export default async function AdminLayout({
             <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-bold text-[#ff6b00]">
               {session.user?.name?.charAt(0) || "A"}
             </div>
-            <div className="overflow-hidden">
-              <p className="text-sm font-bold truncate">{session.user?.name}</p>
-              <p className="text-xs text-gray-400 truncate">{session.user?.email}</p>
+            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center font-bold text-[#ff6b00] border border-gray-200">
+              {session.user?.name?.charAt(0) || "A"}
             </div>
+            <div className="h-6 w-px bg-gray-200 mx-2"></div>
+            <SignOutButton />
           </div>
-          <SignOutButton />
-        </div>
-      </aside>
+        </header>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {children}
-      </main>
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

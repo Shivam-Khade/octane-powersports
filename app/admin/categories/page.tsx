@@ -24,19 +24,32 @@ export async function saveCategory(data: any) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") throw new Error("Unauthorized");
 
-  const { id, name, description, image, featured } = data;
+  const { id, name, description, image, featured, menu_group_id } = data;
+  
+  // Check if category name is unique
+  let nameCheckQuery = 'SELECT id FROM categories WHERE name = ?';
+  let nameCheckParams: any[] = [name];
+  if (id) {
+    nameCheckQuery += ' AND id != ?';
+    nameCheckParams.push(id);
+  }
+  
+  const [existingName] = await pool.query(nameCheckQuery, nameCheckParams);
+  if ((existingName as any[]).length > 0) {
+    throw new Error(`A category with the name "${name}" already exists.`);
+  }
   
   if (id) {
     await pool.query(`
       UPDATE categories SET 
-        name=?, description=?, image=?, featured=?
+        name=?, description=?, image=?, featured=?, menu_group_id=?
       WHERE id=?
-    `, [name, description || '', image || '', featured ? 1 : 0, id]);
+    `, [name, description || '', image || '', featured ? 1 : 0, menu_group_id || null, id]);
   } else {
     await pool.query(`
-      INSERT INTO categories (name, description, image, featured)
-      VALUES (?, ?, ?, ?)
-    `, [name, description || '', image || '', featured ? 1 : 0]);
+      INSERT INTO categories (name, description, image, featured, menu_group_id)
+      VALUES (?, ?, ?, ?, ?)
+    `, [name, description || '', image || '', featured ? 1 : 0, menu_group_id || null]);
   }
   
   revalidatePath('/admin/categories');
@@ -51,8 +64,16 @@ export default async function AdminCategoriesPage() {
     redirect("/");
   }
 
-  const [rows] = await pool.query('SELECT * FROM categories ORDER BY featured DESC, id DESC');
+  const [rows] = await pool.query(`
+    SELECT categories.*, menu_groups.name as menu_group_name 
+    FROM categories 
+    LEFT JOIN menu_groups ON categories.menu_group_id = menu_groups.id 
+    ORDER BY featured DESC, categories.id DESC
+  `);
   const categories = (rows as any[]).map(r => ({ ...r }));
+
+  const [groupRows] = await pool.query('SELECT * FROM menu_groups ORDER BY sort_order ASC, name ASC');
+  const menuGroups = (groupRows as any[]).map(r => ({ ...r }));
 
   return (
     <div className="p-8">
@@ -63,7 +84,7 @@ export default async function AdminCategoriesPage() {
         </div>
       </div>
 
-      <CategoriesClient initialCategories={categories} saveAction={saveCategory} deleteAction={deleteCategory} />
+      <CategoriesClient initialCategories={categories} menuGroups={menuGroups} saveAction={saveCategory} deleteAction={deleteCategory} />
     </div>
   );
 }

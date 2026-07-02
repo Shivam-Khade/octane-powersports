@@ -13,7 +13,7 @@ export default function SignOutButton() {
         }
         signOut({ callbackUrl: '/' });
       }}
-      className="flex items-center gap-3 w-full px-4 py-2 mt-2 text-sm font-bold text-[#0a0a0a] bg-white hover:bg-red-500 hover:text-white rounded-lg transition-colors text-left uppercase tracking-wider"
+      className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-[#0a0a0a] bg-gray-100 hover:bg-[#ff6b00] hover:text-white rounded-lg transition-colors text-left uppercase tracking-wider"
     >
       <LogOut size={16} /> Sign Out
     </button>

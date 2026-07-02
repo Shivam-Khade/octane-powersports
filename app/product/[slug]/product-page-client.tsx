@@ -13,6 +13,7 @@ import { ProductCard } from "@/components/product-card";
 import { useCart } from "@/components/cart-context";
 import { useSession } from "next-auth/react";
 import { useLoginModal } from "@/components/login-context";
+import PackageCard from "@/components/packages/PackageCard";
 import "./product.css";
 
 type Product = {
@@ -36,10 +37,12 @@ type Product = {
 
 export function ProductPageClient({
   product,
-  related
+  related,
+  packages = []
 }: {
   product: Product;
   related: Product[];
+  packages?: any[];
 }) {
   const allImages = [product.image, ...(product.relatedThumbs || [])].filter(Boolean);
   const [activeImg, setActiveImg] = useState(0);
@@ -309,13 +312,33 @@ export function ProductPageClient({
         </div>
       </section>
 
+      {/* Package Deals Section */}
+      {packages && packages.length > 0 && (
+        <section className="section bg-[#f8f8f8]">
+          <div className="container">
+            <div className="flex flex-col items-center text-center mx-auto mb-12">
+              <p className="eyebrow text-[#ff6b00]">Special Offers</p>
+              <h2>Available in Package Deals</h2>
+              <p className="text-gray-500 mt-2 max-w-2xl mx-auto">Get this product at a discounted price by buying it as part of our premium curated packages.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {packages.map((pkg) => (
+                <div key={pkg.id}>
+                  <PackageCard pkg={pkg} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Related Products */}
       <section className="section">
         <div className="container">
           <div className="section-head">
             <div>
               <p className="eyebrow">Related Collection</p>
-              <h2>Complete Your Riding Setup</h2>
+              <h2>Similar Products You May Like</h2>
             </div>
             <Link href="/shop" className="button outline-dark">View All Products</Link>
           </div>

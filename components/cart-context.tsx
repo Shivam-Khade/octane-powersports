@@ -10,14 +10,19 @@ export type CartItem = {
   price: number;
   quantity: number;
   image: string;
+  packageId?: number;
+  packageName?: string;
+  packageDiscount?: number;
 };
 
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (product: any, quantity?: number) => void;
-  removeFromCart: (id: string) => void;
+  addPackageToCart: (pkg: any) => void;
+  removeFromCart: (id: string, warnPackage?: boolean) => void;
   updateQty: (id: string, delta: number) => void;
   clearCart: () => void;
+  validateCart: () => Promise<void>;
   totalItems: number;
 }
 
@@ -31,11 +36,33 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
 
+  const validateCart = async () => {
+    if (cartItems.length > 0) {
+      try {
+        const res = await fetch('/api/cart/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: cartItems })
+        });
+        const data = await res.json();
+        if (data.validItems && data.validItems.length !== cartItems.length) {
+          setCartItems(data.validItems);
+          localStorage.setItem(cartKey, JSON.stringify(data.validItems));
+          toast('Some items were removed from your cart as they are no longer available.', { icon: '⚠️' });
+        }
+      } catch (err) {
+        console.error("Cart validation failed", err);
+      }
+    }
+  };
+
   useEffect(() => {
     const saved = localStorage.getItem(cartKey);
+    let parsedItems: CartItem[] = [];
     if (saved) {
       try {
-        setCartItems(JSON.parse(saved));
+        parsedItems = JSON.parse(saved);
+        setCartItems(parsedItems);
       } catch (e) {
         console.error("Failed to parse cart");
       }
@@ -43,6 +70,61 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
       setCartItems([]);
     }
     setMounted(true);
+
+    // Initial validation
+    if (parsedItems.length > 0) {
+      validateCart(); // Wait, validateCart relies on state which might be stale in this initial load. But it's defined inside the component and uses cartItems. Actually, let's just use the direct fetch here for initial load, or since validateCart doesn't take args, it uses state. Let's use fetch.
+      fetch('/api/cart/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: parsedItems })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.validItems && data.validItems.length !== parsedItems.length) {
+          setCartItems(data.validItems);
+          localStorage.setItem(cartKey, JSON.stringify(data.validItems));
+          toast('Some items were removed from your cart as they are no longer available.', { icon: '⚠️' });
+        }
+      })
+      .catch(console.error);
+    }
+
+    // Validate when tab regains focus
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // Use the latest localStorage to validate if we can, or just trust validateCart.
+        // But validateCart uses current state.
+        // It's safer to just fetch using localStorage items.
+        const currentSaved = localStorage.getItem(cartKey);
+        if (currentSaved) {
+          try {
+            const items = JSON.parse(currentSaved);
+            if (items.length > 0) {
+              fetch('/api/cart/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items })
+              })
+              .then(res => res.json())
+              .then(data => {
+                if (data.validItems && data.validItems.length !== items.length) {
+                  setCartItems(data.validItems);
+                  localStorage.setItem(cartKey, JSON.stringify(data.validItems));
+                  toast('An item in your cart became unavailable and was removed.', { icon: '⚠️' });
+                }
+              })
+              .catch(console.error);
+            }
+          } catch(e) {}
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [cartKey]);
 
   const updateCart = (newItems: CartItem[]) => {
@@ -120,12 +202,80 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
     ), { duration: 4000 });
   };
 
-  const removeFromCart = (id: string) => {
-    setCartItems((prev) => {
-      const newItems = prev.filter((item) => item.id !== id);
+  const addPackageToCart = (pkg: any) => {
+    fetch('/api/packages/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ packageId: pkg.id, action: 'adds_to_cart' })
+    }).catch(() => {});
+
+    setCartItems((prevItems) => {
+      let newItems = [...prevItems];
+      
+      const discountPerItem = pkg.discount_type === 'percentage'
+        ? pkg.discount_value // It's a percentage, applied per item or overall total. To keep it simple, we just store it.
+        : pkg.discount_value / pkg.products.length; // Fixed amount divided equally, or we just store the total package discount.
+
+      pkg.products.forEach((product: any) => {
+        // If product already in cart, update it to be part of the package or add separately if it's cleaner. 
+        // For simplicity, we just add it and overwrite if it was individual.
+        const existingIndex = newItems.findIndex((item) => item.id === product.slug);
+        const itemToAdd = {
+          id: product.slug,
+          name: product.name,
+          seller: product.brand || "Octane Powersports",
+          price: product.price,
+          quantity: 1, // packages are typically bought as 1 unit of bundle
+          image: product.image,
+          packageId: pkg.id,
+          packageName: pkg.name,
+          packageDiscount: pkg.discount_type === 'percentage' ? (product.price * pkg.discount_value / 100) : (pkg.discount_value / pkg.products.length)
+        };
+
+        if (existingIndex >= 0) {
+          newItems[existingIndex] = itemToAdd;
+        } else {
+          newItems.push(itemToAdd);
+        }
+      });
+
       localStorage.setItem(cartKey, JSON.stringify(newItems));
       return newItems;
     });
+
+    toast.success(`${pkg.name} added to cart!`);
+    router.push('/checkout');
+  };
+
+  const removeFromCart = (id: string, warnPackage: boolean = false) => {
+    let triggeredWarning = false;
+
+    setCartItems((prev) => {
+      const itemToRemove = prev.find(i => i.id === id);
+      let newItems = prev.filter((item) => item.id !== id);
+
+      if (itemToRemove?.packageId) {
+        // If it was part of a package, remove the package association from remaining items of this package
+        newItems = newItems.map(item => {
+          if (item.packageId === itemToRemove.packageId) {
+            const { packageId, packageName, packageDiscount, ...rest } = item;
+            return rest;
+          }
+          return item;
+        });
+        
+        if (warnPackage) {
+          triggeredWarning = true;
+        }
+      }
+
+      localStorage.setItem(cartKey, JSON.stringify(newItems));
+      return newItems;
+    });
+
+    if (triggeredWarning) {
+      toast('Package discount removed because an item was removed.', { icon: '⚠️' });
+    }
   };
 
   const updateQty = (id: string, delta: number) => {
@@ -151,14 +301,14 @@ export function CartProvider({ children, session }: { children: React.ReactNode,
 
   if (!mounted) {
     return (
-      <CartContext.Provider value={{ cartItems: [], addToCart, removeFromCart, updateQty, clearCart, totalItems: 0 }}>
+      <CartContext.Provider value={{ cartItems: [], addToCart, addPackageToCart, removeFromCart, updateQty, clearCart, validateCart, totalItems: 0 }}>
         {children}
       </CartContext.Provider>
     );
   }
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQty, clearCart, totalItems }}>
+    <CartContext.Provider value={{ cartItems, addToCart, addPackageToCart, removeFromCart, updateQty, clearCart, validateCart, totalItems }}>
       {children}
     </CartContext.Provider>
   );

@@ -148,6 +148,11 @@ export default function OrdersClient({ initialOrders, updateStatusAction }: any)
                           <li key={idx} className="flex flex-col text-[12px] leading-tight">
                             <span className="font-medium text-gray-700 line-clamp-1" title={item.product_name}>{item.product_name}</span>
                             <span className="text-gray-400">{item.quantity} × ₹{Number(item.price).toLocaleString('en-IN')}</span>
+                            {item.package_id && (
+                              <span className="text-[10px] font-bold text-[#ff6b00] uppercase tracking-wider mt-0.5">
+                                Purchased via Package Deal: {item.package_name || `Package #${item.package_id}`}
+                              </span>
+                            )}
                           </li>
                         ))}
                       </ul>

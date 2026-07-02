@@ -13,25 +13,30 @@ export async function deleteProduct(id: number) {
   revalidatePath('/shop');
 }
 
+function sanitizeSlug(s: string) {
+  return (s || "").toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 export async function saveProduct(data: any) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") throw new Error("Unauthorized");
 
   const { id, name, slug, category, brand, price, rating, availability, badge, image, description, stockCount, compatibility, relatedThumbs, sku } = data;
-  
+  const cleanSlug = sanitizeSlug(slug);
+
   try {
     if (id) {
       await pool.query(`
         UPDATE products SET 
           name=?, slug=?, category=?, brand=?, price=?, rating=?, availability=?, badge=?, image=?, description=?, stockCount=?, compatibility=?, relatedThumbs=?, sku=?
         WHERE id=?
-      `, [name, slug, category, brand, price, rating, availability, badge, image, description, stockCount ?? 10, JSON.stringify(compatibility || []), JSON.stringify(relatedThumbs || []), sku || null, id]);
+      `, [name, cleanSlug, category, brand, price, rating, availability, badge, image, description, stockCount ?? 10, JSON.stringify(compatibility || []), JSON.stringify(relatedThumbs || []), sku || null, id]);
     } else {
       await pool.query(`
         INSERT INTO products 
         (name, slug, category, brand, price, rating, availability, badge, image, description, stockCount, compatibility, specs, options, relatedThumbs, sku)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '[]', '[]', ?, ?)
-      `, [name, slug, category, brand, price, rating || 5.0, availability || 'In Stock', badge || '', image, description || '', stockCount ?? 10, JSON.stringify(compatibility || []), JSON.stringify(relatedThumbs || []), sku || null]);
+      `, [name, cleanSlug, category, brand, price, rating || 5.0, availability || 'In Stock', badge || '', image, description || '', stockCount ?? 10, JSON.stringify(compatibility || []), JSON.stringify(relatedThumbs || []), sku || null]);
     }
     
     revalidatePath('/', 'layout');

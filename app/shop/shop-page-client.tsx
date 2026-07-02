@@ -113,10 +113,14 @@ export function ShopPageClient({ initialProducts, categories, allBrands = [] }: 
       const normalize = (str: string) => str.toLowerCase().replace(/[-_]/g, ' ');
       const normQuery = normalize(searchQuery);
 
-      const matchCategory = activeCategories.length === 0 || activeCategories.some(c => normalize(c) === normalize(safeCategory));
+      const matchCategory = activeCategories.length === 0 || activeCategories.some(c => 
+        safeCategory.split(',').some(cat => normalize(cat.trim()) === normalize(c))
+      );
       
       // Case-insensitive, hyphen-insensitive brand match
-      const matchBrand = activeBrands.length === 0 || activeBrands.some(b => normalize(b) === normalize(safeBrand));
+      const matchBrand = activeBrands.length === 0 || activeBrands.some(b => 
+        safeBrand.split(',').some(brand => normalize(brand.trim()) === normalize(b))
+      );
       
       const matchModel = !activeModel || compatibility.some((m: string) => normalize(m).includes(normalize(activeModel)) || normalize(activeModel).includes(normalize(m)));
 
@@ -169,6 +173,32 @@ export function ShopPageClient({ initialProducts, categories, allBrands = [] }: 
   const isShopAll = activeCategories.length === 0 && activeBrands.length === 0;
   const showCategoryFilter = activeBrands.length > 0;
   const showBrandFilter = activeCategories.length > 0;
+
+  const recommendations = useMemo(() => {
+    let available = initialProducts.filter(p => !displayedProducts.some(dp => dp.slug === p.slug));
+    
+    const scored = available.map(p => {
+      let score = 0;
+      // High baseline score for related items
+      const pCats = (p.category || "").split(',').map(c => c.trim());
+      const pBrands = (p.brand || "").split(',').map(b => b.trim());
+
+      if (activeCategories.some(c => pCats.includes(c))) score += 10000;
+      if (activeBrands.some(b => pBrands.includes(b))) score += 10000;
+      
+      // Factor in popularity (views, cart adds, orders)
+      const analytics = p as any;
+      score += (analytics.views || 0) * 1; // 1 point per view
+      score += (analytics.cart_adds || analytics.cartAdds || 0) * 10; // 10 points per cart add
+      score += (analytics.purchases || analytics.orders_placed || 0) * 50; // 50 points per order
+      
+      score += Math.random(); 
+      return { product: p, score };
+    });
+    
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, 5).map(item => item.product);
+  }, [initialProducts, displayedProducts, activeCategories, activeBrands]);
 
   return (
     <main className="shop-premium-bg">
@@ -294,10 +324,7 @@ export function ShopPageClient({ initialProducts, categories, allBrands = [] }: 
             <div className="recommendations-section mt-12 pt-8 border-t border-gray-100">
               <h3 className="section-eyebrow mb-6">You Might Also Like</h3>
               <div className="recommendations-carousel grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                {initialProducts
-                  .filter(p => !displayedProducts.some(dp => dp.slug === p.slug))
-                  .slice(0, 5)
-                  .map(p => (
+                {recommendations.map(p => (
                     <div key={p.slug} className="carousel-item">
                       <ProductCard product={p} />
                     </div>
