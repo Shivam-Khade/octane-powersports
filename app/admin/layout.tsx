@@ -12,7 +12,8 @@ import {
   LogOut,
   Settings,
   BarChart3,
-  Users
+  Users,
+  Banknote
 } from "lucide-react";
 
 export default async function AdminLayout({
@@ -61,6 +62,9 @@ export default async function AdminLayout({
           </Link>
           <Link href="/admin/orders" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <ShoppingCart size={18} className="text-[#ff6b00]" /> Orders
+          </Link>
+          <Link href="/admin/bank-deposits" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+            <Banknote size={18} className="text-[#ff6b00]" /> Bank Deposits
           </Link>
           <Link href="/admin/bookings" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <CalendarCheck size={18} className="text-[#ff6b00]" /> Service Bookings

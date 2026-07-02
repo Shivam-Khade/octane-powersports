@@ -23,8 +23,35 @@ function CheckoutContent() {
   
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  
-  const { cartItems, updateQty, removeFromCart, clearCart } = useCart();
+  const [paymentMethod, setPaymentMethod] = useState<'RAZORPAY' | 'CASH_BANK_DEPOSIT'>('RAZORPAY');
+  const [depositDate, setDepositDate] = useState("");
+  const [referenceNumber, setReferenceNumber] = useState("");
+  const [customerNotes, setCustomerNotes] = useState("");
+  const [receiptUrl, setReceiptUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleReceiptUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return;
+    setIsUploading(true);
+    setError("");
+    const fileData = new FormData();
+    fileData.append("file", e.target.files[0]);
+    try {
+      const res = await fetch("/api/user/upload", { method: "POST", body: fileData });
+      const data = await res.json();
+      if (data.url) setReceiptUrl(data.url);
+      else setError("Upload failed: " + data.error);
+    } catch (err) {
+      setError("Upload failed");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  const { cartItems, updateQty, removeFromCart, clearCart, validateCart } = useCart();
+
+  useEffect(() => {
+    validateCart();
+  }, []);
 
   const [addresses, setAddresses] = useState<any[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<any | null>(null);
@@ -83,6 +110,49 @@ function CheckoutContent() {
     
     setSubmitting(true);
     setError("");
+
+    if (paymentMethod === 'CASH_BANK_DEPOSIT') {
+      if (!receiptUrl || !depositDate || !referenceNumber) {
+        setError("Please fill in all required deposit details and upload the receipt.");
+        setSubmitting(false);
+        return;
+      }
+      
+      try {
+        const finalOrderData = {
+          total_amount: finalTotal,
+          payment_method: 'CASH_BANK_DEPOSIT',
+          deposit_details: { receiptUrl, depositDate, depositedAmount: finalTotal, transactionId: referenceNumber, customerNotes },
+          items: cartItems.map(i => ({
+            product_name: i.name,
+            price: i.price,
+            quantity: i.quantity,
+            package_id: i.packageId || null,
+            package_name: i.packageName || null
+          }))
+        };
+
+        const res = await fetch("/api/user/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(finalOrderData)
+        });
+
+        if (res.ok) {
+          clearCart();
+          router.push("/orders");
+          router.refresh();
+        } else {
+          const data = await res.json();
+          setError(data.error || "Failed to finalize order in database");
+        }
+      } catch (err: any) {
+        setError(err.message || "An unexpected error occurred");
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
 
     try {
       const resOrder = await fetch("/api/razorpay/order", {
@@ -219,10 +289,104 @@ function CheckoutContent() {
               </div>
             </div>
 
+            {/* Payment Method */}
+            <div className="checkout-panel">
+              <div className="panel-header">
+                <h2><span className="badge">2</span> Payment Method</h2>
+              </div>
+              <div className="panel-body">
+                <div className="flex flex-col gap-4">
+                  <label className={`flex items-center gap-3 cursor-pointer p-4 border rounded-sm transition-all ${paymentMethod === 'RAZORPAY' ? 'border-[#ff6b00] bg-[#ff6b00]/5' : 'border-gray-200 hover:border-[#ff6b00]'}`}>
+                    <input type="radio" name="paymentMethod" value="RAZORPAY" checked={paymentMethod === 'RAZORPAY'} onChange={() => setPaymentMethod('RAZORPAY')} className="w-5 h-5 text-[#ff6b00] focus:ring-[#ff6b00]" />
+                    <div className="flex flex-col">
+                      <span className="font-bold">Pay Online (Razorpay)</span>
+                      <span className="text-sm text-gray-500">Credit/Debit Cards, UPI, NetBanking</span>
+                    </div>
+                  </label>
+                  
+                  <label className={`flex items-center gap-3 cursor-pointer p-4 border rounded-sm transition-all ${paymentMethod === 'CASH_BANK_DEPOSIT' ? 'border-[#ff6b00] bg-[#ff6b00]/5' : 'border-gray-200 hover:border-[#ff6b00]'}`}>
+                    <input type="radio" name="paymentMethod" value="CASH_BANK_DEPOSIT" checked={paymentMethod === 'CASH_BANK_DEPOSIT'} onChange={() => setPaymentMethod('CASH_BANK_DEPOSIT')} className="w-5 h-5 text-[#ff6b00] focus:ring-[#ff6b00]" />
+                    <div className="flex flex-col">
+                      <span className="font-bold">Cash Deposit to Bank</span>
+                      <span className="text-sm text-gray-500">Deposit cash at a bank branch and upload your receipt</span>
+                    </div>
+                  </label>
+                </div>
+                
+                {paymentMethod === 'CASH_BANK_DEPOSIT' && (
+                  <div className="mt-6 p-6 bg-white border border-[#e0e0e0] rounded-sm">
+                    <h3 className="font-bold uppercase tracking-wider text-sm mb-4 flex items-center gap-2 text-[#878787]">
+                      <span className="w-1.5 h-4 bg-[#ff6b00] rounded-sm block"></span> Bank Details
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm mb-8">
+                      <div className="bg-[#f9f9f9] p-4 rounded-sm border border-[#f0f0f0]">
+                        <span className="text-[#878787] text-[11px] uppercase tracking-wider font-bold block mb-1">Account Name</span> 
+                        <strong className="block text-[#212121] text-base">Octane Powersports Ltd.</strong>
+                      </div>
+                      <div className="bg-[#f9f9f9] p-4 rounded-sm border border-[#f0f0f0]">
+                        <span className="text-[#878787] text-[11px] uppercase tracking-wider font-bold block mb-1">Bank Name</span> 
+                        <strong className="block text-[#212121] text-base">HDFC Bank</strong>
+                      </div>
+                      <div className="bg-[#f9f9f9] p-4 rounded-sm border border-[#f0f0f0]">
+                        <span className="text-[#878787] text-[11px] uppercase tracking-wider font-bold block mb-1">Account Number</span> 
+                        <strong className="block text-[#212121] text-base font-mono">50200012345678</strong>
+                      </div>
+                      <div className="bg-[#f9f9f9] p-4 rounded-sm border border-[#f0f0f0]">
+                        <span className="text-[#878787] text-[11px] uppercase tracking-wider font-bold block mb-1">IFSC Code</span> 
+                        <strong className="block text-[#212121] text-base font-mono">HDFC0001234</strong>
+                      </div>
+                      <div className="bg-[#f9f9f9] p-4 rounded-sm border border-[#f0f0f0] md:col-span-2">
+                        <span className="text-[#878787] text-[11px] uppercase tracking-wider font-bold block mb-1">Branch Name</span> 
+                        <strong className="block text-[#212121] text-base">Bandra West, Mumbai</strong>
+                      </div>
+                    </div>
+                    
+                    <h3 className="font-bold uppercase tracking-wider text-sm mb-4 flex items-center gap-2 text-[#878787]">
+                      <span className="w-1.5 h-4 bg-[#ff6b00] rounded-sm block"></span> Upload Deposit Receipt
+                    </h3>
+                    <div className="space-y-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-[11px] uppercase tracking-wider font-bold text-[#878787] mb-2 select-none cursor-default">Deposit Date *</label>
+                          <input type="date" required max={new Date().toISOString().split('T')[0]} suppressHydrationWarning value={depositDate} onChange={e => setDepositDate(e.target.value)} className="w-full p-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-sm focus:border-[#ff6b00] focus:bg-white focus:ring-1 focus:ring-[#ff6b00] outline-none transition-all text-[#212121]" />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] uppercase tracking-wider font-bold text-[#878787] mb-2 select-none cursor-default">Deposited Amount (₹) *</label>
+                          <input type="number" required value={finalTotal} disabled className="w-full p-3 bg-[#f0f0f0] border border-[#e0e0e0] rounded-sm outline-none text-[#878787] font-bold cursor-not-allowed" />
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-[11px] uppercase tracking-wider font-bold text-[#878787] mb-2 select-none cursor-default">Transaction ID *</label>
+                          <input type="text" required placeholder="Enter Transaction ID" value={referenceNumber} onChange={e => setReferenceNumber(e.target.value)} className="w-full p-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-sm focus:border-[#ff6b00] focus:bg-white focus:ring-1 focus:ring-[#ff6b00] outline-none transition-all text-[#212121]" />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] uppercase tracking-wider font-bold text-[#878787] mb-2 select-none cursor-default">Notes</label>
+                          <input type="text" placeholder="Optional notes" value={customerNotes} onChange={e => setCustomerNotes(e.target.value)} className="w-full p-3 bg-[#f9f9f9] border border-[#e0e0e0] rounded-sm focus:border-[#ff6b00] focus:bg-white focus:ring-1 focus:ring-[#ff6b00] outline-none transition-all text-[#212121]" />
+                        </div>
+                      </div>
+
+                      <div className="pt-2">
+                        <label className="block text-[11px] uppercase tracking-wider font-bold text-[#878787] mb-2 select-none cursor-default">Receipt Image/PDF *</label>
+                        <div className="flex items-center gap-4">
+                          <label className="px-6 py-3 bg-[#212121] hover:bg-black text-white text-[11px] font-bold uppercase tracking-wider rounded-sm cursor-pointer transition-colors">
+                            {isUploading ? "Uploading..." : "Choose File"}
+                            <input type="file" accept="image/*,application/pdf" className="hidden" onChange={handleReceiptUpload} disabled={isUploading} />
+                          </label>
+                          {receiptUrl && <span className="text-sm text-[#388e3c] font-bold flex items-center gap-1.5"><CheckCircle2 size={18} /> Uploaded</span>}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Cart Items */}
             <div className="checkout-panel">
               <div className="panel-header">
-                <h2><span className="badge">2</span> Order Summary</h2>
+                <h2><span className="badge">3</span> Order Summary</h2>
               </div>
               <div className="panel-body cart-items">
                 {cartItems.length === 0 ? (

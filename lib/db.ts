@@ -15,6 +15,7 @@ const pool = global._mysqlPool || mysql.createPool({
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 10000,
+  timezone: 'Z',
   ssl: process.env.DB_SSL === 'true' ? {
     minVersion: 'TLSv1.2',
     rejectUnauthorized: true,

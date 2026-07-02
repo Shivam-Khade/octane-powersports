@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import pool from "@/lib/db";
 import { RowDataPacket } from "mysql2";
-import { sendOrderConfirmationEmail, sendAdminOrderNotification, OrderDetails } from "@/lib/email";
+import { sendOrderConfirmationEmail, sendAdminOrderNotification, sendBankDepositReceivedEmail, OrderDetails } from "@/lib/email";
 import crypto from "node:crypto";
 
 export const dynamic = "force-dynamic";
@@ -57,14 +57,16 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { total_amount, items, razorpay_payment_id, razorpay_order_id, razorpay_signature } = await req.json();
+    const { total_amount, items, razorpay_payment_id, razorpay_order_id, razorpay_signature, payment_method, deposit_details } = await req.json();
 
     if (!total_amount || !items || items.length === 0) {
       return NextResponse.json({ error: "Invalid order data" }, { status: 400 });
     }
 
+    const isBankDeposit = payment_method === 'CASH_BANK_DEPOSIT';
+
     // Verify Razorpay Signature for secure payments
-    if (razorpay_payment_id && razorpay_order_id && razorpay_signature) {
+    if (!isBankDeposit && razorpay_payment_id && razorpay_order_id && razorpay_signature) {
       const secret = process.env.RAZORPAY_KEY_SECRET;
       if (!secret) {
         throw new Error("RAZORPAY_KEY_SECRET is not configured");
@@ -81,14 +83,26 @@ export async function POST(req: Request) {
     }
 
     // Insert order
+    const orderStatus = isBankDeposit ? 'AWAITING_PAYMENT_VERIFICATION' : 'Pending';
+    const payMethod = isBankDeposit ? 'CASH_BANK_DEPOSIT' : 'RAZORPAY';
+    const payStatus = isBankDeposit ? 'PENDING_VERIFICATION' : 'PAID';
+
     const [orderResult] = await pool.query(
-      "INSERT INTO orders (user_id, total_amount, status, razorpay_payment_id, razorpay_order_id, razorpay_signature) VALUES (?, ?, ?, ?, ?, ?)",
-      [session.user.id, total_amount, 'Pending', razorpay_payment_id || null, razorpay_order_id || null, razorpay_signature || null]
+      "INSERT INTO orders (user_id, total_amount, status, razorpay_payment_id, razorpay_order_id, razorpay_signature, payment_method, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [session.user.id, total_amount, orderStatus, razorpay_payment_id || null, razorpay_order_id || null, razorpay_signature || null, payMethod, payStatus]
     );
     
     const orderId = (orderResult as any).insertId;
 
-    // Verify stock availability (Race Condition Guard)
+    if (isBankDeposit && deposit_details) {
+      await pool.query(
+        `INSERT INTO bank_deposit_details (order_id, receipt_url, deposited_amount, deposit_date, reference_number, customer_notes, verification_status) 
+         VALUES (?, ?, ?, ?, ?, ?, 'PENDING')`,
+        [orderId, deposit_details.receiptUrl, deposit_details.depositedAmount, deposit_details.depositDate, deposit_details.referenceNumber || null, deposit_details.customerNotes || null]
+      );
+    }
+
+    // Verify stock availability (Race Condition Guard) for ALL orders
     for (const item of items) {
       const [stockRows] = await pool.query<RowDataPacket[]>(
         "SELECT stockCount FROM products WHERE name = ?",
@@ -96,6 +110,9 @@ export async function POST(req: Request) {
       );
       if (stockRows.length === 0 || stockRows[0].stockCount < item.quantity) {
         // Reverse order creation if stock fails
+        if (isBankDeposit) {
+          await pool.query("DELETE FROM bank_deposit_details WHERE order_id = ?", [orderId]);
+        }
         await pool.query("DELETE FROM orders WHERE id = ?", [orderId]);
         return NextResponse.json(
           { error: `Sorry, ${item.product_name} is out of stock or does not have enough quantity available.` }, 
@@ -104,32 +121,42 @@ export async function POST(req: Request) {
       }
     }
 
-    // Insert items and deduct stock
-    for (const item of items) {
-      await pool.query(
-        "INSERT INTO order_items (order_id, product_name, price, quantity, package_id, package_name) VALUES (?, ?, ?, ?, ?, ?)",
-        [orderId, item.product_name, item.price, item.quantity, item.package_id || null, item.package_name || null]
-      );
-      await pool.query(
-        "UPDATE products SET stockCount = GREATEST(0, stockCount - ?) WHERE name = ?",
-        [item.quantity, item.product_name]
-      );
-    }
-
-    // Update package analytics
-    try {
-      const packageIds = new Set(items.map((i: any) => i.package_id).filter(Boolean));
-      for (const pid of packageIds) {
-        const packageItems = items.filter((i: any) => i.package_id === pid);
-        const revenue = packageItems.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
-        
+    if (!isBankDeposit) {
+      // Insert items and deduct stock immediately for online payments
+      for (const item of items) {
         await pool.query(
-          "UPDATE package_analytics SET purchases = purchases + 1, revenue = revenue + ? WHERE package_id = ?",
-          [revenue, pid]
+          "INSERT INTO order_items (order_id, product_name, price, quantity, package_id, package_name) VALUES (?, ?, ?, ?, ?, ?)",
+          [orderId, item.product_name, item.price, item.quantity, item.package_id || null, item.package_name || null]
+        );
+        await pool.query(
+          "UPDATE products SET stockCount = GREATEST(0, stockCount - ?) WHERE name = ?",
+          [item.quantity, item.product_name]
         );
       }
-    } catch (e) {
-      console.error("Error updating package analytics:", e);
+
+      // Update package analytics
+      try {
+        const packageIds = new Set(items.map((i: any) => i.package_id).filter(Boolean));
+        for (const pid of packageIds) {
+          const packageItems = items.filter((i: any) => i.package_id === pid);
+          const revenue = packageItems.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
+          
+          await pool.query(
+            "UPDATE package_analytics SET purchases = purchases + 1, revenue = revenue + ? WHERE package_id = ?",
+            [revenue, pid]
+          );
+        }
+      } catch (e) {
+        console.error("Error updating package analytics:", e);
+      }
+    } else {
+      // For bank deposits, just insert items. Do NOT deduct stock until admin approves.
+      for (const item of items) {
+        await pool.query(
+          "INSERT INTO order_items (order_id, product_name, price, quantity, package_id, package_name) VALUES (?, ?, ?, ?, ?, ?)",
+          [orderId, item.product_name, item.price, item.quantity, item.package_id || null, item.package_name || null]
+        );
+      }
     }
 
     // Fetch user address for email
@@ -156,15 +183,19 @@ export async function POST(req: Request) {
       customerEmail: session.user.email || "",
       customerPhone,
       totalAmount: total_amount,
-      paymentMethod: razorpay_payment_id ? "Razorpay" : "Unknown",
-      paymentStatus: razorpay_payment_id ? "Paid" : "Pending",
+      paymentMethod: payMethod,
+      paymentStatus: payStatus,
       items,
       shippingAddress,
       orderTime: new Date().toISOString(),
     };
 
     if (orderDetails.customerEmail) {
-      sendOrderConfirmationEmail(orderDetails.customerEmail, orderDetails).catch(e => console.error("Customer email error:", e));
+      if (isBankDeposit) {
+        sendBankDepositReceivedEmail(orderDetails.customerEmail, orderDetails).catch(e => console.error("Customer bank email error:", e));
+      } else {
+        sendOrderConfirmationEmail(orderDetails.customerEmail, orderDetails).catch(e => console.error("Customer email error:", e));
+      }
     }
     sendAdminOrderNotification(orderDetails).catch(e => console.error("Admin email error:", e));
 

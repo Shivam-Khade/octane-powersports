@@ -25,11 +25,25 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
   const [isMounted, setIsMounted] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
+  const desktopSearchInputRef = useRef<HTMLInputElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const { openModal } = useLoginModal();
   const { openModal: openProfileModal } = useProfileModal();
   const { totalItems } = useCart();
 
   useEffect(() => setIsMounted(true), []);
+
+  useEffect(() => {
+    if (searchOpen) {
+      setTimeout(() => {
+        if (window.innerWidth >= 768) {
+          desktopSearchInputRef.current?.focus();
+        } else {
+          mobileSearchInputRef.current?.focus();
+        }
+      }, 100); // Small delay to allow CSS transitions to complete
+    }
+  }, [searchOpen]);
 
   const isActiveSession = isMounted && typeof sessionStorage !== 'undefined' && sessionStorage.getItem("octane_session_active") === "true";
   const effectiveSession = isActiveSession ? session : null;
@@ -160,6 +174,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
               </button>
               <form onSubmit={handleSearch} className="nav-search-form">
                 <input
+                  ref={desktopSearchInputRef}
                   autoFocus={searchOpen}
                   type="text"
                   placeholder="Search products..."
@@ -260,6 +275,7 @@ export function Header({ session, categories = [], brands = [], gridSettings = {
           <form onSubmit={handleSearch} className="global-search-inner">
             <Search size={20} className="global-search-icon" />
             <input
+              ref={mobileSearchInputRef}
               autoFocus={searchOpen}
               type="text"
               placeholder="Search for premium parts, brands, or categories..."

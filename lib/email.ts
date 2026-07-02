@@ -287,3 +287,92 @@ export const sendPasswordResetEmail = async (email: string, otp: string) => {
     return { success: false, error };
   }
 };
+
+/**
+ * Sends an email when a bank deposit order is placed (awaiting verification)
+ */
+export const sendBankDepositReceivedEmail = async (customerEmail: string, details: OrderDetails) => {
+  const subject = `Order Received - Awaiting Payment Verification (Order #${details.orderId})`;
+  
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+      <h2 style="color: #ff6b00;">Order Received!</h2>
+      <p>Hi ${details.customerName},</p>
+      <p>We've received your order <strong>#${details.orderId}</strong> and your bank deposit receipt.</p>
+      <p>Our team will verify the payment shortly. Once verified, we will begin processing your order and send you a confirmation email.</p>
+      
+      <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee;">
+        <h3 style="margin-top: 0; color: #0a0a0a;">Order Details</h3>
+        <p><strong>Total Amount:</strong> ${formatCurrency(details.totalAmount)}</p>
+        <p><strong>Payment Status:</strong> Pending Verification</p>
+      </div>
+
+      <p>If you have any questions, feel free to contact us at <a href="mailto:info@octaneps.com">info@octaneps.com</a>.</p>
+      <p>Ride Safe,<br/><strong>Octane Powersports</strong></p>
+    </div>
+  `;
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'Octane Powersports <noreply@octaneps.com>',
+        to: customerEmail,
+        subject,
+        html: htmlContent
+      })
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Exception sending bank deposit received email:', error);
+    return { success: false, error };
+  }
+};
+
+/**
+ * Sends an email when a bank deposit verification fails
+ */
+export const sendBankDepositRejectedEmail = async (customerEmail: string, details: OrderDetails, adminRemarks: string) => {
+  const subject = `Payment Verification Failed - Octane Powersports (Order #${details.orderId})`;
+  
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+      <h2 style="color: #e53935;">Payment Verification Failed</h2>
+      <p>Hi ${details.customerName},</p>
+      <p>Unfortunately, we could not verify your bank deposit for order <strong>#${details.orderId}</strong>.</p>
+      
+      <div style="background-color: #ffebee; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ffcdd2;">
+        <h3 style="margin-top: 0; color: #c62828;">Reason</h3>
+        <p style="color: #b71c1c; font-weight: bold;">${adminRemarks || 'The provided receipt or amount did not match our records.'}</p>
+      </div>
+
+      <p>Please reply to this email or contact support to resolve this issue and complete your order.</p>
+      
+      <p>Ride Safe,<br/><strong>Octane Powersports</strong></p>
+    </div>
+  `;
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'Octane Powersports <noreply@octaneps.com>',
+        to: customerEmail,
+        subject,
+        html: htmlContent
+      })
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Exception sending bank deposit rejected email:', error);
+    return { success: false, error };
+  }
+};
