@@ -1,6 +1,6 @@
 import pool from "@/lib/db";
 import { ProductPageClient } from "./product-page-client";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 // Utility to parse product fields correctly
 function parseProduct(p: any) {
@@ -66,7 +66,20 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const decodedSlug = decodeURIComponent(slug);
   const [rows] = await pool.query('SELECT * FROM products WHERE slug = ? AND stockCount > 0', [decodedSlug]);
   const matched = rows as any[];
-  if (matched.length === 0) notFound();
+  if (matched.length === 0) {
+    const strippedSlug = decodedSlug.replace(/[^a-zA-Z0-9]/g, '%').replace(/%+/g, '%');
+    const aggressivePattern = `%${strippedSlug}%`;
+    const [fallbackRows] = await pool.query(
+      'SELECT slug FROM products WHERE (slug LIKE ? OR name LIKE ?) LIMIT 1',
+      [aggressivePattern, aggressivePattern]
+    );
+    const fallbackMatches = fallbackRows as any[];
+    if (fallbackMatches.length > 0) {
+      redirect(`/product/${fallbackMatches[0].slug}`);
+    } else {
+      notFound();
+    }
+  }
   
   const product = parseProduct(matched[0]);
 

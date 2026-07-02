@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import pool from "@/lib/db";
 import { ArticleCard } from "@/components/article-card";
@@ -70,9 +70,23 @@ import { ViewTracker } from "@/components/view-tracker";
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [rows] = await pool.query('SELECT * FROM blogs WHERE slug = ?', [slug]);
+  const decodedSlug = decodeURIComponent(slug);
+  const [rows] = await pool.query('SELECT * FROM blogs WHERE slug = ?', [decodedSlug]);
   const matched = rows as any[];
-  if (matched.length === 0) notFound();
+  if (matched.length === 0) {
+    const strippedSlug = decodedSlug.replace(/[^a-zA-Z0-9]/g, '%').replace(/%+/g, '%');
+    const aggressivePattern = `%${strippedSlug}%`;
+    const [fallbackRows] = await pool.query(
+      'SELECT slug FROM blogs WHERE (slug LIKE ? OR title LIKE ?) LIMIT 1',
+      [aggressivePattern, aggressivePattern]
+    );
+    const fallbackMatches = fallbackRows as any[];
+    if (fallbackMatches.length > 0) {
+      redirect(`/blog/${fallbackMatches[0].slug}`);
+    } else {
+      notFound();
+    }
+  }
 
   const article = parseArticle(matched[0]);
 

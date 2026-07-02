@@ -23,6 +23,16 @@ const nextConfig = {
         source: '/m/:path*',
         destination: '/:path*',
         permanent: true,
+      },
+      {
+        source: '/product/K&N-OIL-FILTER-KN-204',
+        destination: '/product/knn-oilfilter-bikes-superbikes-adventurebikes',
+        permanent: true,
+      },
+      {
+        source: '/product/K%26N-OIL-FILTER-KN-204',
+        destination: '/product/knn-oilfilter-bikes-superbikes-adventurebikes',
+        permanent: true,
       }
     ];
   }

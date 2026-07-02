@@ -14,6 +14,10 @@ export async function deletePackage(id: number) {
   revalidatePath('/packages');
 }
 
+function sanitizeSlug(s: string) {
+  return (s || "").toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 export async function savePackage(data: any) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") throw new Error("Unauthorized");
@@ -23,6 +27,8 @@ export async function savePackage(data: any) {
     start_date, end_date, discount_type, discount_value, seo_title, seo_description,
     products, bikes
   } = data;
+
+  const cleanSlug = sanitizeSlug(slug);
 
   const connection = await pool.getConnection();
   try {
@@ -37,7 +43,7 @@ export async function savePackage(data: any) {
           start_date=?, end_date=?, discount_type=?, discount_value=?, seo_title=?, seo_description=?
         WHERE id=?
       `, [
-        name, slug, description, banner, thumbnail, priority || 0, is_active ? 1 : 0,
+        name, cleanSlug, description, banner, thumbnail, priority || 0, is_active ? 1 : 0,
         start_date || null, end_date || null, discount_type || 'percentage', discount_value || 0,
         seo_title, seo_description, id
       ]);
@@ -47,7 +53,7 @@ export async function savePackage(data: any) {
         (name, slug, description, banner, thumbnail, priority, is_active, start_date, end_date, discount_type, discount_value, seo_title, seo_description)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
-        name, slug, description, banner, thumbnail, priority || 0, is_active ? 1 : 0,
+        name, cleanSlug, description, banner, thumbnail, priority || 0, is_active ? 1 : 0,
         start_date || null, end_date || null, discount_type || 'percentage', discount_value || 0,
         seo_title, seo_description
       ]);

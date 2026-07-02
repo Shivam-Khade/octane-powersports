@@ -15,6 +15,10 @@ export async function deleteBlog(id: number) {
   revalidatePath('/blog');
 }
 
+function sanitizeSlug(s: string) {
+  return (s || "").toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 export async function saveBlog(data: any) {
   "use server";
   const session = await getServerSession(authOptions);
@@ -22,18 +26,20 @@ export async function saveBlog(data: any) {
 
   const { id, title, slug, description, image, category, author, publishDate, readTime, content, introText, quoteText, subHeading, bodyText } = data;
   
+  const cleanSlug = sanitizeSlug(slug);
+  
   if (id) {
     await pool.query(`
       UPDATE blogs SET 
         title=?, slug=?, description=?, image=?, category=?, author=?, publishDate=?, readTime=?, content=?, introText=?, quoteText=?, subHeading=?, bodyText=?
       WHERE id=?
-    `, [title, slug, description, image, category, author, publishDate, readTime, content, introText, quoteText, subHeading, bodyText, id]);
+    `, [title, cleanSlug, description, image, category, author, publishDate, readTime, content, introText, quoteText, subHeading, bodyText, id]);
   } else {
     await pool.query(`
       INSERT INTO blogs 
       (title, slug, description, image, category, author, publishDate, readTime, content, featured, introText, quoteText, subHeading, bodyText)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?)
-    `, [title, slug, description, image, category, author, publishDate || new Date().toISOString().split('T')[0], readTime || 5, content || '', introText || '', quoteText || '', subHeading || '', bodyText || '']);
+    `, [title, cleanSlug, description, image, category, author, publishDate || new Date().toISOString().split('T')[0], readTime || 5, content || '', introText || '', quoteText || '', subHeading || '', bodyText || '']);
   }
   
   revalidatePath('/admin/blogs');

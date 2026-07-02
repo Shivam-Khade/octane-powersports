@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import pool from "@/lib/db";
 import { RowDataPacket } from "mysql2";
 import Link from "next/link";
@@ -51,7 +51,17 @@ export default async function PackagePage({ params }: { params: Promise<{ slug: 
   `, [decodedSlug]);
 
   if (packageRows.length === 0) {
-    notFound();
+    const strippedSlug = decodedSlug.replace(/[^a-zA-Z0-9]/g, '%').replace(/%+/g, '%');
+    const aggressivePattern = `%${strippedSlug}%`;
+    const [fallbackRows] = await pool.query<RowDataPacket[]>(`
+      SELECT slug FROM packages WHERE (slug LIKE ? OR name LIKE ?) AND is_active = 1 LIMIT 1
+    `, [aggressivePattern, aggressivePattern]);
+    
+    if (fallbackRows.length > 0) {
+      redirect(`/packages/${fallbackRows[0].slug}`);
+    } else {
+      notFound();
+    }
   }
 
   const pkg = packageRows[0];
