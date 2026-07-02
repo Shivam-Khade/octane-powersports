@@ -50,18 +50,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title,
       description,
-      url: `https://octanepowersports.in/blog/${article.slug}`,
-      images: [{ url: article.image || 'https://octanepowersports.in/logo.png', width: 1200, height: 630, alt: article.title || 'Blog' }],
+      url: `https://octaneps.com/blog/${article.slug}`,
+      images: [{ url: article.image || 'https://octaneps.com/logo.png', width: 1200, height: 630, alt: article.title || 'Blog' }],
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [article.image || 'https://octanepowersports.in/logo.png'],
+      images: [article.image || 'https://octaneps.com/logo.png'],
     },
     alternates: {
-      canonical: `https://octanepowersports.in/blog/${article.slug}`
+      canonical: `https://octaneps.com/blog/${article.slug}`
     }
   };
 }
@@ -80,7 +80,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": article.title,
-    "image": [article.image || 'https://octanepowersports.in/logo.png'],
+    "image": [article.image || 'https://octaneps.com/logo.png'],
     "datePublished": (() => {
       try {
         return new Date(article.publishDate).toISOString();
@@ -97,7 +97,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       "name": "Octane Powersports",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://octanepowersports.in/logo.png"
+        "url": "https://octaneps.com/logo.png"
       }
     }
   };

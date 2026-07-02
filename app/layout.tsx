@@ -41,7 +41,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://octanepowersports.in"),
+  metadataBase: new URL("https://octaneps.com"),
   title: {
     default: "Octane Powersports | Premium Motorcycle Gear & Performance Parts India",
     template: "%s | Octane Powersports"
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Octane Powersports — Ride Harder. Explore Further.",
     description: "Premium motorcycle accessories, exhausts and performance parts for riders who demand more.",
-    url: "https://octanepowersports.in",
+    url: "https://octaneps.com",
     siteName: "Octane Powersports",
     images: [
       {
@@ -83,8 +83,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Octane Powersports",
-    url: "https://octanepowersports.in",
-    logo: "https://octanepowersports.in/logo.png",
+    url: "https://octaneps.com",
+    logo: "https://octaneps.com/logo.png",
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+91-9876543210",

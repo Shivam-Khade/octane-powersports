@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title,
       description,
-      url: `https://octanepowersports.in/product/${product.slug}`,
+      url: `https://octaneps.com/product/${product.slug}`,
       images: [{ url: product.image, width: 800, height: 800, alt: product.name }],
       type: "website",
     },
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       images: [product.image],
     },
     alternates: {
-      canonical: `https://octanepowersports.in/product/${product.slug}`
+      canonical: `https://octaneps.com/product/${product.slug}`
     }
   };
 }
@@ -83,7 +83,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     },
     "offers": {
       "@type": "Offer",
-      "url": `https://octanepowersports.in/product/${product.slug}`,
+      "url": `https://octaneps.com/product/${product.slug}`,
       "priceCurrency": "INR",
       "price": product.price,
       "itemCondition": "https://schema.org/NewCondition",

@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import pool from "@/lib/db";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = "https://octanepowersports.in";
+  const base = "https://octaneps.com";
   
   const [productRows] = await pool.query('SELECT slug FROM products WHERE stockCount > 0');
   const products = productRows as any[];
