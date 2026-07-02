@@ -255,7 +255,7 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
               <p className="text-sm text-gray-500 pt-1">Select specific bike series models that this product is compatible with.</p>
             </div>
             {bikeModels && bikeModels.length > 0 && (() => {
-              const allAvailableModels = bikeModels.flatMap((b: any) => b.series.flatMap((s: any) => s.models));
+              const allAvailableModels = bikeModels.flatMap((b: any) => b.series.flatMap((s: any) => s.models)).filter((m: string) => m.trim() !== "");
               const isAllBikesSelected = allAvailableModels.length > 0 && allAvailableModels.every((m: string) => formData.compatibility.includes(m));
               return (
                 <button
@@ -282,7 +282,7 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
           </div>
           <div className="max-h-96 overflow-y-auto p-4 border border-gray-100 rounded-lg bg-gray-50/50 space-y-4">
             {bikeModels?.map((brandObj: any) => {
-              const allBrandModels = brandObj.series.flatMap((s: any) => s.models);
+              const allBrandModels = brandObj.series.flatMap((s: any) => s.models).filter((m: string) => m.trim() !== "");
               const isBrandSelected = allBrandModels.length > 0 && allBrandModels.every((m: string) => formData.compatibility.includes(m));
               return (
               <details key={brandObj.brand} className="group">
@@ -291,33 +291,36 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
                     <span className="text-[#ff6b00] group-open:rotate-90 transition-transform">▶</span>
                     {brandObj.brand}
                   </div>
-                  <button 
-                    type="button" 
-                    suppressHydrationWarning
-                    className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all duration-200 active:scale-95 shadow-md border ${
-                      isBrandSelected 
-                        ? 'bg-gradient-to-b from-red-500 to-red-600 border-red-700/20 text-white hover:from-red-400 hover:to-red-500 shadow-red-500/20' 
-                        : 'bg-gradient-to-b from-green-500 to-green-600 border-green-700/20 text-white hover:from-green-400 hover:to-green-500 shadow-green-500/20'
-                    }`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      let newComp = [...formData.compatibility];
-                      if (!isBrandSelected) {
-                        allBrandModels.forEach((m: string) => {
-                          if (!newComp.includes(m)) newComp.push(m);
-                        });
-                      } else {
-                        newComp = newComp.filter((m: string) => !allBrandModels.includes(m));
-                      }
-                      setFormData({ ...formData, compatibility: newComp });
-                    }}
-                  >
-                    {isBrandSelected ? 'Clear All' : 'Select All'}
-                  </button>
+                  {allBrandModels.length > 0 && (
+                    <button 
+                      type="button" 
+                      suppressHydrationWarning
+                      className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all duration-200 active:scale-95 shadow-md border ${
+                        isBrandSelected 
+                          ? 'bg-gradient-to-b from-red-500 to-red-600 border-red-700/20 text-white hover:from-red-400 hover:to-red-500 shadow-red-500/20' 
+                          : 'bg-gradient-to-b from-green-500 to-green-600 border-green-700/20 text-white hover:from-green-400 hover:to-green-500 shadow-green-500/20'
+                      }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        let newComp = [...formData.compatibility];
+                        if (!isBrandSelected) {
+                          allBrandModels.forEach((m: string) => {
+                            if (!newComp.includes(m)) newComp.push(m);
+                          });
+                        } else {
+                          newComp = newComp.filter((m: string) => !allBrandModels.includes(m));
+                        }
+                        setFormData({ ...formData, compatibility: newComp });
+                      }}
+                    >
+                      {isBrandSelected ? 'Clear All' : 'Select All'}
+                    </button>
+                  )}
                 </summary>
                 <div className="pl-6 pt-1 space-y-4 mb-4">
                   {brandObj.series.map((seriesObj: any) => {
-                    const isSeriesSelected = seriesObj.models.length > 0 && seriesObj.models.every((m: string) => formData.compatibility.includes(m));
+                    const validModels = seriesObj.models.filter((m: string) => m.trim() !== "");
+                    const isSeriesSelected = validModels.length > 0 && validModels.every((m: string) => formData.compatibility.includes(m));
                     return (
                     <details key={seriesObj.name} className="group/series">
                       <summary className="font-bold text-gray-700 text-sm cursor-pointer select-none list-none flex items-center justify-between mb-1 pr-2">
@@ -325,44 +328,52 @@ export default function ProductForm({ initialData, categories, brands, bikeModel
                           <span className="text-gray-400 group-open/series:rotate-90 transition-transform text-xs">▶</span>
                           {seriesObj.name}
                         </div>
-                        <button 
-                          type="button" 
-                          suppressHydrationWarning
-                          className={`text-[11px] uppercase tracking-wider font-bold px-2.5 py-1 rounded transition-all duration-200 active:scale-95 shadow-sm border ${
-                            isSeriesSelected 
-                              ? 'bg-gradient-to-b from-red-500 to-red-600 border-red-700/20 text-white hover:from-red-400 hover:to-red-500 shadow-red-500/20' 
-                              : 'bg-gradient-to-b from-green-500 to-green-600 border-green-700/20 text-white hover:from-green-400 hover:to-green-500 shadow-green-500/20'
-                          }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            let newComp = [...formData.compatibility];
-                            if (!isSeriesSelected) {
-                              seriesObj.models.forEach((m: string) => {
-                                if (!newComp.includes(m)) newComp.push(m);
-                              });
-                            } else {
-                              newComp = newComp.filter((m: string) => !seriesObj.models.includes(m));
-                            }
-                            setFormData({ ...formData, compatibility: newComp });
-                          }}
-                        >
-                          {isSeriesSelected ? 'Clear' : 'Select All'}
-                        </button>
+                        {validModels.length > 0 && (
+                          <button 
+                            type="button" 
+                            suppressHydrationWarning
+                            className={`text-[11px] uppercase tracking-wider font-bold px-2.5 py-1 rounded transition-all duration-200 active:scale-95 shadow-sm border ${
+                              isSeriesSelected 
+                                ? 'bg-gradient-to-b from-red-500 to-red-600 border-red-700/20 text-white hover:from-red-400 hover:to-red-500 shadow-red-500/20' 
+                                : 'bg-gradient-to-b from-green-500 to-green-600 border-green-700/20 text-white hover:from-green-400 hover:to-green-500 shadow-green-500/20'
+                            }`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              let newComp = [...formData.compatibility];
+                              if (!isSeriesSelected) {
+                                validModels.forEach((m: string) => {
+                                  if (!newComp.includes(m)) newComp.push(m);
+                                });
+                              } else {
+                                newComp = newComp.filter((m: string) => !validModels.includes(m));
+                              }
+                              setFormData({ ...formData, compatibility: newComp });
+                            }}
+                          >
+                            {isSeriesSelected ? 'Clear' : 'Select All'}
+                          </button>
+                        )}
                       </summary>
-                      <div className="pl-6 grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {seriesObj.models.map((model: string) => (
-                          <label key={model} className="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white border border-transparent hover:border-gray-200 transition-all">
-                            <input 
-                              suppressHydrationWarning
-                              type="checkbox" 
-                              checked={formData.compatibility.includes(model)}
-                              onChange={() => handleCheckboxChange('compatibility', model)}
-                              className="w-4 h-4 text-[#ff6b00] border-gray-300 rounded focus:ring-[#ff6b00]"
-                            />
-                            <span className="text-sm font-medium text-gray-600">{model}</span>
-                          </label>
-                        ))}
-                      </div>
+                      {validModels.length > 0 ? (
+                        <div className="pl-6 grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {validModels.map((model: string) => (
+                            <label key={model} className="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white border border-transparent hover:border-gray-200 transition-all">
+                              <input 
+                                suppressHydrationWarning
+                                type="checkbox" 
+                                checked={formData.compatibility.includes(model)}
+                                onChange={() => handleCheckboxChange('compatibility', model)}
+                                className="w-4 h-4 text-[#ff6b00] border-gray-300 rounded focus:ring-[#ff6b00]"
+                              />
+                              <span className="text-sm font-medium text-gray-600">{model}</span>
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="pl-6 pt-1 pb-2">
+                          <p className="text-xs text-gray-400 italic">No bikes added to this series yet.</p>
+                        </div>
+                      )}
                     </details>
                     );
                   })}

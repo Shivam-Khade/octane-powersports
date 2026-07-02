@@ -3,11 +3,11 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import SignOutButton from "@/components/sign-out-button";
-import { 
-  LayoutDashboard, 
-  Package, 
-  FileText, 
-  CalendarCheck, 
+import {
+  LayoutDashboard,
+  Package,
+  FileText,
+  CalendarCheck,
   ShoppingCart,
   LogOut,
   Settings,
@@ -36,7 +36,7 @@ export default async function AdminLayout({
             <span className="text-[#ff6b00] text-sm tracking-[0.2em] -mt-1">ADMIN</span>
           </Link>
         </div>
-        
+
         <nav className="flex-1 px-4 py-4 space-y-2">
           <Link href="/admin" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <LayoutDashboard size={18} className="text-[#ff6b00]" /> Dashboard
@@ -52,6 +52,9 @@ export default async function AdminLayout({
           </Link>
           <Link href="/admin/brands" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <Package size={18} className="text-[#ff6b00]" /> Brands
+          </Link>
+          <Link href="/admin/bikes" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
+            <Package size={18} className="text-[#ff6b00]" /> Bikes
           </Link>
           <Link href="/admin/orders" prefetch={false} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm">
             <ShoppingCart size={18} className="text-[#ff6b00]" /> Orders
@@ -69,7 +72,7 @@ export default async function AdminLayout({
             <Settings size={18} className="text-[#ff6b00]" /> Settings
           </Link>
         </nav>
-        
+
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-4 px-2">
             <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-bold text-[#ff6b00]">
